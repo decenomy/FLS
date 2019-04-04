@@ -1,0 +1,81 @@
+policy_module(fls, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type fls_t;
+type fls_exec_t;
+init_daemon_domain(fls_t, fls_exec_t)
+
+permissive fls_t;
+
+type fls_initrc_exec_t;
+init_script_file(fls_initrc_exec_t)
+
+type fls_conf_t;
+files_type(fls_conf_t)
+
+type fls_var_lib_t;
+files_type(fls_var_lib_t)
+
+type fls_var_run_t;
+files_type(fls_var_run_t)
+
+type fls_port_t;
+corenet_port(fls_port_t)
+
+########################################
+#
+# fls local policy
+#
+allow fls_t self:process { fork };
+
+allow fls_t self:fifo_file rw_fifo_file_perms;
+allow fls_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(fls_t, fls_conf_t, fls_conf_t)
+manage_files_pattern(fls_t, fls_conf_t, fls_conf_t)
+
+manage_dirs_pattern(fls_t, fls_var_lib_t, fls_var_lib_t)
+manage_files_pattern(fls_t, fls_var_lib_t, fls_var_lib_t)
+files_var_lib_filetrans(fls_t, fls_var_lib_t, { dir file })
+
+manage_dirs_pattern(fls_t, fls_var_run_t, fls_var_run_t)
+manage_files_pattern(fls_t, fls_var_run_t, fls_var_run_t)
+
+sysnet_dns_name_resolve(fls_t)
+corenet_all_recvfrom_unlabeled(fls_t)
+
+allow fls_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(fls_t)
+corenet_tcp_sendrecv_generic_node(fls_t)
+corenet_tcp_sendrecv_all_ports(fls_t)
+corenet_tcp_bind_generic_node(fls_t)
+
+gen_require(`
+    type fls_port_t;
+')
+allow fls_t fls_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type fls_port_t;
+')
+allow fls_t fls_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(fls_t)
+
+files_read_etc_files(fls_t)
+
+miscfiles_read_localization(fls_t)
+
+sysnet_dns_name_resolve(fls_t)
+
+allow fls_t fls_exec_t:file execute_no_trans;
+allow fls_t self:process setsched;
+corecmd_exec_ls(fls_t)
+corenet_tcp_connect_http_port(fls_t)
+dev_read_urand(fls_t)
+fs_getattr_xattr_fs(fls_t)
+kernel_read_system_state(fls_t)

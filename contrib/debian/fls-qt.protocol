@@ -1,0 +1,11 @@
+[Protocol]
+exec=fls-qt '%u'
+protocol=fls
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false
