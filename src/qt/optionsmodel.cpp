@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -24,8 +24,8 @@
 
 #ifdef ENABLE_WALLET
 #include "masternodeconfig.h"
-#include "wallet.h"
-#include "walletdb.h"
+#include "wallet/wallet.h"
+#include "wallet/walletdb.h"
 #endif
 
 #include <QNetworkProxy>
@@ -98,11 +98,6 @@ void OptionsModel::Init()
     if (!settings.contains("nPreferredDenom"))
         settings.setValue("nPreferredDenom", 0);
     nPreferredDenom = settings.value("nPreferredDenom", "0").toLongLong();
-
-    if (!settings.contains("nAnonymizeFlsAmount"))
-        settings.setValue("nAnonymizeFlsAmount", 1000);
-
-    nAnonymizeFlsAmount = settings.value("nAnonymizeFlsAmount").toLongLong();
 
     if (!settings.contains("fShowMasternodesTab"))
         settings.setValue("fShowMasternodesTab", masternodeConfig.getCount());
@@ -274,8 +269,6 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             return QVariant(nZeromintPercentage);
         case ZeromintPrefDenom:
             return QVariant(nPreferredDenom);
-        case AnonymizeFlsAmount:
-            return QVariant(nAnonymizeFlsAmount);
         case Listen:
             return settings.value("fListen");
         default:
@@ -411,11 +404,6 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
             fHideOrphans = value.toBool();
             settings.setValue("fHideOrphans", fHideOrphans);
             emit hideOrphansChanged(fHideOrphans);
-            break;
-        case AnonymizeFlsAmount:
-            nAnonymizeFlsAmount = value.toInt();
-            settings.setValue("nAnonymizeFlsAmount", nAnonymizeFlsAmount);
-            emit anonymizeFlsAmountChanged(nAnonymizeFlsAmount);
             break;
         case CoinControlFeatures:
             fCoinControlFeatures = value.toBool();

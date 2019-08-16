@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
@@ -17,8 +17,6 @@
 
 #include <boost/assign/list_of.hpp>
 
-using namespace std;
-using namespace boost::assign;
 
 struct SeedSpec6 {
     uint8_t addr[16];
@@ -127,11 +125,14 @@ public:
         nTargetTimespan = 1 * 80; // FLS: 1 day
         nTargetSpacing = 1 * 80;  // FLS: 1 minute
         nMaturity = 30;
+        nStakeMinAge = 60 * 60;   // FLS: 1 hour
         nMasternodeCountDrift = 20;
         nMaxMoneyOut = 10000000 * COIN;
 
         /** Height or Time Based Activations **/
         nLastPOWBlock = 200;
+        nFlsBadBlockTime = 1554456853; // Skip nBit validation of Block 259201 per PR #915
+        nFlsBadBlocknBits = 488380309; // Skip nBit validation of Block 259201 per PR #915
         nModifierUpdateBlock = 999999999;
         nZerocoinStartHeight = 205;
         nZerocoinStartTime = 1554491934; // October 17, 2017 4:30:00 AM
@@ -145,6 +146,9 @@ public:
         nBlockDoubleAccumulated = 10;
         nEnforceNewSporkKey = 1554402932; //!> Sporks signed after (GMT): Tuesday, May 1, 2018 7:00:00 AM GMT must use the new spork key
         nRejectOldSporkKey = 1554402932; //!> Fully reject old spork key after (GMT): Friday, June 1, 2018 12:00:00 AM
+
+        // Public coin spend enforcement
+        nPublicZCSpends = 165000;
 
         // Fake Serial Attack
         nFakeSerialBlockheightEnd = -1;
@@ -164,7 +168,7 @@ public:
         CMutableTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
-        txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
+        txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
         txNew.vout[0].SetEmpty();
         txNew.vout[0].scriptPubKey = CScript() << ParseHex("04c10e54f7633cde562f7d47eddd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9") << OP_CHECKSIG;
         genesis.vtx.push_back(txNew);
@@ -196,16 +200,17 @@ public:
 
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
-        fMiningRequiresPeers = false;
+        fMiningRequiresPeers = true;
         fAllowMinDifficultyBlocks = false;
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
         fMineBlocksOnDemand = false;
-        fSkipProofOfWorkCheck = true;
+        fSkipProofOfWorkCheck = false;
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
 
         nPoolMaxTransactions = 3;
+        nBudgetCycleBlocks = 43200; //!< Amount of blocks in a months period of time (using 1 minutes per) = (60*24*30)
         strSporkKey = "0426c24ed88f8c36b3b0e97766a6f94e72e860b7faa4cc489c68386cf5f8a9f4eef881aea324a2bf7fe0ca1c4bd6c015f910224df5f42a718c1660b1a14808e6c2";
         strSporkKeyOld = "0426c24ed88f8c36b3b0e97766a6f94e72e860b7faa4cc489c68386cf5f8a9f4eef881aea324a2bf7fe0ca1c4bd6c015f910224df5f42a718c1660b1a14808e6c2";
         strObfuscationPoolDummyAddress = "FbZs7RJpaAFqtFt82sfseZe4mPf43diNjQ";
@@ -219,6 +224,7 @@ public:
             "8441436038339044149526344321901146575444541784240209246165157233507787077498171257724679629263863563732899121548"
             "31438167899885040445364023527381951378636564391212010397122822120720357";
         nMaxZerocoinSpendsPerTransaction = 7; // Assume about 20kb each
+        nMaxZerocoinPublicSpendsPerTransaction = 0; // Assume about 220 bytes each input
         nMinZerocoinMintFee = 1 * CENT; //high fee required for zerocoin mints
         nMintRequiredConfirmations = 20; //the maximum amount of confirmations until accumulated in 19
         nRequiredAccumulation = 1;
@@ -227,6 +233,7 @@ public:
         nZerocoinRequiredStakeDepth = 100; //The required confirmations for a zfls to be stakable
 
         nBudget_Fee_Confirmations = 6; // Number of confirmations for the finalization fee
+        nProposalEstablishmentTime = 60 * 60 * 24; // Proposals must be at least a day old to make it into a budget
     }
 
     const Checkpoints::CCheckpointData& Checkpoints() const
@@ -259,6 +266,8 @@ public:
         nTargetTimespan = 1 * 80; // FLS: 1 day
         nTargetSpacing = 1 * 80;  // FLS: 1 minute
         nLastPOWBlock = 200;
+        nFlsBadBlockTime = 1489001494; // Skip nBit validation of Block 259201 per PR #915
+        nFlsBadBlocknBits = 0x1e0a20bd; // Skip nBit validation of Block 201 per PR #915
         nMaturity = 15;
         nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 999999999; //approx Mon, 17 Apr 2017 04:00:00 GMT
@@ -274,6 +283,9 @@ public:
         nBlockZerocoinV2 = 220; //!> The block that zerocoin v2 becomes active
         nEnforceNewSporkKey = 1554402932; //!> Sporks signed after Wednesday, March 21, 2018 4:00:00 AM GMT must use the new spork key
         nRejectOldSporkKey = 1522454400; //!> Reject old spork key after Saturday, March 31, 2018 12:00:00 AM GMT
+
+        // Public coin spend enforcement
+        nPublicZCSpends = 225;
 
         // Fake Serial Attack
         nFakeSerialBlockheightEnd = -1;
@@ -307,7 +319,7 @@ public:
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
-        fMiningRequiresPeers = false;
+        fMiningRequiresPeers = true;
         fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
@@ -315,12 +327,15 @@ public:
         fTestnetToBeDeprecatedFieldRPC = true;
 
         nPoolMaxTransactions = 2;
+        nBudgetCycleBlocks = 144; //!< Ten cycles per day on testnet
         strSporkKey = "041145afb7415f1d0346f67e3249202fcaf80c6b73ef86a635cd7389caafca19f24366f98dd81845a1de740617597dac3f1108589e69af70650251ddf143767172";
         strSporkKeyOld = "041145afb7415f1d0346f67e3249202fcaf80c6b73ef86a635cd7389caafca19f24366f98dd81845a1de740617597dac3f1108589e69af70650251ddf143767172";
         strObfuscationPoolDummyAddress = "yEHyYVuBQSeqf7oi1nswiRhrnfBwNK9RaG";
         nStartMasternodePayments = 1420837558; //Fri, 09 Jan 2015 21:05:58 GMT
         nBudget_Fee_Confirmations = 3; // Number of confirmations for the finalization fee. We have to make this very short
                                        // here because we only have a 8 block finalization window on testnet
+
+        nProposalEstablishmentTime = 60 * 5; // Proposals must be at least 5 mns old to make it into a test budget
     }
     const Checkpoints::CCheckpointData& Checkpoints() const
     {
@@ -354,6 +369,7 @@ public:
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         nLastPOWBlock = 250;
         nMaturity = 30;
+        nStakeMinAge = 0;
         nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 0; //approx Mon, 17 Apr 2017 04:00:00 GMT
         nMaxMoneyOut = 10000000 * COIN;
@@ -364,6 +380,9 @@ public:
         nBlockRecalculateAccumulators = 999999999; //Trigger a recalculation of accumulators
         nBlockFirstFraudulent = 999999999; //First block that bad serials emerged
         nBlockLastGoodCheckpoint = 999999999; //Last valid accumulator checkpoint
+
+        // Public coin spend enforcement
+        nPublicZCSpends = 225;
 
         // Fake Serial Attack
         nFakeSerialBlockheightEnd = -1;
@@ -385,6 +404,13 @@ public:
         fMineBlocksOnDemand = true;
         fSkipProofOfWorkCheck = true;
         fTestnetToBeDeprecatedFieldRPC = false;
+
+        /* Spork Key for RegTest:
+        WIF private key: 932HEevBSujW2ud7RfB1YF91AFygbBRQj3de3LyaCRqNzKKgWXi
+        private key hex: bd4960dcbd9e7f2223f24e7164ecb6f1fe96fc3a416f5d3a830ba5720c84b8ca
+        Address: yCvUVd72w7xpimf981m114FSFbmAmne7j9
+        */
+        strSporkKey = "043969b1b0e6f327de37f297a015d37e2235eaaeeb3933deecd8162c075cee0207b13537618bde640879606001a8136091c62ec272dd0133424a178704e6e75bb7";
     }
     const Checkpoints::CCheckpointData& Checkpoints() const
     {
