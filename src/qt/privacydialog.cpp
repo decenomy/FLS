@@ -1,4 +1,6 @@
-// Copyright (c) 2017-2018 The PIVX developers
+// Copyright (c) 2017-2019 The PIVX developers
+// Copyright (c) 2019 The CryptoDev developers
+// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -36,11 +38,11 @@ PrivacyDialog::PrivacyDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystem
 
     // "Spending 999999 zFLS ought to be enough for anybody." - Bill Gates, 2017
     ui->zFLSpayAmount->setValidator( new QDoubleValidator(0.0, 21000000.0, 20, this) );
-    ui->labelMintAmountValue->setValidator( new QIntValidator(0, 999999, this) );
+    //ui->labelMintAmountValue->setValidator( new QIntValidator(0, 999999, this) );     // disable MINT
 
     // Default texts for (mini-) coincontrol
-    ui->labelCoinControlQuantity->setText (tr("Coins automatically selected"));
-    ui->labelCoinControlAmount->setText (tr("Coins automatically selected"));
+    //ui->labelCoinControlQuantity->setText (tr("Coins automatically selected"));       // disable MINT
+    //ui->labelCoinControlAmount->setText (tr("Coins automatically selected"));         // disable MINT
     ui->labelzFLSSyncStatus->setText("(" + tr("out of sync") + ")");
 
     // Sunken frame for minting messages
@@ -50,6 +52,7 @@ PrivacyDialog::PrivacyDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystem
     ui->TEMintStatus->setPlainText(tr("Mint Status: Okay"));
 
     // Coin Control signals
+    /*                                                                            [disable MINT and coinControl]
     connect(ui->pushButtonCoinControl, SIGNAL(clicked()), this, SLOT(coinControlButtonClicked()));
 
     // Coin Control: clipboard actions
@@ -59,6 +62,7 @@ PrivacyDialog::PrivacyDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystem
     connect(clipboardAmountAction, SIGNAL(triggered()), this, SLOT(coinControlClipboardAmount()));
     ui->labelCoinControlQuantity->addAction(clipboardQuantityAction);
     ui->labelCoinControlAmount->addAction(clipboardAmountAction);
+    */
 
     // Denomination labels
     ui->labelzDenom1Text->setText(tr("Denom. with value <b>1</b>:"));
@@ -109,6 +113,8 @@ PrivacyDialog::PrivacyDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystem
     if(!settings.contains("fDenomsSectionMinimized"))
         settings.setValue("fDenomsSectionMinimized", true);
     minimizeDenomsSection(settings.value("fDenomsSectionMinimized").toBool());
+
+    ui->checkBoxMintChange->setVisible(false);
 }
 
 PrivacyDialog::~PrivacyDialog()
@@ -153,7 +159,8 @@ void PrivacyDialog::on_addressBookButton_clicked()
         ui->zFLSpayAmount->setFocus();
     }
 }
-
+/* disable MINT
+ *
 void PrivacyDialog::on_pushButtonMintzFLS_clicked()
 {
     if (!walletModel || !walletModel->getOptionsModel())
@@ -195,8 +202,8 @@ void PrivacyDialog::on_pushButtonMintzFLS_clicked()
     int64_t nTime = GetTimeMillis();
 
     CWalletTx wtx;
-    vector<CDeterministicMint> vMints;
-    string strError = pwalletMain->MintZerocoin(nAmount, wtx, vMints, CoinControlDialog::coinControl);
+    std::vector<CDeterministicMint> vMints;
+    std::string strError = pwalletMain->MintZerocoin(nAmount, wtx, vMints, CoinControlDialog::coinControl);
 
     // Return if something went wrong during minting
     if (strError != ""){
@@ -234,14 +241,14 @@ void PrivacyDialog::on_pushButtonMintzFLS_clicked()
 
     return;
 }
-
+*/
 void PrivacyDialog::on_pushButtonMintReset_clicked()
 {
     ui->TEMintStatus->setPlainText(tr("Starting ResetMintZerocoin: rescanning complete blockchain, this will need up to 30 minutes depending on your hardware.\nPlease be patient..."));
     ui->TEMintStatus->repaint ();
 
     int64_t nTime = GetTimeMillis();
-    string strResetMintResult = pwalletMain->ResetMintZerocoin();
+    std::string strResetMintResult = pwalletMain->ResetMintZerocoin();
     double fDuration = (double)(GetTimeMillis() - nTime)/1000.0;
     ui->TEMintStatus->setPlainText(QString::fromStdString(strResetMintResult) + tr("Duration: ") + QString::number(fDuration) + tr(" sec.\n"));
     ui->TEMintStatus->repaint ();
@@ -256,7 +263,7 @@ void PrivacyDialog::on_pushButtonSpentReset_clicked()
     ui->TEMintStatus->setPlainText(tr("Starting ResetSpentZerocoin: "));
     ui->TEMintStatus->repaint ();
     int64_t nTime = GetTimeMillis();
-    string strResetSpentResult = pwalletMain->ResetSpentZerocoin();
+    std::string strResetSpentResult = pwalletMain->ResetSpentZerocoin();
     double fDuration = (double)(GetTimeMillis() - nTime)/1000.0;
     ui->TEMintStatus->setPlainText(QString::fromStdString(strResetSpentResult) + tr("Duration: ") + QString::number(fDuration) + tr(" sec.\n"));
     ui->TEMintStatus->repaint ();
@@ -343,7 +350,7 @@ void PrivacyDialog::sendzFLS()
     }
 
     // Convert change to zFLS
-    bool fMintChange = ui->checkBoxMintChange->isChecked();
+    bool fMintChange = false;// ui->checkBoxMintChange->isChecked();
 
     // Persist minimize change setting
     fMinimizeChange = ui->checkBoxMinimizeChange->isChecked();
@@ -407,8 +414,8 @@ void PrivacyDialog::sendzFLS()
     ui->TEMintStatus->repaint();
 
     // use mints from zFLS selector if applicable
-    vector<CMintMeta> vMintsToFetch;
-    vector<CZerocoinMint> vMintsSelected;
+    std::vector<CMintMeta> vMintsToFetch;
+    std::vector<CZerocoinMint> vMintsSelected;
     if (!ZFlsControlDialog::setSelectedMints.empty()) {
         vMintsToFetch = ZFlsControlDialog::GetSelectedMints();
 
@@ -438,6 +445,7 @@ void PrivacyDialog::sendzFLS()
 
     // Display errors during spend
     if (!fSuccess) {
+        /*
         int nNeededSpends = receipt.GetNeededSpends(); // Number of spends we would need for this transaction
         const int nMaxSpends = Params().Zerocoin_MaxSpendsPerTransaction(); // Maximum possible spends for one zFLS transaction
         if (nNeededSpends > nMaxSpends) {
@@ -447,9 +455,10 @@ void PrivacyDialog::sendzFLS()
             ui->TEMintStatus->setPlainText(tr("Spend Zerocoin failed with status = ") +QString::number(receipt.GetStatus(), 10) + "\n" + "Message: " + QString::fromStdString(strStatusMessage.toStdString()));
         }
         else {
-            QMessageBox::warning(this, tr("Spend Zerocoin"), receipt.GetStatusMessage().c_str(), QMessageBox::Ok, QMessageBox::Ok);
-            ui->TEMintStatus->setPlainText(tr("Spend Zerocoin failed with status = ") +QString::number(receipt.GetStatus(), 10) + "\n" + "Message: " + QString::fromStdString(receipt.GetStatusMessage()));
-        }
+         */
+        QMessageBox::warning(this, tr("Spend Zerocoin"), receipt.GetStatusMessage().c_str(), QMessageBox::Ok, QMessageBox::Ok);
+        ui->TEMintStatus->setPlainText(tr("Spend Zerocoin failed with status = ") +QString::number(receipt.GetStatus(), 10) + "\n" + "Message: " + QString::fromStdString(receipt.GetStatusMessage()));
+        //}
         ui->zFLSpayAmount->setFocus();
         ui->TEMintStatus->repaint();
         ui->TEMintStatus->verticalScrollBar()->setValue(ui->TEMintStatus->verticalScrollBar()->maximum()); // Automatically scroll to end of text
@@ -490,7 +499,7 @@ void PrivacyDialog::sendzFLS()
 
         strStats += tr("address: ");
         CTxDestination dest;
-        if(txout.scriptPubKey.IsZerocoinMint())
+        if(txout.IsZerocoinMint())
             strStats += tr("zFLS Mint");
         else if(ExtractDestination(txout.scriptPubKey, dest))
             strStats += tr(CBitcoinAddress(dest).ToString().c_str());
@@ -517,6 +526,8 @@ void PrivacyDialog::on_payTo_textChanged(const QString& address)
 {
     updateLabel(address);
 }
+
+/* DISABLE MINTs: no need for coinCointrol
 
 // Coin Control: copy label "Quantity" to clipboard
 void PrivacyDialog::coinControlClipboardQuantity()
@@ -559,7 +570,7 @@ void PrivacyDialog::coinControlUpdateLabels()
         ui->labelCoinControlAmount->setText (tr("Coins automatically selected"));
     }
 }
-
+*/
 
 void PrivacyDialog::on_pushButtonShowDenoms_clicked()
 {
@@ -616,13 +627,13 @@ void PrivacyDialog::setBalance(const CAmount& balance, const CAmount& unconfirme
     std::map<libzerocoin::CoinDenomination, int> mapUnconfirmed;
     std::map<libzerocoin::CoinDenomination, int> mapImmature;
     for (const auto& denom : libzerocoin::zerocoinDenomList){
-        mapDenomBalances.insert(make_pair(denom, 0));
-        mapUnconfirmed.insert(make_pair(denom, 0));
-        mapImmature.insert(make_pair(denom, 0));
+        mapDenomBalances.insert(std::make_pair(denom, 0));
+        mapUnconfirmed.insert(std::make_pair(denom, 0));
+        mapImmature.insert(std::make_pair(denom, 0));
     }
 
     std::vector<CMintMeta> vMints = pwalletMain->zflsTracker->GetMints(false);
-    map<libzerocoin::CoinDenomination, int> mapMaturityHeights = GetMintMaturityHeight();
+    std::map<libzerocoin::CoinDenomination, int> mapMaturityHeights = GetMintMaturityHeight();
     for (auto& meta : vMints){
         // All denominations
         mapDenomBalances.at(meta.denom)++;
@@ -705,7 +716,6 @@ void PrivacyDialog::setBalance(const CAmount& balance, const CAmount& unconfirme
     ui->labelzAvailableAmount->setText(QString::number(zerocoinBalance/COIN) + QString(" zFLS "));
     ui->labelzAvailableAmount_2->setText(QString::number(matureZerocoinBalance/COIN) + QString(" zFLS "));
     ui->labelzAvailableAmount_4->setText(QString::number(zerocoinBalance/COIN) + QString(" zFLS "));
-    ui->labelzFLSAmountValue->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, balance - immatureBalance - nLockedBalance, false, BitcoinUnits::separatorAlways));
 
     // Display AutoMint status
     updateAutomintStatus();
@@ -797,20 +807,21 @@ void PrivacyDialog::updateAutomintStatus()
 void PrivacyDialog::updateSPORK16Status()
 {
     // Update/enable labels, buttons and tooltips depending on the current SPORK_16 status
-    bool fButtonsEnabled =  ui->pushButtonMintzFLS->isEnabled();
+    //bool fButtonsEnabled =  ui->pushButtonMintzFLS->isEnabled();
+    bool fButtonsEnabled = false;
     bool fMaintenanceMode = GetAdjustedTime() > GetSporkValue(SPORK_16_ZEROCOIN_MAINTENANCE_MODE);
     if (fMaintenanceMode && fButtonsEnabled) {
         // Mint zFLS
-        ui->pushButtonMintzFLS->setEnabled(false);
-        ui->pushButtonMintzFLS->setToolTip(tr("zFLS is currently disabled due to maintenance."));
+        //ui->pushButtonMintzFLS->setEnabled(false);
+        //ui->pushButtonMintzFLS->setToolTip(tr("zFLS is currently disabled due to maintenance."));
 
         // Spend zFLS
         ui->pushButtonSpendzFLS->setEnabled(false);
         ui->pushButtonSpendzFLS->setToolTip(tr("zFLS is currently disabled due to maintenance."));
     } else if (!fMaintenanceMode && !fButtonsEnabled) {
         // Mint zFLS
-        ui->pushButtonMintzFLS->setEnabled(true);
-        ui->pushButtonMintzFLS->setToolTip(tr("PrivacyDialog", "Enter an amount of FLS to convert to zFLS", 0));
+        //ui->pushButtonMintzFLS->setEnabled(true);
+        //ui->pushButtonMintzFLS->setToolTip(tr("PrivacyDialog", "Enter an amount of FLS to convert to zFLS", 0));
 
         // Spend zFLS
         ui->pushButtonSpendzFLS->setEnabled(true);

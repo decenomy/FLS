@@ -1,5 +1,4 @@
-//
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
@@ -38,11 +37,11 @@ void CLightWorker::ThreadLightZFLSSimplified() {
                     libzerocoin::Accumulator accumulator(params, genWit.getDen(), genWit.getAccWitValue());
                     libzerocoin::PublicCoin temp(params);
                     libzerocoin::AccumulatorWitness witness(params, accumulator, temp);
-                    string strFailReason = "";
+                    std::string strFailReason = "";
                     int nMintsAdded = 0;
                     CZerocoinSpendReceipt receipt;
 
-                    list<CBigNum> ret;
+                    std::list<CBigNum> ret;
                     int heightStop;
 
                     bool res;

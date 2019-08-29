@@ -2,7 +2,7 @@ dnl require autoconf 2.60 (AS_ECHO/AS_ECHO_N)
 AC_PREREQ([2.60])
 define(_CLIENT_VERSION_MAJOR, 1)
 define(_CLIENT_VERSION_MINOR, 0)
-define(_CLIENT_VERSION_REVISION, 0)
+define(_CLIENT_VERSION_REVISION, 1)
 define(_CLIENT_VERSION_BUILD, 0)
 define(_CLIENT_VERSION_IS_RELEASE, true)
 define(_COPYRIGHT_YEAR, 2019)
@@ -81,8 +81,8 @@ AC_PATH_TOOL(RANLIB, ranlib)
 AC_PATH_TOOL(STRIP, strip)
 AC_PATH_TOOL(GCOV, gcov)
 AC_PATH_PROG(LCOV, lcov)
-dnl Python 3.x is supported from 3.4 on (see https://github.com/bitcoin/bitcoin/issues/7893)
-AC_PATH_PROGS([PYTHON], [python3.7 python3.6 python3.5 python3.4 python3 python])
+dnl Python 3.5 is specified in .python-version and should be used if available, see doc/dependencies.md
+AC_PATH_PROGS([PYTHON], [python3.5 python3.6 python3.7 python3.8 python3 python])
 AC_PATH_PROG(GENHTML, genhtml)
 AC_PATH_PROG([GIT], [git])
 AC_PATH_PROG(CCACHE,ccache)
@@ -1100,8 +1100,8 @@ CXXFLAGS="${save_CXXFLAGS}"
 AC_CHECK_LIB([crypto],[RAND_egd],[],[
   AC_ARG_WITH([unsupported-ssl],
     [AS_HELP_STRING([--with-unsupported-ssl],[Build with system SSL (default is no; DANGEROUS; NOT SUPPORTED; You should use OpenSSL 1.0)])],
-    [AC_MSG_WARN([Detected unsupported SSL version: This is NOT supported, and may break consensus compatibility!])],
-    [AC_MSG_ERROR([Detected unsupported SSL version: This is NOT supported, and may break consensus compatibility!])]
+    [AC_MSG_WARN([Detected unsupported SSL version: This is NOT supported, and may break consensus compatibility! Use '--with-unsupported-ssl' if you don't care])],
+    [AC_MSG_ERROR([Detected unsupported SSL version: This is NOT supported, and may break consensus compatibility! Use '--with-unsupported-ssl' if you don't care])]
   )
 ])
 
@@ -1309,6 +1309,9 @@ openssl)
   AC_MSG_ERROR([invalid bignum implementation])
   ;;
 esac
+
+AM_CONDITIONAL([USE_NUM_GMP], [test "x$set_bignum" = "xgmp"])
+AM_CONDITIONAL([USE_NUM_OPENSSL], [test "x$set_bignum" = "xopenssl"])
 
 AC_MSG_CHECKING([whether to build test_fls])
 if test x$use_tests = xyes; then

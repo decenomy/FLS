@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -21,9 +21,9 @@
 
 #include "base58.h"
 #include "coincontrol.h"
-#include "ui_interface.h"
+#include "guiinterface.h"
 #include "utilmoneystr.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
 
 #include <QMessageBox>
 #include <QScrollBar>
@@ -135,8 +135,13 @@ SendCoinsDialog::SendCoinsDialog(QWidget* parent) : QDialog(parent, Qt::WindowSy
     ui->sliderSmartFee->setValue(settings.value("nSmartFeeSliderPosition").toInt());
     ui->customFee->setValue(settings.value("nTransactionFee").toLongLong());
     ui->checkBoxMinimumFee->setChecked(settings.value("fPayOnlyMinFee").toBool());
-    ui->checkBoxFreeTx->setChecked(settings.value("fSendFreeTransactions").toBool());
+    //ui->checkBoxFreeTx->setChecked(settings.value("fSendFreeTransactions").toBool());
     ui->checkzFLS->hide();
+
+    // Making zero fee txes option not visible (no need to clean this.. wallet 4.0 is right behind the corner)
+    ui->checkBoxFreeTx->setChecked(false);
+    ui->checkBoxFreeTx->setVisible(false);
+    ui->labelFreeTx->setVisible(false);
 
     minimizeFeeSection(settings.value("fFeeSectionMinimized").toBool());
     // If SwiftX activated hide button 'Choose'. Show otherwise.
@@ -167,7 +172,7 @@ void SendCoinsDialog::setModel(WalletModel* model)
         setBalance(model->getBalance(), model->getUnconfirmedBalance(), model->getImmatureBalance(),
                    model->getZerocoinBalance (), model->getUnconfirmedZerocoinBalance (), model->getImmatureZerocoinBalance (),
                    model->getWatchBalance(), model->getWatchUnconfirmedBalance(), model->getWatchImmatureBalance());
-        connect(model, SIGNAL(balanceChanged(CAmount, CAmount,  CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount)), this, 
+        connect(model, SIGNAL(balanceChanged(CAmount, CAmount,  CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount)), this,
                          SLOT(setBalance(CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount)));
         connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
         updateDisplayUnit();
@@ -548,7 +553,7 @@ bool SendCoinsDialog::handlePaymentRequest(const SendCoinsRecipient& rv)
     return true;
 }
 
-void SendCoinsDialog::setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, 
+void SendCoinsDialog::setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
                                  const CAmount& zerocoinBalance, const CAmount& unconfirmedZerocoinBalance, const CAmount& immatureZerocoinBalance,
                                  const CAmount& watchBalance, const CAmount& watchUnconfirmedBalance, const CAmount& watchImmatureBalance)
 {
@@ -573,7 +578,7 @@ void SendCoinsDialog::updateDisplayUnit()
     TRY_LOCK(cs_main, lockMain);
     if (!lockMain) return;
 
-    setBalance(model->getBalance(), model->getUnconfirmedBalance(), model->getImmatureBalance(), 
+    setBalance(model->getBalance(), model->getUnconfirmedBalance(), model->getImmatureBalance(),
                model->getZerocoinBalance (), model->getUnconfirmedZerocoinBalance (), model->getImmatureZerocoinBalance (),
                model->getWatchBalance(), model->getWatchUnconfirmedBalance(), model->getWatchImmatureBalance());
     coinControlUpdateLabels();
@@ -610,7 +615,7 @@ void SendCoinsDialog::updateSwiftTX()
 void SendCoinsDialog::processSendCoinsReturn(const WalletModel::SendCoinsReturn& sendCoinsReturn, const QString& msgArg, bool fPrepare)
 {
     bool fAskForUnlock = false;
-    
+
     QPair<QString, CClientUIInterface::MessageBoxFlags> msgParams;
     // Default to a warning message, override if error message is needed
     msgParams.second = CClientUIInterface::MSG_WARNING;

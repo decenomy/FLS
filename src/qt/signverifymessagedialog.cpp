@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -15,7 +15,7 @@
 
 #include "base58.h"
 #include "init.h"
-#include "wallet.h"
+#include "wallet/wallet.h"
 #include "askpassphrasedialog.h"
 
 #include <string>

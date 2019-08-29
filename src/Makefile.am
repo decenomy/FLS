@@ -106,7 +106,7 @@ BITCOIN_CORE_H = \
   denomination_functions.h \
   obfuscation.h \
   obfuscation-relay.h \
-  db.h \
+  wallet/db.h \
   hash.h \
   httprpc.h \
   httpserver.h \
@@ -162,7 +162,7 @@ BITCOIN_CORE_H = \
   torcontrol.h \
   txdb.h \
   txmempool.h \
-  ui_interface.h \
+  guiinterface.h \
   uint256.h \
   undo.h \
   util.h \
@@ -171,9 +171,9 @@ BITCOIN_CORE_H = \
   utiltime.h \
   validationinterface.h \
   version.h \
-  wallet.h \
-  wallet_ismine.h \
-  walletdb.h \
+  wallet/wallet.h \
+  wallet/wallet_ismine.h \
+  wallet/walletdb.h \
   zflschain.h \
   zfls/accumulators.h \
   zfls/accumulatorcheckpoints.h \
@@ -185,6 +185,7 @@ BITCOIN_CORE_H = \
   zfls/zerocoin.h \
   zfls/zflstracker.h \
   zfls/zflswallet.h \
+  zfls/zflsmodule.h \
   genwit.h \
   concurrentqueue.h \
   lightzflsthread.h \
@@ -257,7 +258,7 @@ libbitcoin_wallet_a_SOURCES = \
   denomination_functions.cpp \
   obfuscation.cpp \
   obfuscation-relay.cpp \
-  db.cpp \
+  wallet/db.cpp \
   crypter.cpp \
   swifttx.cpp \
   masternode.cpp \
@@ -266,14 +267,14 @@ libbitcoin_wallet_a_SOURCES = \
   masternode-sync.cpp \
   masternodeconfig.cpp \
   masternodeman.cpp \
-  rpcdump.cpp \
+  wallet/rpcdump.cpp \
+  wallet/rpcwallet.cpp \
+  kernel.cpp \
+  wallet/wallet.cpp \
+  wallet/wallet_ismine.cpp \
+  wallet/walletdb.cpp \
   zfls/deterministicmint.cpp \
   zfls/zerocoin.cpp \
-  rpcwallet.cpp \
-  kernel.cpp \
-  wallet.cpp \
-  wallet_ismine.cpp \
-  walletdb.cpp \
   zfls/accumulators.cpp \
   zfls/mintpool.cpp \
   zfls/witness.cpp \
@@ -281,6 +282,7 @@ libbitcoin_wallet_a_SOURCES = \
   zfls/zflstracker.cpp \
   stakeinput.cpp \
   genwit.cpp \
+  zfls/zflsmodule.cpp \
   lightzflsthread.cpp \
   $(BITCOIN_CORE_H)
 
@@ -336,6 +338,7 @@ libzerocoin_libbitcoin_zerocoin_a_SOURCES = \
   libzerocoin/SerialNumberSignatureOfKnowledge.h \
   libzerocoin/SpendType.h \
   libzerocoin/ZerocoinDefines.h \
+  libzerocoin/bignum.cpp \
   libzerocoin/Accumulator.cpp \
   libzerocoin/AccumulatorProofOfKnowledge.cpp \
   libzerocoin/Coin.cpp \
@@ -345,6 +348,12 @@ libzerocoin_libbitcoin_zerocoin_a_SOURCES = \
   libzerocoin/ParamGeneration.cpp \
   libzerocoin/Params.cpp \
   libzerocoin/SerialNumberSignatureOfKnowledge.cpp
+if USE_NUM_GMP
+  libzerocoin_libbitcoin_zerocoin_a_SOURCES += libzerocoin/bignum_gmp.cpp
+endif
+if USE_NUM_OPENSSL
+  libzerocoin_libbitcoin_zerocoin_a_SOURCES += libzerocoin/bignum_openssl.cpp
+endif
 
 # common: shared between flsd, and fls-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
@@ -523,10 +532,16 @@ CLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES += *.gcda *.gcno
 CLEANFILES += compat/*.gcda compat/*.gcno
 CLEANFILES += crypto/*.gcda crypto/*.gcno
+CLEANFILES += libzerocoin/*.gcda libzerocoin/*.gcno
 CLEANFILES += primitives/*.gcda primitives/*.gcno
+CLEANFILES += rpc/*.gcda rpc/*.gcno
 CLEANFILES += script/*.gcda script/*.gcno
+CLEANFILES += support/*.gcda support/*.gcno
 CLEANFILES += univalue/*.gcda univalue/*.gcno
+CLEANFILES += wallet/*.gcda wallet/*.gcno
+CLEANFILES += wallet/test/*.gcda wallet/test/*.gcno
 CLEANFILES += zmq/*.gcda zmq/*.gcno
+CLEANFILES += zfls/*.gcda zfls/*.gcno
 CLEANFILES += obj/build.h
 
 EXTRA_DIST =
@@ -554,13 +569,13 @@ clean-local:
 check-symbols: $(bin_PROGRAMS)
 if GLIBC_BACK_COMPAT
 	@echo "Checking glibc back compat..."
-	$(AM_V_at) READELF=$(READELF) CPPFILT=$(CPPFILT) $(top_srcdir)/contrib/devtools/symbol-check.py < $(bin_PROGRAMS)
+	$(AM_V_at) READELF=$(READELF) CPPFILT=$(CPPFILT) $(PYTHON) $(top_srcdir)/contrib/devtools/symbol-check.py < $(bin_PROGRAMS)
 endif
 
 check-security: $(bin_PROGRAMS)
 if HARDEN
 	@echo "Checking binary security..."
-	$(AM_V_at) READELF=$(READELF) OBJDUMP=$(OBJDUMP) $(top_srcdir)/contrib/devtools/security-check.py < $(bin_PROGRAMS)
+	$(AM_V_at) READELF=$(READELF) OBJDUMP=$(OBJDUMP) $(PYTHON) $(top_srcdir)/contrib/devtools/security-check.py < $(bin_PROGRAMS)
 endif
 
 %.pb.cc %.pb.h: %.proto

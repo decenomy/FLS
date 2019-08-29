@@ -1,4 +1,4 @@
-// Copyright (c) 2018 The PIVX developers
+// Copyright (c) 2018-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
@@ -300,7 +300,7 @@ void ProposalFrame::SendVote(std::string strHash, int nVote)
 
         std::string strError = "";
         if (budget.UpdateProposal(vote, NULL, strError)) {
-            budget.mapSeenMasternodeBudgetVotes.insert(make_pair(vote.GetHash(), vote));
+            budget.mapSeenMasternodeBudgetVotes.insert(std::make_pair(vote.GetHash(), vote));
             vote.Relay();
             mnresult += mne.getAlias() + ": " + "Success!" + "<br />";
             success++;

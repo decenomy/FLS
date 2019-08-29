@@ -1,5 +1,7 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
+// Copyright (c) 2017-2019 The PIVX developers
+// Copyright (c) 2019 The CryptoDev developers
+// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -20,7 +22,7 @@
 #include "txdb.h" // for -dbcache defaults
 
 #ifdef ENABLE_WALLET
-#include "wallet.h" // for CWallet::minTxFee
+#include "wallet/wallet.h" // for CWallet::minTxFee
 #endif
 
 #include <boost/thread.hpp>
@@ -68,9 +70,12 @@ OptionsDialog::OptionsDialog(QWidget* parent, bool enableWallet) : QDialog(paren
     ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabWindow));
 #endif
 
-    /* remove Wallet tab in case of -disablewallet */
+    /* remove Wallet tab and zFls options in case of -disablewallet */
     if (!enableWallet) {
         ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->tabWallet));
+
+        ui->verticalZflsOptionsWidget->hide();
+        ui->verticalZflsDisplayWidget->hide();
     }
 
     /* Display elements init */
@@ -269,7 +274,6 @@ void OptionsDialog::on_resetButton_clicked()
 void OptionsDialog::on_okButton_clicked()
 {
     mapper->submit();
-    obfuScationPool.cachedNumBlocks = std::numeric_limits<int>::max();
     pwalletMain->MarkDirty();
     accept();
 }

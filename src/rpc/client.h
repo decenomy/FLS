@@ -1,6 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2016 The Bitcoin developers
-// Copyright (c) 2017 The PIVX developers
+// Copyright (c) 2017-2018 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying

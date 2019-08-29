@@ -1,4 +1,6 @@
-// Copyright (c) 2017-2018 The PIVX developers
+// Copyright (c) 2017-2019 The PIVX developers
+// Copyright (c) 2019 The CryptoDev developers
+// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -43,6 +45,7 @@ private:
     CBigNum randomness;
     CBigNum serialNumber;
     uint256 txid;
+    int outputIndex = -1;
     CPrivKey privkey;
     uint8_t version;
     bool isUsed;
@@ -103,6 +106,9 @@ public:
     CPrivKey GetPrivKey() const { return this->privkey; }
     void SetPrivKey(const CPrivKey& privkey) { this->privkey = privkey; }
     bool GetKeyPair(CKey& key) const;
+
+    int GetOutputIndex() { return this->outputIndex; }
+    void SetOutputIndex(int index) { this->outputIndex = index; }
 
     inline bool operator <(const CZerocoinMint& a) const { return GetHeight() < a.GetHeight(); }
 

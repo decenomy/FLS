@@ -1544,32 +1544,32 @@ Please check the address and try again.</translation>
         <translation>Please select a privacy level.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 10000 FLS</source>
-        <translation>Use 2 separate masternodes to mix funds up to 10000 FLS</translation>
+        <source>Use 2 separate masternodes to mix funds up to 1000 FLS</source>
+        <translation>Use 2 separate masternodes to mix funds up to 1000 FLS</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 10000 FLS</source>
-        <translation>Use 8 separate masternodes to mix funds up to 10000 FLS</translation>
+        <source>Use 8 separate masternodes to mix funds up to 1000 FLS</source>
+        <translation>Use 8 separate masternodes to mix funds up to 1000 FLS</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Use 16 separate masternodes</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FLS to anonymize 10000 FLS</source>
-        <translation>This option is the quickest and will cost about ~0.025 FLS to anonymize 10000 FLS</translation>
+        <source>This option is the quickest and will cost about ~0.025 FLS to anonymize 1000 FLS</source>
+        <translation>This option is the quickest and will cost about ~0.025 FLS to anonymize 1000 FLS</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FLS to anonymize 10000 FLS</source>
-        <translation>This option is moderately fast and will cost about 0.05 FLS to anonymize 10000 FLS</translation>
+        <source>This option is moderately fast and will cost about 0.05 FLS to anonymize 1000 FLS</source>
+        <translation>This option is moderately fast and will cost about 0.05 FLS to anonymize 1000 FLS</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>This is the slowest and most secure option. Using maximum anonymity will cost</translation>
     </message>
     <message>
-        <source>0.1 FLS per 10000 FLS you anonymize.</source>
-        <translation>0.1 FLS per 10000 FLS you anonymize.</translation>
+        <source>0.1 FLS per 1000 FLS you anonymize.</source>
+        <translation>0.1 FLS per 1000 FLS you anonymize.</translation>
     </message>
     <message>
         <source>Obfuscation Configuration</source>
@@ -1719,9 +1719,9 @@ Please check the address and try again.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/flitsnode/flitsnode-translations</source>
+https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</source>
         <translation>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/flitsnode/flitsnode-translations</translation>
+https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>

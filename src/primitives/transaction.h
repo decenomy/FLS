@@ -1,6 +1,8 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
+// Copyright (c) 2019 The CryptoDev developers
+// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -95,6 +97,9 @@ public:
         return (nSequence == std::numeric_limits<uint32_t>::max());
     }
 
+    bool IsZerocoinSpend() const;
+    bool IsZerocoinPublicSpend() const;
+
     friend bool operator==(const CTxIn& a, const CTxIn& b)
     {
         return (a.prevout   == b.prevout &&
@@ -173,10 +178,8 @@ public:
         return (nValue < 3*minRelayTxFee.GetFee(nSize));
     }
 
-    bool IsZerocoinMint() const
-    {
-        return !scriptPubKey.empty() && scriptPubKey.IsZerocoinMint();
-    }
+    bool IsZerocoinMint() const;
+    CAmount GetZerocoinMinted() const;
 
     friend bool operator==(const CTxOut& a, const CTxOut& b)
     {
@@ -259,23 +262,14 @@ public:
     // Compute modified tx size for priority calculation (optionally given tx size)
     unsigned int CalculateModifiedSize(unsigned int nTxSize=0) const;
 
-    bool IsZerocoinSpend() const
-    {
-        return (vin.size() > 0 && vin[0].prevout.hash == 0 && vin[0].scriptSig[0] == OP_ZEROCOINSPEND);
-    }
+    bool HasZerocoinSpendInputs() const;
+    bool HasZerocoinPublicSpendInputs() const;
 
-    bool IsZerocoinMint() const
-    {
-        for(const CTxOut& txout : vout) {
-            if (txout.scriptPubKey.IsZerocoinMint())
-                return true;
-        }
-        return false;
-    }
+    bool HasZerocoinMintOutputs() const;
 
     bool ContainsZerocoins() const
     {
-        return IsZerocoinSpend() || IsZerocoinMint();
+        return HasZerocoinSpendInputs() || HasZerocoinPublicSpendInputs() || HasZerocoinMintOutputs();
     }
 
     CAmount GetZerocoinMinted() const;
@@ -333,17 +327,6 @@ struct CMutableTransaction
     uint256 GetHash() const;
 
     std::string ToString() const;
-
-    friend bool operator==(const CMutableTransaction& a, const CMutableTransaction& b)
-    {
-        return a.GetHash() == b.GetHash();
-    }
-
-    friend bool operator!=(const CMutableTransaction& a, const CMutableTransaction& b)
-    {
-        return !(a == b);
-    }
-
 };
 
 #endif // BITCOIN_PRIMITIVES_TRANSACTION_H

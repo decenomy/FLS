@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -33,7 +33,7 @@
 
 #include "init.h"
 #include "masternodelist.h"
-#include "ui_interface.h"
+#include "guiinterface.h"
 #include "util.h"
 
 #include <iostream>
@@ -342,7 +342,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(historyAction);
 
-    //privacyAction = new QAction(QIcon(":/icons/privacy"), tr("&Privacy"), this);
+    //privacyAction = new QAction(QIcon(":/icons/privacy"), tr("privacyAction = new QAction(QIcon(":/icons/privacy"), tr("&Privacy"), this);Privacy"), this);
     //privacyAction->setStatusTip(tr("Privacy Actions for zFLS"));
     //privacyAction->setToolTip(privacyAction->statusTip());
     //privacyAction->setCheckable(true);
@@ -371,7 +371,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
         connect(masternodeAction, SIGNAL(triggered()), this, SLOT(gotoMasternodePage()));
     }
 
-    //governanceAction = new QAction(QIcon(":/icons/governance"), tr("&Governance"), this);
+    //governanceAction = new QAction(QIcon(":/icons/governance"), tr("governanceAction = new QAction(QIcon(":/icons/governance"), tr("&Governance"), this);Governance"), this);
     //governanceAction->setStatusTip(tr("Show Proposals"));
     //governanceAction->setToolTip(governanceAction->statusTip());
     //governanceAction->setCheckable(true);
@@ -390,7 +390,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(gotoSendCoinsPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
-    connect(privacyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    //connect(privacyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     //connect(privacyAction, SIGNAL(triggered()), this, SLOT(gotoPrivacyPage()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));

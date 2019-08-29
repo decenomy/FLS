@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2015-2019 The PIVX developers
 // Copyright (c) 2019 The CryptoDev developers
 // Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
@@ -16,7 +16,6 @@
 #include "utilstrencodings.h"
 #include "transaction.h"
 
-#include <boost/foreach.hpp>
 
 extern bool GetTransaction(const uint256 &hash, CTransaction &txOut, uint256 &hashBlock, bool fAllowSlow);
 
@@ -62,13 +61,23 @@ CTxIn::CTxIn(const libzerocoin::CoinSpend& spend, libzerocoin::CoinDenomination 
     nSequence = denom;
 }
 
+bool CTxIn::IsZerocoinSpend() const
+{
+    return prevout.hash == 0 && scriptSig.IsZerocoinSpend();
+}
+
+bool CTxIn::IsZerocoinPublicSpend() const
+{
+    return scriptSig.IsZerocoinPublicSpend();
+}
+
 std::string CTxIn::ToString() const
 {
     std::string str;
     str += "CTxIn(";
     str += prevout.ToString();
     if (prevout.IsNull())
-        if(scriptSig.IsZerocoinSpend())
+        if(IsZerocoinSpend())
             str += strprintf(", zerocoinspend %s...", HexStr(scriptSig).substr(0, 25));
         else
             str += strprintf(", coinbase %s", HexStr(scriptSig));
@@ -98,6 +107,19 @@ bool COutPoint::IsMasternodeReward(const CTransaction* tx) const
 uint256 CTxOut::GetHash() const
 {
     return SerializeHash(*this);
+}
+
+bool CTxOut::IsZerocoinMint() const
+{
+    return scriptPubKey.IsZerocoinMint();
+}
+
+CAmount CTxOut::GetZerocoinMinted() const
+{
+    if (!IsZerocoinMint())
+        return CAmount(0);
+
+    return nValue;
 }
 
 std::string CTxOut::ToString() const
@@ -148,17 +170,45 @@ CTransaction& CTransaction::operator=(const CTransaction &tx) {
     return *this;
 }
 
+bool CTransaction::HasZerocoinSpendInputs() const
+{
+    for (const CTxIn& txin: vin) {
+        if (txin.IsZerocoinSpend() || txin.IsZerocoinPublicSpend())
+            return true;
+    }
+    return false;
+}
+
+bool CTransaction::HasZerocoinMintOutputs() const
+{
+    for(const CTxOut& txout : vout) {
+        if (txout.IsZerocoinMint())
+            return true;
+    }
+    return false;
+}
+
+bool CTransaction::HasZerocoinPublicSpendInputs() const
+{
+    // The wallet only allows publicSpend inputs in the same tx and not a combination between fls and zfls
+    for(const CTxIn& txin : vin) {
+        if (txin.IsZerocoinPublicSpend())
+            return true;
+    }
+    return false;
+}
+
 bool CTransaction::IsCoinStake() const
 {
     if (vin.empty())
         return false;
 
     // ppcoin: the coin stake transaction is marked with the first output empty
-    bool fAllowNull = vin[0].scriptSig.IsZerocoinSpend();
+    bool fAllowNull = vin[0].IsZerocoinSpend();
     if (vin[0].prevout.IsNull() && !fAllowNull)
         return false;
 
-    return (vin.size() > 0 && vout.size() >= 2 && vout[0].IsEmpty());
+    return (vout.size() >= 2 && vout[0].IsEmpty());
 }
 
 CAmount CTransaction::GetValueOut() const
@@ -180,14 +230,12 @@ CAmount CTransaction::GetValueOut() const
 
 CAmount CTransaction::GetZerocoinMinted() const
 {
+    CAmount nValueOut = 0;
     for (const CTxOut& txOut : vout) {
-        if(!txOut.scriptPubKey.IsZerocoinMint())
-            continue;
-
-        return txOut.nValue;
+        nValueOut += txOut.GetZerocoinMinted();
     }
 
-    return  CAmount(0);
+    return  nValueOut;
 }
 
 bool CTransaction::UsesUTXO(const COutPoint out)
@@ -211,12 +259,9 @@ std::list<COutPoint> CTransaction::GetOutPoints() const
 
 CAmount CTransaction::GetZerocoinSpent() const
 {
-    if(!IsZerocoinSpend())
-        return 0;
-
     CAmount nValueOut = 0;
     for (const CTxIn& txin : vin) {
-        if(!txin.scriptSig.IsZerocoinSpend())
+        if(!txin.IsZerocoinSpend())
             continue;
 
         nValueOut += txin.nSequence * COIN;
@@ -229,7 +274,7 @@ int CTransaction::GetZerocoinMintCount() const
 {
     int nCount = 0;
     for (const CTxOut& out : vout) {
-        if (out.scriptPubKey.IsZerocoinMint())
+        if (out.IsZerocoinMint())
             nCount++;
     }
     return nCount;
