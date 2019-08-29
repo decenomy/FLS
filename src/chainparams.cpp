@@ -16,6 +16,7 @@
 #include <assert.h>
 
 #include <boost/assign/list_of.hpp>
+#include <limits>
 
 
 struct SeedSpec6 {
@@ -98,6 +99,17 @@ libzerocoin::ZerocoinParams* CChainParams::Zerocoin_Params(bool useModulusV1) co
     return &ZCParamsDec;
 }
 
+bool CChainParams::HasStakeMinAgeOrDepth(const int contextHeight, const uint32_t contextTime,
+        const int utxoFromBlockHeight, const uint32_t utxoFromBlockTime) const
+{
+    // before stake modifier V2, the age required was 60 * 60 (1 hour) / not required on regtest
+    if (!IsStakeModifierV2(contextHeight))
+        return (NetworkID() == CBaseChainParams::REGTEST || (utxoFromBlockTime + 3600 <= contextTime));
+
+    // after stake modifier V2, we require the utxo to be nStakeMinDepth deep in the chain
+    return (contextHeight - utxoFromBlockHeight >= nStakeMinDepth);
+}
+
 class CMainParams : public CChainParams
 {
 public:
@@ -123,10 +135,11 @@ public:
         nRejectBlockOutdatedMajority = 10260; // 95%
         nToCheckBlockUpgradeMajority = 10800; // Approximate expected amount of blocks in 7 days (1440*7.5)
         nMinerThreads = 0;
-        nTargetTimespan = 1 * 80; // FLS: 1 day
         nTargetSpacing = 1 * 80;  // FLS: 1 minute
         nMaturity = 30;
-        nStakeMinAge = 60 * 60;   // FLS: 1 hour
+        nStakeMinDepth = 600;
+        nFutureTimeDriftPoW = 7200;
+        nFutureTimeDriftPoS = 180;
         nMasternodeCountDrift = 20;
         nMaxMoneyOut = 10000000 * COIN;
 
@@ -147,9 +160,9 @@ public:
         nBlockDoubleAccumulated = 10;
         nEnforceNewSporkKey = 1554402932; //!> Sporks signed after (GMT): Tuesday, May 1, 2018 7:00:00 AM GMT must use the new spork key
         nRejectOldSporkKey = 1554402932; //!> Fully reject old spork key after (GMT): Friday, June 1, 2018 12:00:00 AM
-
+        nBlockStakeModifierlV2 = 178000;
         // Public coin spend enforcement
-        nPublicZCSpends = 165000;
+        nPublicZCSpends = 178000;
 
         // Fake Serial Attack
         nFakeSerialBlockheightEnd = -1;
@@ -241,6 +254,7 @@ public:
     {
         return data;
     }
+
 };
 static CMainParams mainParams;
 
@@ -264,12 +278,12 @@ public:
         nRejectBlockOutdatedMajority = 5472; // 95%
         nToCheckBlockUpgradeMajority = 5760; // 4 days
         nMinerThreads = 0;
-        nTargetTimespan = 1 * 80; // FLS: 1 day
         nTargetSpacing = 1 * 80;  // FLS: 1 minute
         nLastPOWBlock = 200;
         nFlsBadBlockTime = 1489001494; // Skip nBit validation of Block 259201 per PR #915
         nFlsBadBlocknBits = 0x1e0a20bd; // Skip nBit validation of Block 201 per PR #915
         nMaturity = 15;
+        nStakeMinDepth = 100;
         nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 999999999; //approx Mon, 17 Apr 2017 04:00:00 GMT
         nMaxMoneyOut = 10000000 * COIN;
@@ -284,7 +298,7 @@ public:
         nBlockZerocoinV2 = 220; //!> The block that zerocoin v2 becomes active
         nEnforceNewSporkKey = 1554402932; //!> Sporks signed after Wednesday, March 21, 2018 4:00:00 AM GMT must use the new spork key
         nRejectOldSporkKey = 1522454400; //!> Reject old spork key after Saturday, March 31, 2018 12:00:00 AM GMT
-
+        nBlockStakeModifierlV2 = 225;
         // Public coin spend enforcement
         nPublicZCSpends = 225;
 
@@ -365,12 +379,11 @@ public:
         nRejectBlockOutdatedMajority = 950;
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 1;
-        nTargetTimespan = 24 * 60 * 60; // FLS: 1 day
         nTargetSpacing = 1 * 80;        // FLS: 1 minutes
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         nLastPOWBlock = 250;
         nMaturity = 30;
-        nStakeMinAge = 0;
+        nStakeMinDepth = 0;
         nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 0; //approx Mon, 17 Apr 2017 04:00:00 GMT
         nMaxMoneyOut = 10000000 * COIN;
@@ -381,7 +394,7 @@ public:
         nBlockRecalculateAccumulators = 999999999; //Trigger a recalculation of accumulators
         nBlockFirstFraudulent = 999999999; //First block that bad serials emerged
         nBlockLastGoodCheckpoint = 999999999; //Last valid accumulator checkpoint
-
+        nBlockStakeModifierlV2 = std::numeric_limits<int>::max(); // max integer value (never switch on regtest)
         // Public coin spend enforcement
         nPublicZCSpends = 225;
 
@@ -456,7 +469,6 @@ public:
     virtual void setSkipProofOfWorkCheck(bool afSkipProofOfWorkCheck) { fSkipProofOfWorkCheck = afSkipProofOfWorkCheck; }
 };
 static CUnitTestParams unitTestParams;
-
 
 static CChainParams* pCurrentParams = 0;
 
