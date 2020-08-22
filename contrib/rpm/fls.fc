@@ -1,8 +1,0 @@
-/usr/bin/fls-cli		--	gen_context(system_u:object_r:fls_exec_t,s0)
-/usr/sbin/flsd		--	gen_context(system_u:object_r:fls_exec_t,s0)
-/usr/lib(64)?/fls/flsd		--	gen_context(system_u:object_r:fls_exec_t,s0)
-
-/etc/fls(/.*)?		gen_context(system_u:object_r:fls_conf_t,s0)
-/var/lib/fls(/.*)?		gen_context(system_u:object_r:fls_var_lib_t,s0)
-
-(/var)?/run/flsd(/.*)?   gen_context(system_u:object_r:fls_var_run_t,s0)

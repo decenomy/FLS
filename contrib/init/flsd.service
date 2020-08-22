@@ -12,12 +12,12 @@ Description=FLS daemon
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/flsd -daemon -conf=/etc/fls/fls.conf -pid=/run/flsd/flsd.pid
-# Creates /run/flsd owned by fls
-RuntimeDirectory=flsd
+ExecStart=/usr/bin/flitsd -daemon -conf=/etc/fls/fls.conf -pid=/run/flitsd/flitsd.pid
+# Creates /run/flitsd owned by fls
+RuntimeDirectory=flitsd
 User=fls
 Type=forking
-PIDFile=/run/flsd/flsd.pid
+PIDFile=/run/flitsd/flitsd.pid
 Restart=on-failure
 
 # Hardening measures

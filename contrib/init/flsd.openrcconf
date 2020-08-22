@@ -1,25 +1,25 @@
-# /etc/conf.d/flsd: config file for /etc/init.d/flsd
+# /etc/conf.d/flitsd: config file for /etc/init.d/flitsd
 
 # Config file location
 #BITCOIND_CONFIGFILE="/etc/fls/fls.conf"
 
 # What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
-#BITCOIND_PIDDIR="/var/run/flsd"
+#BITCOIND_PIDDIR="/var/run/flitsd"
 
 # What filename to give the pidfile
-#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/flsd.pid"
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/flitsd.pid"
 
-# Where to write flsd data (be mindful that the blockchain is large)
-#BITCOIND_DATADIR="/var/lib/flsd"
+# Where to write flitsd data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/flitsd"
 
-# User and group to own flsd process
+# User and group to own flitsd process
 #BITCOIND_USER="fls"
 #BITCOIND_GROUP="fls"
 
-# Path to flsd executable
-#BITCOIND_BIN="/usr/bin/flsd"
+# Path to flitsd executable
+#BITCOIND_BIN="/usr/bin/flitsd"
 
-# Nice value to run flsd under
+# Nice value to run flitsd under
 #BITCOIND_NICE=0
 
 # Additional options (avoid -conf and -datadir, use flags above)

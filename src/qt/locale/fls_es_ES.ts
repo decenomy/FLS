@@ -655,7 +655,7 @@
     <name>ZFlsControlDialog</name>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>Zapping all transactions from wallet...</source>
         <translation>Saltando todas las transacciones del monedero...</translation>

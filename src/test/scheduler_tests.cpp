@@ -6,7 +6,7 @@
 #include "random.h"
 #include "scheduler.h"
 #if defined(HAVE_CONFIG_H)
-#include "config/fls-config.h"
+#include "config/flits-config.h"
 #else
 #define HAVE_WORKING_BOOST_SLEEP_FOR
 #endif

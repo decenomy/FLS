@@ -9,7 +9,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/fls-config.h"
+#include "config/flits-config.h"
 #endif
 
 #include "init.h"
@@ -197,7 +197,7 @@ void PrepareShutdown()
     /// for example if the data directory was found to be locked.
     /// Be sure that anything that writes files or flushes caches only does this if the respective
     /// module was initialized.
-    util::ThreadRename("fls-shutoff");
+    util::ThreadRename("flits-shutoff");
     mempool.AddTransactionsUpdated(1);
     StopHTTPRPC();
     StopREST();
@@ -669,7 +669,7 @@ struct CImportingNow {
 
 void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 {
-    util::ThreadRename("fls-loadblk");
+    util::ThreadRename("flits-loadblk");
 
     // -reindex
     if (fReindex) {

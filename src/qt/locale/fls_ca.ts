@@ -1911,7 +1911,7 @@
     </message>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>Connection options:</source>
         <translation>Opcions de connexió:</translation>

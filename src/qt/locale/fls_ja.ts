@@ -279,6 +279,6 @@
     <name>ZFlsControlDialog</name>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     </context>
 </TS>

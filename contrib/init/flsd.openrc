@@ -5,23 +5,23 @@
 if [ -d "/var/lib/fls/.fls" ]; then
 	BITCOIND_DEFAULT_DATADIR="/var/lib/fls/.fls"
 else
-	BITCOIND_DEFAULT_DATADIR="/var/lib/flsd"
+	BITCOIND_DEFAULT_DATADIR="/var/lib/flitsd"
 fi
 
 BITCOIND_CONFIGFILE=${BITCOIND_CONFIGFILE:-/etc/fls/fls.conf}
-BITCOIND_PIDDIR=${BITCOIND_PIDDIR:-/var/run/flsd}
-BITCOIND_PIDFILE=${BITCOIND_PIDFILE:-${BITCOIND_PIDDIR}/flsd.pid}
+BITCOIND_PIDDIR=${BITCOIND_PIDDIR:-/var/run/flitsd}
+BITCOIND_PIDFILE=${BITCOIND_PIDFILE:-${BITCOIND_PIDDIR}/flitsd.pid}
 BITCOIND_DATADIR=${BITCOIND_DATADIR:-${BITCOIND_DEFAULT_DATADIR}}
 BITCOIND_USER=${BITCOIND_USER:-${BITCOIN_USER:-fls}
 BITCOIND_GROUP=${BITCOIND_GROUP:-fls}
-BITCOIND_BIN=${BITCOIND_BIN:-/usr/bin/flsd}
+BITCOIND_BIN=${BITCOIND_BIN:-/usr/bin/flitsd}
 BITCOIND_NICE=${BITCOIND_NICE:-${NICELEVEL:-0}}
 BITCOIND_OPTS="${BITCOIND_OPTS:-${BITCOIN_OPTS}}"
 
 name="FLS Core Daemon"
 description="FLS crypto-currency p2p network daemon"
 
-command="/usr/bin/flsd"
+command="/usr/bin/flitsd"
 command_args="-pid=\"${BITCOIND_PIDFILE}\" \
 		-conf=\"${BITCOIND_CONFIGFILE}\" \
 		-datadir=\"${BITCOIND_DATADIR}\" \
@@ -71,7 +71,7 @@ checkconfig()
 {
 	if ! grep -qs '^rpcpassword=' "${BITCOIND_CONFIGFILE}" ; then
 		eerror ""
-		eerror "ERROR: You must set a secure rpcpassword to run flsd."
+		eerror "ERROR: You must set a secure rpcpassword to run flitsd."
 		eerror "The setting must appear in ${BITCOIND_CONFIGFILE}"
 		eerror ""
 		eerror "This password is security critical to securing wallets "

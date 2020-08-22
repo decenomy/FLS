@@ -71,7 +71,7 @@ DashboardWidget::DashboardWidget(FLSGUI* parent) :
     ui->labelAmountzFLS->setText("0 zFLS");
     ui->labelAmountzFLS->setVisible(false);
     ui->labelAmountFLS->setText("0 FLS");
-    setCssProperty(ui->labelAmountFLS, "text-stake-FLS-disable");
+    setCssProperty(ui->labelAmountFLS, "text-stake-flits-disable");
     setCssProperty(ui->labelAmountzFLS, "text-stake-zfls-disable");
 
     setCssProperty({ui->pushButtonAll,  ui->pushButtonMonth, ui->pushButtonYear}, "btn-check-time");
@@ -666,7 +666,7 @@ void DashboardWidget::onChartRefreshed()
         setCssProperty(ui->labelAmountFLS, "text-stake-FLS");
         setCssProperty(ui->labelAmountzFLS, "text-stake-zfls");
     } else {
-        setCssProperty(ui->labelAmountFLS, "text-stake-FLS-disable");
+        setCssProperty(ui->labelAmountFLS, "text-stake-flits-disable");
         setCssProperty(ui->labelAmountzFLS, "text-stake-zfls-disable");
     }
     forceUpdateStyle({ui->labelAmountFLS, ui->labelAmountzFLS});

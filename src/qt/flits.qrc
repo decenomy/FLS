@@ -128,9 +128,9 @@
     <qresource prefix="/">
         <file alias="bg-splash">fls/res/img/bg-splash.svg</file>
         <file alias="bg-splash-png">fls/res/img/bg-splash.png</file>
-        <file alias="img-logo-fls-png">fls/res/img/img-logo-fls.png</file>
-        <file alias="img-logo-fls-2x">fls/res/img/img-logo-fls@2x.png</file>
-        <file alias="img-logo-fls-3x">fls/res/img/img-logo-fls@3x.png</file>
+        <file alias="img-logo-flits-png">fls/res/img/img-logo-fls.png</file>
+        <file alias="img-logo-flits-2x">fls/res/img/img-logo-fls@2x.png</file>
+        <file alias="img-logo-flits-3x">fls/res/img/img-logo-fls@3x.png</file>
         <file alias="img-nav-logo-fls">fls/res/img/img-nav-logo-fls.png</file>
         <file alias="img-qr-test-big">fls/res/img/img-qr-test-big.png</file>
         <file alias="img-qr-test">fls/res/img/img-qr-test.png</file>

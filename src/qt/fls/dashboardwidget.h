@@ -19,7 +19,7 @@
 #include <QMap>
 
 #if defined(HAVE_CONFIG_H)
-#include "config/fls-config.h" /* for USE_QTCHARTS */
+#include "config/flits-config.h" /* for USE_QTCHARTS */
 #endif
 
 #ifdef USE_QTCHARTS

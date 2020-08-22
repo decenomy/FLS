@@ -48,9 +48,9 @@ const QString BITCOIN_IPC_PREFIX("fls:");
 const char* BIP70_MESSAGE_PAYMENTACK = "PaymentACK";
 const char* BIP70_MESSAGE_PAYMENTREQUEST = "PaymentRequest";
 // BIP71 payment protocol media types
-const char* BIP71_MIMETYPE_PAYMENT = "application/fls-payment";
-const char* BIP71_MIMETYPE_PAYMENTACK = "application/fls-paymentack";
-const char* BIP71_MIMETYPE_PAYMENTREQUEST = "application/fls-paymentrequest";
+const char* BIP71_MIMETYPE_PAYMENT = "application/flits-payment";
+const char* BIP71_MIMETYPE_PAYMENTACK = "application/flits-paymentack";
+const char* BIP71_MIMETYPE_PAYMENTREQUEST = "application/flits-paymentrequest";
 // BIP70 max payment request size in bytes (DoS protection)
 const qint64 BIP70_MAX_PAYMENTREQUEST_SIZE = 50000;
 

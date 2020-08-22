@@ -68,7 +68,7 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.mime-type</key>
-        <string>application/x-fls-payment-request</string>
+        <string>application/x-flits-payment-request</string>
         <key>public.filename-extension</key>
         <array>
           <string>flspaymentrequest</string>

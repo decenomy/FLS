@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=FLS
+Comment=FLS P2P Cryptocurrency
+Comment[fr]=FLS, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=FLS, eşten eşe kriptografik sanal para birimi
+Exec=flits-qt %u
+Terminal=false
+Type=Application
+Icon=fls128
+MimeType=x-scheme-handler/fls;
+Categories=Office;Finance;

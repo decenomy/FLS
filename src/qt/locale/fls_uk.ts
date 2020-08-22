@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>These are your FLS addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Це ваші FLS-адреси для надсилання платежів. Завжди перевіряйте суму та адресу одержувача перед відправленням монет.</translation>
+        <translation>Це ваші flits-адреси для надсилання платежів. Завжди перевіряйте суму та адресу одержувача перед відправленням монет.</translation>
     </message>
     <message>
         <source>These are your FLS addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
@@ -383,6 +383,6 @@
     <name>ZFlsControlDialog</name>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     </context>
 </TS>

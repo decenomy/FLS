@@ -2269,7 +2269,7 @@ static CCheckQueue<CScriptCheck> scriptcheckqueue(128);
 
 void ThreadScriptCheck()
 {
-    util::ThreadRename("fls-scriptch");
+    util::ThreadRename("flits-scriptch");
     scriptcheckqueue.Thread();
 }
 

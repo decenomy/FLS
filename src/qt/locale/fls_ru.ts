@@ -63,11 +63,11 @@
     </message>
     <message>
         <source>These are your FLS addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Это ваши FLS-адреса для отправки платежей. Перед отправкой монет всегда проверяйте сумму и адрес получателя.</translation>
+        <translation>Это ваши flits-адреса для отправки платежей. Перед отправкой монет всегда проверяйте сумму и адрес получателя.</translation>
     </message>
     <message>
         <source>These are your FLS addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Это ваши FLS-адреса для получения платежей. Для каждой транзакции рекомендуется использовать новый адрес получения.</translation>
+        <translation>Это ваши flits-адреса для получения платежей. Для каждой транзакции рекомендуется использовать новый адрес получения.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -4635,7 +4635,7 @@ Please be patient...</source>
     </message>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>(1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)</source>
         <translation>(1 = сохранить tx метаданные, например, владельца учетной записи и информацию о запросе платежа, 2 = удалить tx метаданные)</translation>

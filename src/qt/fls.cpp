@@ -7,7 +7,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/fls-config.h"
+#include "config/flits-config.h"
 #endif
 
 #include "bitcoingui.h"
@@ -83,7 +83,7 @@ static void InitMessage(const std::string& message)
  */
 static std::string Translate(const char* psz)
 {
-    return QCoreApplication::translate("fls-core", psz).toStdString();
+    return QCoreApplication::translate("flits-core", psz).toStdString();
 }
 
 static QString GetLangTerritory()
