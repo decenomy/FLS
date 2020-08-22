@@ -115,7 +115,7 @@ def try_rpc(code, message, fun, *args, **kwds):
         if (code is not None) and (code != e.error["code"]):
             raise AssertionError("Unexpected JSONRPC error code %i" % e.error["code"])
         if (message is not None) and (message not in e.error['message']):
-            raise AssertionError("Expected substring not found:" + e.error['message'])
+            raise AssertionError("Expected substring (%s) not found in: %s" % (message, e.error['message']))
         return True
     except Exception as e:
         raise AssertionError("Unexpected exception raised: " + type(e).__name__)
@@ -284,7 +284,7 @@ def rpc_url(datadir, i, rpchost=None):
 ################
 
 def initialize_datadir(dirname, n):
-    datadir = os.path.join(dirname, "node" + str(n))
+    datadir = get_datadir_path(dirname, n)
     if not os.path.isdir(datadir):
         os.makedirs(datadir)
     rpc_u, rpc_p = rpc_auth_pair(n)
@@ -295,10 +295,6 @@ def initialize_datadir(dirname, n):
         f.write("port=" + str(p2p_port(n)) + "\n")
         f.write("rpcport=" + str(rpc_port(n)) + "\n")
         f.write("listenonion=0\n")
-        f.write("litemode=1\n")
-        f.write("enablezeromint=0\n")
-        f.write("precompute=0\n")
-        f.write("staking=0\n")
         f.write("spendzeroconfchange=1\n")
     return datadir
 
@@ -365,9 +361,12 @@ def connect_nodes(from_connection, node_num):
     # with transaction relaying
     wait_until(lambda:  all(peer['version'] != 0 for peer in from_connection.getpeerinfo()))
 
-def connect_nodes_bi(nodes, a, b):
-    connect_nodes(nodes[a], b)
-    connect_nodes(nodes[b], a)
+def connect_nodes_clique(nodes):
+    l = len(nodes)
+    for a in range(l):
+        for b in range(a, l):
+            connect_nodes(nodes[a], b)
+            connect_nodes(nodes[b], a)
 
 def sync_blocks(rpc_connections, *, wait=1, timeout=60):
     """
@@ -426,6 +425,7 @@ def sync_mempools(rpc_connections, *, wait=1, timeout=60, flush_scheduler=True):
         time.sleep(wait)
         timeout -= wait
     raise AssertionError("Mempool sync failed")
+
 
 # Transaction/Block functions
 #############################
@@ -586,3 +586,15 @@ def mine_large_block(node, utxos=None):
     fee = 100 * node.getnetworkinfo()["relayfee"]
     create_lots_of_big_transactions(node, txouts, utxos, num, fee=fee)
     node.generate(1)
+
+### FLS specific utils ###
+vZC_DENOMS = [1, 5, 10, 50, 100, 500, 1000, 5000]
+DEFAULT_FEE = 0.01
+SPORK_ACTIVATION_TIME = 1563253447
+SPORK_DEACTIVATION_TIME = 4070908800
+
+def DecimalAmt(x):
+    """Return Decimal from float for equality checks against rpc outputs"""
+    return Decimal("{:0.8f}".format(x))
+
+

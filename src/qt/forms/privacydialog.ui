@@ -34,7 +34,16 @@
      <item>
       <widget class="QFrame" name="frame_Header">
        <layout class="QVBoxLayout" name="verticalLayout_8">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -113,7 +122,16 @@
      <item>
       <widget class="QFrame" name="frame_BG">
        <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
+        </property>
+        <property name="rightMargin">
+         <number>6</number>
+        </property>
+        <property name="bottomMargin">
          <number>6</number>
         </property>
         <item>
@@ -122,7 +140,16 @@
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -145,7 +172,7 @@
                       <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_3">
                         <item>
-                         <widget class="QLabel" name="labelzFLSActions">
+                         <widget class="QLabel" name="labelzflsActions">
                           <property name="font">
                            <font>
                             <pointsize>12</pointsize>
@@ -162,9 +189,9 @@
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLabel" name="labelzFLSSyncStatus">
+                         <widget class="QLabel" name="labelzflsSyncStatus">
                           <property name="toolTip">
-                           <string>The displayed information may be out of date. Your wallet automatically synchronizes with the FLS network after a connection is established, but this process has not completed yet.</string>
+                           <string>The displayed information may be out of date. Your wallet automatically synchronizes with the Flits network after a connection is established, but this process has not completed yet.</string>
                           </property>
                           <property name="styleSheet">
                            <string notr="true">QLabel { color: red; }</string>
@@ -231,7 +258,7 @@
                               </font>
                              </property>
                              <property name="toolTip">
-                              <string>Total Balance including unconfirmed and immature zFLS</string>
+                              <string>Total Balance including unconfirmed and immature zfls</string>
                              </property>
                              <property name="text">
                               <string>Total Zerocoin  Balance:</string>
@@ -256,10 +283,10 @@
                               </font>
                              </property>
                              <property name="toolTip">
-                              <string>Total Balance including unconfirmed and immature zFLS</string>
+                              <string>Total Balance including unconfirmed and immature zfls</string>
                              </property>
                              <property name="text">
-                              <string>0 zFLS</string>
+                              <string>0 zfls</string>
                              </property>
                              <property name="alignment">
                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -308,7 +335,7 @@
                               </font>
                              </property>
                              <property name="text">
-                              <string>0 zFLS</string>
+                              <string>0 zfls</string>
                              </property>
                             </widget>
                            </item>
@@ -330,7 +357,7 @@
                          <item>
                           <widget class="QPushButton" name="pushButtonShowDenoms">
                            <property name="toolTip">
-                            <string>Show zFLS denominations list</string>
+                            <string>Show zfls denominations list</string>
                            </property>
                            <property name="text">
                             <string>Show Denominations</string>
@@ -342,6 +369,77 @@
                       </item>
                       <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_4">
+                        <item>
+                         <widget class="QPushButton" name="pushButtonMintzfls">
+                          <property name="minimumSize">
+                           <size>
+                            <width>131</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>Enter an amount of FLS to convert to zfls</string>
+                          </property>
+                          <property name="text">
+                           <string>Mint Zerocoin</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLineEdit" name="labelMintAmountValue">
+                          <property name="minimumSize">
+                           <size>
+                            <width>60</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>0</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="labelzfls_2">
+                          <property name="text">
+                           <string>zfls</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="labelzflsAmountText">
+                          <property name="toolTip">
+                           <string>Available for minting are coins which are confirmed and not locked or Masternode collaterals.</string>
+                          </property>
+                          <property name="text">
+                           <string>Available for Minting:</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLabel" name="labelzflsAmountValue">
+                          <property name="font">
+                           <font>
+                            <weight>75</weight>
+                            <bold>true</bold>
+                           </font>
+                          </property>
+                          <property name="toolTip">
+                           <string>Enter an amount of FLS to convert to zfls</string>
+                          </property>
+                          <property name="text">
+                           <string>0.000 000 00 FLS</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
                         <item>
                          <spacer name="horizontalSpacer_2">
                           <property name="orientation">
@@ -356,15 +454,169 @@
                          </spacer>
                         </item>
                         <item>
-                         <widget class="QLabel" name="label">
-                          <property name="styleSheet">
-                           <string notr="true">color: red;
-font-weight: bold;</string>
+                         <widget class="QPushButton" name="pushButtonSpentReset">
+                          <property name="maximumSize">
+                           <size>
+                            <width>80</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="toolTip">
+                           <string>Reset Zerocoin Wallet DB. Deletes transactions that did not make it into the blockchain.</string>
                           </property>
                           <property name="text">
-                           <string>zFLS minting is DISABLED</string>
+                           <string>Reset</string>
                           </property>
                          </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_5">
+                        <item>
+                         <widget class="QPushButton" name="pushButtonCoinControl">
+                          <property name="minimumSize">
+                           <size>
+                            <width>131</width>
+                            <height>27</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>131</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true"/>
+                          </property>
+                          <property name="text">
+                           <string>Coin Control...</string>
+                          </property>
+                          <property name="autoDefault">
+                           <bool>false</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_4">
+                          <item>
+                           <widget class="QLabel" name="labelCoinControlQuantityText">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>Quantity:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                            </property>
+                            <property name="margin">
+                             <number>0</number>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="labelCoinControlAmountText">
+                            <property name="enabled">
+                             <bool>true</bool>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>Amount:</string>
+                            </property>
+                            <property name="margin">
+                             <number>0</number>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_6">
+                          <item>
+                           <widget class="QLabel" name="labelCoinControlQuantity">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="cursor">
+                             <cursorShape>IBeamCursor</cursorShape>
+                            </property>
+                            <property name="contextMenuPolicy">
+                             <enum>Qt::ActionsContextMenu</enum>
+                            </property>
+                            <property name="text">
+                             <string notr="true">0</string>
+                            </property>
+                            <property name="margin">
+                             <number>0</number>
+                            </property>
+                            <property name="textInteractionFlags">
+                             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLabel" name="labelCoinControlAmount">
+                            <property name="enabled">
+                             <bool>true</bool>
+                            </property>
+                            <property name="cursor">
+                             <cursorShape>IBeamCursor</cursorShape>
+                            </property>
+                            <property name="contextMenuPolicy">
+                             <enum>Qt::ActionsContextMenu</enum>
+                            </property>
+                            <property name="text">
+                             <string notr="true">0.00 FLS</string>
+                            </property>
+                            <property name="textInteractionFlags">
+                             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
                         </item>
                         <item>
                          <spacer name="horizontalSpacer_3">
@@ -395,23 +647,20 @@ font-weight: bold;</string>
                           </property>
                          </widget>
                         </item>
-                        <item>
-                         <widget class="QPushButton" name="pushButtonSpentReset">
-                          <property name="maximumSize">
-                           <size>
-                            <width>80</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="toolTip">
-                           <string>Reset Zerocoin Wallet DB. Deletes transactions that did not make it into the blockchain.</string>
-                          </property>
-                          <property name="text">
-                           <string>Reset</string>
-                          </property>
-                         </widget>
-                        </item>
                        </layout>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_18">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
                       </item>
                       <item>
                        <widget class="QPlainTextEdit" name="TEMintStatus">
@@ -472,47 +721,6 @@ font-weight: bold;</string>
                        </widget>
                       </item>
                       <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_7">
-                        <item>
-                         <spacer name="horizontalSpacer_18">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>40</width>
-                            <height>20</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="label_2">
-                          <property name="styleSheet">
-                           <string notr="true">color: red;
-font-weight: bold;</string>
-                          </property>
-                          <property name="text">
-                           <string>zFLS spending is NOT private (links back to the mint transaction)</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <spacer name="horizontalSpacer_30">
-                          <property name="orientation">
-                           <enum>Qt::Horizontal</enum>
-                          </property>
-                          <property name="sizeHint" stdset="0">
-                           <size>
-                            <width>40</width>
-                            <height>20</height>
-                           </size>
-                          </property>
-                         </spacer>
-                        </item>
-                       </layout>
-                      </item>
-                      <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_24">
                         <property name="leftMargin">
                          <number>0</number>
@@ -521,21 +729,21 @@ font-weight: bold;</string>
                          <number>0</number>
                         </property>
                         <item>
-                         <widget class="QPushButton" name="pushButtonZFlsControl">
+                         <widget class="QPushButton" name="pushButtonzflsControl">
                           <property name="text">
-                           <string>zFLS Control</string>
+                           <string>zfls Control</string>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLabel" name="labelzFlsSelected">
+                         <widget class="QLabel" name="labelzflsSelected">
                           <property name="text">
-                           <string>zFLS Selected:</string>
+                           <string>zfls Selected:</string>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLabel" name="labelzFlsSelected_int">
+                         <widget class="QLabel" name="labelzflsSelected_int">
                           <property name="text">
                            <string>0</string>
                           </property>
@@ -589,7 +797,7 @@ font-weight: bold;</string>
                       <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_6">
                         <item>
-                         <widget class="QPushButton" name="pushButtonSpendzFLS">
+                         <widget class="QPushButton" name="pushButtonSpendzfls">
                           <property name="minimumSize">
                            <size>
                             <width>131</width>
@@ -605,9 +813,9 @@ font-weight: bold;</string>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QLabel" name="labelzFLSBalanceText">
+                         <widget class="QLabel" name="labelzflsBalanceText">
                           <property name="toolTip">
-                           <string>Available (mature and spendable) zFLS for spending</string>
+                           <string>Available (mature and spendable) zfls for spending</string>
                           </property>
                           <property name="text">
                            <string>Available Balance:</string>
@@ -626,12 +834,12 @@ font-weight: bold;</string>
                            </font>
                           </property>
                           <property name="toolTip">
-                           <string>Available (mature and spendable) zFLS for spending
+                           <string>Available (mature and spendable) zfls for spending
 
-zFLS are mature when they have more than 20 confirmations AND more than 2 mints of the same denomination after them were minted</string>
+zfls are mature when they have more than 20 confirmations AND more than 2 mints of the same denomination after them were minted</string>
                           </property>
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -694,7 +902,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                              </size>
                             </property>
                             <property name="toolTip">
-                             <string>The FLS address to send the payment to. Creates local payment to yourself when empty.</string>
+                             <string>The Flits address to send the payment to. Creates local payment to yourself when empty.</string>
                             </property>
                            </widget>
                           </item>
@@ -707,7 +915,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                              <string/>
                             </property>
                             <property name="icon">
-                             <iconset resource="../fls.qrc">
+                             <iconset resource="../flits.qrc">
                               <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
                             </property>
                             <property name="shortcut">
@@ -724,7 +932,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                              <string/>
                             </property>
                             <property name="icon">
-                             <iconset resource="../fls.qrc">
+                             <iconset resource="../flits.qrc">
                               <normaloff>:/icons/editpaste</normaloff>:/icons/editpaste</iconset>
                             </property>
                             <property name="shortcut">
@@ -775,7 +983,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="buddy">
-                           <cstring>zFLSpayAmount</cstring>
+                           <cstring>zflspayAmount</cstring>
                           </property>
                          </widget>
                         </item>
@@ -785,10 +993,10 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                            <number>0</number>
                           </property>
                           <item>
-                           <widget class="QLineEdit" name="zFLSpayAmount"/>
+                           <widget class="QLineEdit" name="zflspayAmount"/>
                           </item>
                           <item>
-                           <widget class="QLabel" name="labelzFLS">
+                           <widget class="QLabel" name="labelzfls">
                             <property name="minimumSize">
                              <size>
                               <width>55</width>
@@ -796,7 +1004,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                              </size>
                             </property>
                             <property name="text">
-                             <string>zFLS</string>
+                             <string>zfls</string>
                             </property>
                             <property name="alignment">
                              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -880,7 +1088,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                       <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_21">
                         <item>
-                         <widget class="QLabel" name="labelzFLSStats">
+                         <widget class="QLabel" name="labelzflsStats">
                           <property name="font">
                            <font>
                             <pointsize>12</pointsize>
@@ -960,7 +1168,7 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                            </font>
                           </property>
                           <property name="toolTip">
-                           <string>Total Balance including unconfirmed and immature zFLS</string>
+                           <string>Total Balance including unconfirmed and immature zfls</string>
                           </property>
                           <property name="text">
                            <string>Total Zerocoin  Balance:</string>
@@ -998,10 +1206,10 @@ zFLS are mature when they have more than 20 confirmations AND more than 2 mints 
                            </font>
                           </property>
                           <property name="toolTip">
-                           <string>Total Balance including unconfirmed and immature zFLS</string>
+                           <string>Total Balance including unconfirmed and immature zfls</string>
                           </property>
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1458,14 +1666,14 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
                         <item>
                          <widget class="QLabel" name="label_AutoMintStatus">
                           <property name="toolTip">
-                           <string>Show the current status of automatic zFLS minting.
+                           <string>Show the current status of automatic zfls minting.
 
 To change the status (restart required):
-- enable: add 'enablezeromint=1' to fls.conf
-- disable: add 'enablezeromint=0' to fls.conf
+- enable: add 'enablezeromint=1' to flits.conf
+- disable: add 'enablezeromint=0' to flits.conf
 
 To change the percentage (no restart required):
-- menu Settings-&gt;Options-&gt;Percentage of autominted zFLS
+- menu Settings-&gt;Options-&gt;Percentage of autominted zfls
 
 </string>
                           </property>
@@ -1545,7 +1753,7 @@ To change the percentage (no restart required):
                            </font>
                           </property>
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1576,7 +1784,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount1">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1607,7 +1815,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount5">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1638,7 +1846,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount10">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1669,7 +1877,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount50">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1700,7 +1908,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount100">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1731,7 +1939,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount500">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1762,7 +1970,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount1000">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1793,7 +2001,7 @@ To change the percentage (no restart required):
                         <item>
                          <widget class="QLabel" name="labelZsupplyAmount5000">
                           <property name="text">
-                           <string>0 zFLS</string>
+                           <string>0 zfls</string>
                           </property>
                          </widget>
                         </item>
@@ -1883,7 +2091,16 @@ To change the percentage (no restart required):
       <property name="spacing">
        <number>0</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -2305,7 +2522,16 @@ To change the percentage (no restart required):
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -2369,7 +2595,16 @@ To change the percentage (no restart required):
               <string notr="true"/>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayoutCoinControl5_2">
-              <property name="margin">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
                <number>0</number>
               </property>
               <item>
@@ -2554,7 +2789,7 @@ To change the percentage (no restart required):
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../fls.qrc"/>
+  <include location="../flits.qrc"/>
  </resources>
  <connections/>
 </ui>

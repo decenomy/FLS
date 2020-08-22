@@ -1,8 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2015-2018 The PIVX developers
+// Copyright (c) 2018-2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,6 +14,7 @@
 #include "guiutil.h"
 #include "init.h"
 #include "obfuscation.h"
+#include "obfuscationconfig.h"
 #include "optionsmodel.h"
 #include "transactionfilterproxy.h"
 #include "transactionrecord.h"
@@ -148,7 +148,7 @@ OverviewPage::~OverviewPage()
     delete ui;
 }
 
-void OverviewPage::getPercentage(CAmount nUnlockedBalance, CAmount nZerocoinBalance, QString& sFLSPercentage, QString& szFLSPercentage)
+void OverviewPage::getPercentage(CAmount nUnlockedBalance, CAmount nZerocoinBalance, QString& sFLSPercentage, QString& szflsPercentage)
 {
     int nPrecision = 2;
     double dzPercentage = 0.0;
@@ -167,7 +167,7 @@ void OverviewPage::getPercentage(CAmount nUnlockedBalance, CAmount nZerocoinBala
 
     double dPercentage = 100.0 - dzPercentage;
 
-    szFLSPercentage = "(" + QLocale(QLocale::system()).toString(dzPercentage, 'f', nPrecision) + " %)";
+    szflsPercentage = "(" + QLocale(QLocale::system()).toString(dzPercentage, 'f', nPrecision) + " %)";
     sFLSPercentage = "(" + QLocale(QLocale::system()).toString(dPercentage, 'f', nPrecision) + " %)";
 
 }
@@ -195,14 +195,14 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
 
     // FLS Balance
     CAmount nTotalBalance = balance + unconfirmedBalance;
-    CAmount flsAvailableBalance = balance - immatureBalance - nLockedBalance;
+    CAmount FLSAvailableBalance = balance - immatureBalance - nLockedBalance;
     CAmount nUnlockedBalance = nTotalBalance - nLockedBalance;
 
     // FLS Watch-Only Balance
     CAmount nTotalWatchBalance = watchOnlyBalance + watchUnconfBalance;
     CAmount nAvailableWatchBalance = watchOnlyBalance - watchImmatureBalance - nWatchOnlyLockedBalance;
 
-    // zFLS Balance
+    // zfls Balance
     CAmount matureZerocoinBalance = zerocoinBalance - unconfirmedZerocoinBalance - immatureZerocoinBalance;
 
     // Percentages
@@ -210,11 +210,11 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     QString sPercentage = "";
     getPercentage(nUnlockedBalance, zerocoinBalance, sPercentage, szPercentage);
     // Combined balances
-    CAmount availableTotalBalance = flsAvailableBalance + matureZerocoinBalance;
+    CAmount availableTotalBalance = FLSAvailableBalance + matureZerocoinBalance;
     CAmount sumTotalBalance = nTotalBalance + zerocoinBalance;
 
     // FLS labels
-    ui->labelBalance->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, flsAvailableBalance, false, BitcoinUnits::separatorAlways));
+    ui->labelBalance->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, FLSAvailableBalance, false, BitcoinUnits::separatorAlways));
     ui->labelUnconfirmed->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, unconfirmedBalance, false, BitcoinUnits::separatorAlways));
     ui->labelImmature->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, immatureBalance, false, BitcoinUnits::separatorAlways));
     ui->labelLockedBalance->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, nLockedBalance, false, BitcoinUnits::separatorAlways));
@@ -227,7 +227,7 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     ui->labelWatchLocked->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, nWatchOnlyLockedBalance, false, BitcoinUnits::separatorAlways));
     ui->labelWatchTotal->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, nTotalWatchBalance, false, BitcoinUnits::separatorAlways));
 
-    // zFLS labels
+    // zfls labels
     ui->labelzBalance->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, zerocoinBalance, false, BitcoinUnits::separatorAlways));
     ui->labelzBalanceUnconfirmed->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, unconfirmedZerocoinBalance, false, BitcoinUnits::separatorAlways));
     ui->labelzBalanceMature->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, matureZerocoinBalance, false, BitcoinUnits::separatorAlways));
@@ -239,18 +239,18 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
 
     // Percentage labels
     ui->labelFLSPercent->setText(sPercentage);
-    ui->labelzFLSPercent->setText(szPercentage);
+    ui->labelzflsPercent->setText(szPercentage);
 
     // Adjust bubble-help according to AutoMint settings
-    QString automintHelp = tr("Current percentage of zFLS.\nIf AutoMint is enabled this percentage will settle around the configured AutoMint percentage (default = 10%).\n");
-    bool fEnableZeromint = GetBoolArg("-enablezeromint", true);
-    int nZeromintPercentage = GetArg("-zeromintpercentage", 10);
+    QString automintHelp = tr("Current percentage of zfls.\nIf AutoMint is enabled this percentage will settle around the configured AutoMint percentage (default = 10%).\n");
+    bool fEnableZeromint = GetBoolArg("-enablezeromint", false);
+    int nZeromintPercentage = GetArg("-zeromintpercentage", 0);
     if (fEnableZeromint) {
         automintHelp += tr("AutoMint is currently enabled and set to ") + QString::number(nZeromintPercentage) + "%.\n";
-        automintHelp += tr("To disable AutoMint add 'enablezeromint=0' in fls.conf.");
+        automintHelp += tr("To disable AutoMint add 'enablezeromint=0' in flits.conf.");
     }
     else {
-        automintHelp += tr("AutoMint is currently disabled.\nTo enable AutoMint change 'enablezeromint=0' to 'enablezeromint=1' in fls.conf");
+        automintHelp += tr("AutoMint is currently disabled.\nTo enable AutoMint change 'enablezeromint=0' to 'enablezeromint=1' in flits.conf");
     }
 
     // Only show most balances if they are non-zero for the sake of simplicity
@@ -264,7 +264,7 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     bool showWatchOnly = nTotalWatchBalance != 0;
 
     // FLS Available
-    bool showFLSAvailable = settingShowAllBalances || flsAvailableBalance != nTotalBalance;
+    bool showFLSAvailable = settingShowAllBalances || FLSAvailableBalance != nTotalBalance;
     bool showWatchOnlyFLSAvailable = showFLSAvailable || nAvailableWatchBalance != nTotalWatchBalance;
     ui->labelBalanceText->setVisible(showFLSAvailable || showWatchOnlyFLSAvailable);
     ui->labelBalance->setVisible(showFLSAvailable || showWatchOnlyFLSAvailable);
@@ -291,21 +291,21 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     ui->labelLockedBalance->setVisible(showFLSLocked || showWatchOnlyFLSLocked);
     ui->labelWatchLocked->setVisible(showWatchOnlyFLSLocked && showWatchOnly);
 
-    // zFLS
-    bool showzFLSAvailable = settingShowAllBalances || zerocoinBalance != matureZerocoinBalance;
-    bool showzFLSUnconfirmed = settingShowAllBalances || unconfirmedZerocoinBalance != 0;
-    bool showzFLSImmature = settingShowAllBalances || immatureZerocoinBalance != 0;
-    ui->labelzBalanceMature->setVisible(showzFLSAvailable);
-    ui->labelzBalanceMatureText->setVisible(showzFLSAvailable);
-    ui->labelzBalanceUnconfirmed->setVisible(showzFLSUnconfirmed);
-    ui->labelzBalanceUnconfirmedText->setVisible(showzFLSUnconfirmed);
-    ui->labelzBalanceImmature->setVisible(showzFLSImmature);
-    ui->labelzBalanceImmatureText->setVisible(showzFLSImmature);
+    // zfls
+    bool showzflsAvailable = settingShowAllBalances || zerocoinBalance != matureZerocoinBalance;
+    bool showzflsUnconfirmed = settingShowAllBalances || unconfirmedZerocoinBalance != 0;
+    bool showzflsImmature = settingShowAllBalances || immatureZerocoinBalance != 0;
+    ui->labelzBalanceMature->setVisible(showzflsAvailable);
+    ui->labelzBalanceMatureText->setVisible(showzflsAvailable);
+    ui->labelzBalanceUnconfirmed->setVisible(showzflsUnconfirmed);
+    ui->labelzBalanceUnconfirmedText->setVisible(showzflsUnconfirmed);
+    ui->labelzBalanceImmature->setVisible(showzflsImmature);
+    ui->labelzBalanceImmatureText->setVisible(showzflsImmature);
 
     // Percent split
     bool showPercentages = ! (zerocoinBalance == 0 && nTotalBalance == 0);
     ui->labelFLSPercent->setVisible(showPercentages);
-    ui->labelzFLSPercent->setVisible(showPercentages);
+    ui->labelzflsPercent->setVisible(showPercentages);
 
     static int cachedTxLocks = 0;
 

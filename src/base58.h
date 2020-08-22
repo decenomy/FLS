@@ -1,8 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -71,7 +69,7 @@ inline bool DecodeBase58Check(const char* psz, std::vector<unsigned char>& vchRe
  * Decode a base58-encoded string (str) that includes a checksum into a byte
  * vector (vchRet), return true if decoding is successful
  */
-inline bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>& vchRet);
+bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>& vchRet);
 
 /**
  * Base class for all base58-encoded data
@@ -112,20 +110,31 @@ public:
 class CBitcoinAddress : public CBase58Data
 {
 public:
-    bool Set(const CKeyID& id);
+    bool Set(const CKeyID& id, const CChainParams::Base58Type addrType = CChainParams::PUBKEY_ADDRESS);
     bool Set(const CScriptID& id);
-    bool Set(const CTxDestination& dest);
+    bool Set(const CTxDestination& dest, const CChainParams::Base58Type addrType = CChainParams::PUBKEY_ADDRESS);
     bool IsValid() const;
     bool IsValid(const CChainParams& params) const;
 
     CBitcoinAddress() {}
-    CBitcoinAddress(const CTxDestination& dest) { Set(dest); }
+    CBitcoinAddress(const CTxDestination& dest, const CChainParams::Base58Type addrType = CChainParams::PUBKEY_ADDRESS) { Set(dest, addrType); }
     CBitcoinAddress(const std::string& strAddress) { SetString(strAddress); }
     CBitcoinAddress(const char* pszAddress) { SetString(pszAddress); }
 
     CTxDestination Get() const;
     bool GetKeyID(CKeyID& keyID) const;
     bool IsScript() const;
+    bool IsStakingAddress() const;
+
+
+    // Helpers
+    static const CBitcoinAddress newCSInstance(const CTxDestination& dest) {
+        return CBitcoinAddress(dest, CChainParams::STAKING_ADDRESS);
+    }
+
+    static const CBitcoinAddress newInstance(const CTxDestination& dest) {
+        return CBitcoinAddress(dest, CChainParams::PUBKEY_ADDRESS);
+    }
 };
 
 /**

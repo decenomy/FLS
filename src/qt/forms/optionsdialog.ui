@@ -131,8 +131,8 @@
         </spacer>
        </item>
        <item>
-        <widget class="QWidget" name="verticalZflsOptionsWidget" native="true">
-         <layout class="QVBoxLayout" name="verticalZflsOptionsLayout">
+        <widget class="QWidget" name="verticalzFLSOptionsWidget" native="true">
+         <layout class="QVBoxLayout" name="verticalzFLSOptionsLayout">
           <property name="margin">
            <number>0</number>
           </property>
@@ -533,7 +533,7 @@
          </property>
          <property name="text">
           <string>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</string>
+https://www.transifex.com/fls-core/fls-core-translations</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -561,8 +561,8 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</stri
         </layout>
        </item>
        <item>
-        <widget class="QWidget" name="verticalZflsDisplayWidget" native="true">
-         <layout class="QVBoxLayout" name="verticalZflsDisplayLayout">
+        <widget class="QWidget" name="verticalzflsolutionsdisplayWidget" native="true">
+         <layout class="QVBoxLayout" name="verticalzflsolutionsdisplayLayout">
           <property name="margin">
            <number>0</number>
           </property>

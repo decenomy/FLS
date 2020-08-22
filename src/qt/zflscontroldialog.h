@@ -1,6 +1,4 @@
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2020 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,32 +8,31 @@
 #include <QDialog>
 #include <QTreeWidgetItem>
 #include "zfls/zerocoin.h"
-#include "privacydialog.h"
 
 class CZerocoinMint;
 class WalletModel;
 
 namespace Ui {
-class ZFlsControlDialog;
+class zFLSControlDialog;
 }
 
-class CZFlsControlWidgetItem : public QTreeWidgetItem
+class CzFLSControlWidgetItem : public QTreeWidgetItem
 {
 public:
-    explicit CZFlsControlWidgetItem(QTreeWidget *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
-    explicit CZFlsControlWidgetItem(int type = Type) : QTreeWidgetItem(type) {}
-    explicit CZFlsControlWidgetItem(QTreeWidgetItem *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
+    explicit CzFLSControlWidgetItem(QTreeWidget *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
+    explicit CzFLSControlWidgetItem(int type = Type) : QTreeWidgetItem(type) {}
+    explicit CzFLSControlWidgetItem(QTreeWidgetItem *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
 
     bool operator<(const QTreeWidgetItem &other) const;
 };
 
-class ZFlsControlDialog : public QDialog
+class zFLSControlDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ZFlsControlDialog(QWidget *parent);
-    ~ZFlsControlDialog();
+    explicit zFLSControlDialog(QWidget *parent);
+    ~zFLSControlDialog();
 
     void setModel(WalletModel* model);
 
@@ -44,9 +41,8 @@ public:
     static std::vector<CMintMeta> GetSelectedMints();
 
 private:
-    Ui::ZFlsControlDialog *ui;
+    Ui::zFLSControlDialog *ui;
     WalletModel* model;
-    PrivacyDialog* privacyDialog;
 
     void updateList();
     void updateLabels();
@@ -56,13 +52,12 @@ private:
         COLUMN_DENOMINATION,
         COLUMN_PUBCOIN,
         COLUMN_VERSION,
-        COLUMN_PRECOMPUTE,
         COLUMN_CONFIRMATIONS,
         COLUMN_ISSPENDABLE
     };
-    friend class CZFlsControlWidgetItem;
+    friend class CzFLSControlWidgetItem;
 
-private slots:
+private Q_SLOTS:
     void updateSelection(QTreeWidgetItem* item, int column);
     void ButtonAllClicked();
 };

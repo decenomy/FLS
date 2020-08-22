@@ -1,7 +1,5 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -51,7 +49,7 @@ public:
 protected:
     virtual bool eventFilter(QObject* obj, QEvent* event);
 
-private slots:
+private Q_SLOTS:
     void on_lineEdit_returnPressed();
     void on_tabWidget_currentChanged(int index);
     /** open the debug.log from the current datadir */
@@ -72,7 +70,7 @@ private slots:
     /** clear the selected node */
     void clearSelectedNode();
 
-public slots:
+public Q_SLOTS:
     void clear();
 
     /** Wallet repair options */
@@ -85,7 +83,8 @@ public slots:
     void walletResync();
 
     void reject();
-    void message(int category, const QString& message, bool html = false);
+    void message(int category, const QString &msg) { message(category, msg, false); }
+    void message(int category, const QString &message, bool html);
     /** Set number of connections shown in the UI */
     void setNumConnections(int count);
     /** Set number of blocks shown in the UI */
@@ -123,7 +122,7 @@ public slots:
     /** Show folder with wallet backups in default browser */
     void showBackups();
 
-signals:
+Q_SIGNALS:
     // For RPC command executor
     void stopExecutor();
     void cmdRequest(const QString& command);

@@ -1,8 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2015-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2020 The Flits developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -22,6 +21,7 @@
 #include <vector>
 #include "libzerocoin/Denominations.h"
 #include "libzerocoin/SpendType.h"
+#include "sporkid.h"
 
 class CScript;
 
@@ -290,6 +290,23 @@ inline void Unserialize(Stream& s, libzerocoin::SpendType & a, int, int = 0)
     uint8_t f=0;
     READDATA(s, f);
     a = static_cast<libzerocoin::SpendType>(f);
+}
+
+// Serialization for SporkId
+inline unsigned int GetSerializeSize(SporkId sporkID, int, int = 0) { return sizeof(SporkId); }
+template <typename Stream>
+inline void Serialize(Stream& s, SporkId sporkID, int, int = 0)
+{
+    int32_t f = static_cast<int32_t>(sporkID);
+    WRITEDATA(s, f);
+}
+
+template <typename Stream>
+inline void Unserialize(Stream& s, SporkId& sporkID, int, int = 0)
+{
+    int32_t f=0;
+    READDATA(s, f);
+    sporkID = (SporkId) f;
 }
 
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" shape-rendering="geometricPrecision"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px"
+	 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<title>Top Bar Sync</title>
+<desc>Created with Sketch.</desc>
+<g id="Top-Bar-Sync">
+	<g id="Group" transform="translate(3.000000, 2.000000)">
+		<path id="Path_18901" fill="#007BFE" d="M9,17c-2.291,0.004-4.438-1.117-5.743-3H6v-2H0v6h2v-2.372
+			c2.385,2.982,6.395,4.131,9.997,2.864C15.6,17.225,18.007,13.818,18,10h-2C15.995,13.863,12.863,16.995,9,17z"/>
+		<path id="Path_18902" fill="#007BFE" d="M16,2v2.37c-2.386-2.981-6.396-4.129-9.998-2.861C2.401,2.776-0.007,6.182,0,10h2
+			c0-3.059,1.985-5.764,4.904-6.68C9.822,2.405,12.998,3.49,14.745,6H12v2h6V2H16z"/>
+	</g>
+</g>
+</svg>

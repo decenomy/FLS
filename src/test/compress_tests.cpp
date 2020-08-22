@@ -4,7 +4,7 @@
 
 #include "compressor.h"
 #include "util.h"
-#include "test/test_fls.h"
+#include "test/test_flits.h"
 
 #include <stdint.h>
 

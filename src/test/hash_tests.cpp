@@ -4,7 +4,7 @@
 
 #include "hash.h"
 #include "utilstrencodings.h"
-#include "test/test_fls.h"
+#include "test/test_flits.h"
 
 #include <vector>
 

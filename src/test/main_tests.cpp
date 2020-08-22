@@ -6,7 +6,7 @@
 
 #include "primitives/transaction.h"
 #include "main.h"
-#include "test_fls.h"
+#include "test_flits.h"
 
 #include <boost/test/unit_test.hpp>
 
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(subsidy_limit_test)
         /* PoW Phase Two */
         CAmount nSubsidy = GetBlockValue(nHeight);
         BOOST_CHECK(nSubsidy <= 45 * COIN);
-        BOOST_CHECK(MoneyRange(nSubsidy));
+        BOOST_CHECK(Params().GetConsensus().MoneyRange(nSubsidy));
         nSum += nSubsidy;
         BOOST_CHECK(nSum > 0 && nSum <= nMoneySupplyPoWEnd);
     }

@@ -78,7 +78,7 @@ HEADERS += src/activemasternode.h \
            src/crypter.h \
            src/obfuscation-relay.h \
            src/obfuscation.h \
-           src/fls-config.h \
+           src/flits-config.h \
            src/db.h \
            src/eccryptoverify.h \
            src/ecwrapper.h \
@@ -131,7 +131,7 @@ HEADERS += src/activemasternode.h \
            src/wallet_ismine.h \
            src/walletdb.h \
            src/compat/sanity.h \
-           src/config/fls-config.h \
+           src/config/flits-config.h \
            src/crypto/common.h \
            src/crypto/hmac_sha256.h \
            src/crypto/hmac_sha512.h \
@@ -164,6 +164,7 @@ HEADERS += src/activemasternode.h \
            src/obj/build.h \
            src/primitives/block.h \
            src/primitives/transaction.h \
+            src/qt/macos_appnap.h \
            src/qt/addressbookpage.h \
            src/qt/addresstablemodel.h \
            src/qt/askpassphrasedialog.h \
@@ -332,7 +333,7 @@ HEADERS += src/activemasternode.h \
            src/secp256k1/src/java/org_bitcoin_NativeSecp256k1.h \
            src/crypto/aes_helper.c \
            src/qt/bitcoinamountfield.moc \
-           src/qt/fls.moc \
+           src/qt/flits.moc \
            src/qt/intro.moc \
            src/qt/overviewpage.moc \
            src/qt/rpcconsole.moc \
@@ -373,9 +374,9 @@ SOURCES += src/activemasternode.cpp \
            src/crypter.cpp \
            src/obfuscation-relay.cpp \
            src/obfuscation.cpp \
-           src/fls-cli.cpp \
-           src/fls-tx.cpp \
-           src/fls.cpp \
+           src/flits-cli.cpp \
+           src/flits-tx.cpp \
+           src/flits.cpp \
            src/db.cpp \
            src/eccryptoverify.cpp \
            src/ecwrapper.cpp \
@@ -470,8 +471,8 @@ SOURCES += src/activemasternode.cpp \
            src/qt/coincontroltreewidget.cpp \
            src/qt/csvmodelwriter.cpp \
            src/qt/obfuscationconfig.cpp \
-           src/qt/fls.cpp \
-           src/qt/flsstrings.cpp \
+           src/qt/flits.cpp \
+           src/qt/flitsstrings.cpp \
            src/qt/editaddressdialog.cpp \
            src/qt/guiutil.cpp \
            src/qt/intro.cpp \
@@ -549,7 +550,7 @@ SOURCES += src/activemasternode.cpp \
            src/test/sighash_tests.cpp \
            src/test/sigopcount_tests.cpp \
            src/test/skiplist_tests.cpp \
-           src/test/test_fls.cpp \
+           src/test/test_flits.cpp \
            src/test/timedata_tests.cpp \
            src/test/transaction_tests.cpp \
            src/test/uint256_tests.cpp \
@@ -640,21 +641,21 @@ SOURCES += src/activemasternode.cpp \
            src/leveldb/helpers/memenv/memenv.cc \
            src/leveldb/helpers/memenv/memenv_test.cc \
            src/secp256k1/src/java/org_bitcoin_NativeSecp256k1.c
-RESOURCES += src/qt/fls.qrc src/qt/fls_locale.qrc
+RESOURCES += src/qt/flits.qrc src/qt/flits_locale.qrc
 
-TRANSLATIONS += src/qt/locale/fls_bg.ts \
-                src/qt/locale/fls_de.ts \
-                src/qt/locale/fls_en.ts \
-                src/qt/locale/fls_es.ts \
-                src/qt/locale/fls_fi.ts \
-                src/qt/locale/fls_fr.ts \
-                src/qt/locale/fls_it.ts \
-                src/qt/locale/fls_ja.ts \
-                src/qt/locale/fls_pl.ts \
-                src/qt/locale/fls_pt.ts \
-                src/qt/locale/fls_ru.ts \
-                src/qt/locale/fls_sk.ts \
-                src/qt/locale/fls_sv.ts \
-                src/qt/locale/fls_vi.ts \
-                src/qt/locale/fls_zh_CN.ts \
-                src/qt/locale/fls_zh_TW.ts
+TRANSLATIONS += src/qt/locale/flits_bg.ts \
+                src/qt/locale/flits_de.ts \
+                src/qt/locale/flits_en.ts \
+                src/qt/locale/flits_es.ts \
+                src/qt/locale/flits_fi.ts \
+                src/qt/locale/flits_fr.ts \
+                src/qt/locale/flits_it.ts \
+                src/qt/locale/flits_ja.ts \
+                src/qt/locale/flits_pl.ts \
+                src/qt/locale/flits_pt.ts \
+                src/qt/locale/flits_ru.ts \
+                src/qt/locale/flits_sk.ts \
+                src/qt/locale/flits_sv.ts \
+                src/qt/locale/flits_vi.ts \
+                src/qt/locale/flits_zh_CN.ts \
+                src/qt/locale/flits_zh_TW.ts

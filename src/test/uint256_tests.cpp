@@ -1,6 +1,8 @@
 // Copyright (c) 2011-2013 The Bitcoin Core developers
+// Copyright (c) 2019 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include <boost/test/unit_test.hpp>
 #include <stdint.h>
 #include <sstream>
@@ -10,7 +12,7 @@
 #include "uint256.h"
 #include <string>
 #include "version.h"
-#include "test/test_fls.h"
+#include "test/test_flits.h"
 
 BOOST_FIXTURE_TEST_SUITE(uint256_tests, BasicTestingSetup)
 
@@ -140,7 +142,7 @@ BOOST_AUTO_TEST_CASE( basics ) // constructors, equality, inequality
 
     // uint64_t constructor
     BOOST_CHECK( (R1L & uint256("0xffffffffffffffff")) == uint256(R1LLow64));
-    BOOST_CHECK(ZeroL == uint256(0));
+    BOOST_CHECK(ZeroL.IsNull());
     BOOST_CHECK(OneL == uint256(1));
     BOOST_CHECK(uint256("0xffffffffffffffff") = uint256(0xffffffffffffffffULL));
     BOOST_CHECK( (R1S & uint160("0xffffffffffffffff")) == uint160(R1LLow64));

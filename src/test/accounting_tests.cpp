@@ -1,14 +1,12 @@
 // Copyright (c) 2012-2014 The Bitcoin Core developers
 // Copyright (c) 2018-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h"
 
-#include "test/test_fls.h"
+#include "wallet/test/wallet_test_fixture.h"
 
 #include <stdint.h>
 
@@ -16,7 +14,7 @@
 
 extern CWallet* pwalletMain;
 
-BOOST_FIXTURE_TEST_SUITE(accounting_tests, TestingSetup)
+BOOST_FIXTURE_TEST_SUITE(accounting_tests, WalletTestingSetup)
 
 static void
 GetResults(CWalletDB& walletdb, std::map<CAmount, CAccountingEntry>& results)
@@ -50,7 +48,7 @@ BOOST_AUTO_TEST_CASE(acc_orderupgrade)
     pwalletMain->AddAccountingEntry(ae, walletdb);
 
     wtx.mapValue["comment"] = "z";
-    pwalletMain->AddToWallet(wtx);
+    pwalletMain->AddToWallet(wtx, false, &walletdb);
     vpwtx.push_back(&pwalletMain->mapWallet[wtx.GetHash()]);
     vpwtx[0]->nTimeReceived = (unsigned int)1333333335;
     vpwtx[0]->nOrderPos = -1;
@@ -92,7 +90,7 @@ BOOST_AUTO_TEST_CASE(acc_orderupgrade)
         --tx.nLockTime;  // Just to change the hash :)
         *static_cast<CTransaction*>(&wtx) = CTransaction(tx);
     }
-    pwalletMain->AddToWallet(wtx);
+    pwalletMain->AddToWallet(wtx, false, &walletdb);
     vpwtx.push_back(&pwalletMain->mapWallet[wtx.GetHash()]);
     vpwtx[1]->nTimeReceived = (unsigned int)1333333336;
 
@@ -102,7 +100,7 @@ BOOST_AUTO_TEST_CASE(acc_orderupgrade)
         --tx.nLockTime;  // Just to change the hash :)
         *static_cast<CTransaction*>(&wtx) = CTransaction(tx);
     }
-    pwalletMain->AddToWallet(wtx);
+    pwalletMain->AddToWallet(wtx, false, &walletdb);
     vpwtx.push_back(&pwalletMain->mapWallet[wtx.GetHash()]);
     vpwtx[2]->nTimeReceived = (unsigned int)1333333329;
     vpwtx[2]->nOrderPos = -1;

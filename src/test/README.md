@@ -5,44 +5,44 @@ and tests weren't explicitly disabled.
 
 After configuring, they can be run with `make check`.
 
-To run the flsd tests manually, launch `src/test/test_fls`. To recompile
+To run the sssolutionsd tests manually, launch `src/test/test_sss`. To recompile
 after a test file was modified, run `make` and then run the test again. If you
 modify a non-test file, use `make -C src/test` to recompile only what's needed
-to run the flsd tests.
+to run the sssolutionsd tests.
 
-To add more flsd tests, add `BOOST_AUTO_TEST_CASE` functions to the existing
+To add more sssolutionsd tests, add `BOOST_AUTO_TEST_CASE` functions to the existing
 .cpp files in the `test/` directory or add new .cpp files that
 implement new BOOST_FIXTURE_TEST_SUITE sections.
 
-To run the fls-qt tests manually, launch `src/qt/test/test_fls-qt`
+To run the sssolutions-qt tests manually, launch `src/qt/test/test_sssolutions-qt`
 
-To add more fls-qt tests, add them to the `src/qt/test/` directory and
+To add more sssolutions-qt tests, add them to the `src/qt/test/` directory and
 the `src/qt/test/test_main.cpp` file.
 
 ### Running individual tests
 
-test_fls has some built-in command-line arguments; for
+test_sss has some built-in command-line arguments; for
 example, to run just the getarg_tests verbosely:
 
-    test_fls --log_level=all --run_test=getarg_tests
+    test_sss --log_level=all --run_test=getarg_tests
 
 ... or to run just the doubledash test:
 
-    test_fls --run_test=getarg_tests/doubledash
+    test_sss --run_test=getarg_tests/doubledash
 
-Run `test_fls --help` for the full list.
+Run `test_sss --help` for the full list.
 
 ### Note on adding test cases
 
 The sources in this directory are unit test cases.  Boost includes a
-unit testing framework, and since fls already uses boost, it makes
+unit testing framework, and since sss already uses boost, it makes
 sense to simply use this framework rather than require developers to
 configure some other framework (we want as few impediments to creating
 unit tests as possible).
 
-The build system is setup to compile an executable called `test_fls`
+The build system is setup to compile an executable called `test_sss`
 that runs all of the unit tests.  The main source file is called
-test_fls.cpp, which simply includes other files that contain the
+test_sssolutions.cpp, which simply includes other files that contain the
 actual unit tests (outside of a couple required preprocessor
 directives). To add a new unit test file to our test suite you need
 to add the file to `src/Makefile.test.include`. The pattern is to

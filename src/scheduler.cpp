@@ -1,12 +1,11 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "scheduler.h"
 
+#include "random.h"
 #include "reverselock.h"
 
 #include <assert.h>
@@ -40,6 +39,11 @@ void CScheduler::serviceQueue()
     // is called.
     while (!shouldStop()) {
         try {
+            if (!shouldStop() && taskQueue.empty()) {
+                reverse_lock<boost::unique_lock<boost::mutex> > rlock(lock);
+                // Use this chance to get a tiny bit more entropy
+                RandAddSeedSleep();
+            }
             while (!shouldStop() && taskQueue.empty()) {
                 // Wait until there is something to do.
                 newTaskScheduled.wait(lock);

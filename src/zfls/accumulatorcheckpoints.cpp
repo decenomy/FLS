@@ -1,11 +1,8 @@
-// Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2018 The Flits-Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "accumulatorcheckpoints.h"
-#include "accumulatorcheckpoints.json.h"
 
 namespace AccumulatorCheckpoints
 {
@@ -25,14 +22,14 @@ namespace AccumulatorCheckpoints
     bool LoadCheckpoints(const std::string& strNetwork)
     {
         UniValue v;
-        if (strNetwork == "main")
+        /*if (strNetwork == "main")
             v = read_json(GetMainCheckpoints());
         else if (strNetwork == "test")
             v = read_json(GetTestCheckpoints());
         else if (strNetwork == "regtest")
             v = read_json(GetRegTestCheckpoints());
         else
-            return false;
+            return false;*/
 
         if (v.empty())
             return false;
@@ -60,7 +57,7 @@ namespace AccumulatorCheckpoints
                 checkpoint.insert(std::make_pair(denom, bn));
             }
 
-            mapCheckpoints.insert(std::make_pair(nHeight, checkpoint));
+            mapCheckpoints.insert(make_pair(nHeight, checkpoint));
         }
         return true;
     }

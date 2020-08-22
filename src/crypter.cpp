@@ -1,7 +1,5 @@
 // Copyright (c) 2009-2013 The Bitcoin developers
 // Copyright (c) 2017-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -199,85 +197,6 @@ bool CCryptoKeyStore::SetCrypted()
     return true;
 }
 
-bool CCryptoKeyStore::Lock()
-{
-    if (!SetCrypted())
-        return false;
-
-    {
-        LOCK(cs_KeyStore);
-        vMasterKey.clear();
-        pwalletMain->zwalletMain->Lock();
-    }
-
-    NotifyStatusChanged(this);
-    return true;
-}
-
-bool CCryptoKeyStore::Unlock(const CKeyingMaterial& vMasterKeyIn)
-{
-    {
-        LOCK(cs_KeyStore);
-        if (!SetCrypted())
-            return false;
-
-        bool keyPass = false;
-        bool keyFail = false;
-        CryptedKeyMap::const_iterator mi = mapCryptedKeys.begin();
-        for (; mi != mapCryptedKeys.end(); ++mi) {
-            const CPubKey& vchPubKey = (*mi).second.first;
-            const std::vector<unsigned char>& vchCryptedSecret = (*mi).second.second;
-            CKeyingMaterial vchSecret;
-            if (!DecryptSecret(vMasterKeyIn, vchCryptedSecret, vchPubKey.GetHash(), vchSecret)) {
-                keyFail = true;
-                break;
-            }
-            if (vchSecret.size() != 32) {
-                keyFail = true;
-                break;
-            }
-            CKey key;
-            key.Set(vchSecret.begin(), vchSecret.end(), vchPubKey.IsCompressed());
-            if (key.GetPubKey() != vchPubKey) {
-                keyFail = true;
-                break;
-            }
-            keyPass = true;
-            if (fDecryptionThoroughlyChecked)
-                break;
-        }
-        if (keyPass && keyFail) {
-            LogPrintf("The wallet is probably corrupted: Some keys decrypt but not all.");
-            assert(false);
-        }
-        if (keyFail || !keyPass)
-            return false;
-        vMasterKey = vMasterKeyIn;
-        fDecryptionThoroughlyChecked = true;
-
-        uint256 hashSeed;
-        if (CWalletDB(pwalletMain->strWalletFile).ReadCurrentSeedHash(hashSeed)) {
-            uint256 nSeed;
-            if (!GetDeterministicSeed(hashSeed, nSeed)) {
-                return error("Failed to read zFLS seed from DB. Wallet is probably corrupt.");
-            }
-            pwalletMain->zwalletMain->SetMasterSeed(nSeed, false);
-        } else {
-            // First time this wallet has been unlocked with dzFLS
-            // Borrow random generator from the key class so that we don't have to worry about randomness
-            CKey key;
-            key.MakeNewKey(true);
-            uint256 seed = key.GetPrivKey_256();
-            LogPrintf("%s: first run of zfls wallet detected, new seed generated. Seedhash=%s\n", __func__, Hash(seed.begin(), seed.end()).GetHex());
-            pwalletMain->zwalletMain->SetMasterSeed(seed, true);
-            pwalletMain->zwalletMain->GenerateMintPool();
-        }
-    }
-
-    NotifyStatusChanged(this);
-    return true;
-}
-
 bool CCryptoKeyStore::AddKeyPubKey(const CKey& key, const CPubKey& pubkey)
 {
     {
@@ -372,82 +291,4 @@ bool CCryptoKeyStore::EncryptKeys(CKeyingMaterial& vMasterKeyIn)
         mapKeys.clear();
     }
     return true;
-}
-
-bool CCryptoKeyStore::AddDeterministicSeed(const uint256& seed)
-{
-    CWalletDB db(pwalletMain->strWalletFile);
-    std::string strErr;
-    uint256 hashSeed = Hash(seed.begin(), seed.end());
-
-    if(IsCrypted()) {
-        if (!IsLocked()) { //if we have password
-
-            CKeyingMaterial kmSeed(seed.begin(), seed.end());
-            std::vector<unsigned char> vchSeedSecret;
-
-
-            //attempt encrypt
-            if (EncryptSecret(vMasterKey, kmSeed, hashSeed, vchSeedSecret)) {
-                //write to wallet with hashSeed as unique key
-                if (db.WriteZFLSSeed(hashSeed, vchSeedSecret)) {
-                    return true;
-                }
-            }
-            strErr = "encrypt seed";
-        }
-        strErr = "save since wallet is locked";
-    } else { //wallet not encrypted
-        if (db.WriteZFLSSeed(hashSeed, ToByteVector(seed))) {
-            return true;
-        }
-        strErr = "save zflsseed to wallet";
-    }
-                //the use case for this is no password set seed, mint dzFLS,
-
-    return error("s%: Failed to %s\n", __func__, strErr);
-}
-
-bool CCryptoKeyStore::GetDeterministicSeed(const uint256& hashSeed, uint256& seedOut)
-{
-
-    CWalletDB db(pwalletMain->strWalletFile);
-    std::string strErr;
-    if (IsCrypted()) {
-        if(!IsLocked()) { //if we have password
-
-            std::vector<unsigned char> vchCryptedSeed;
-            //read encrypted seed
-            if (db.ReadZFLSSeed(hashSeed, vchCryptedSeed)) {
-                uint256 seedRetrieved = uint256(ReverseEndianString(HexStr(vchCryptedSeed)));
-                //this checks if the hash of the seed we just read matches the hash given, meaning it is not encrypted
-                //the use case for this is when not crypted, seed is set, then password set, the seed not yet crypted in memory
-                if(hashSeed == Hash(seedRetrieved.begin(), seedRetrieved.end())) {
-                    seedOut = seedRetrieved;
-                    return true;
-                }
-
-                CKeyingMaterial kmSeed;
-                //attempt decrypt
-                if (DecryptSecret(vMasterKey, vchCryptedSeed, hashSeed, kmSeed)) {
-                    seedOut = uint256(ReverseEndianString(HexStr(kmSeed)));
-                    return true;
-                }
-                strErr = "decrypt seed";
-            } else { strErr = "read seed from wallet"; }
-        } else { strErr = "read seed; wallet is locked"; }
-    } else {
-        std::vector<unsigned char> vchSeed;
-        // wallet not crypted
-        if (db.ReadZFLSSeed(hashSeed, vchSeed)) {
-            seedOut = uint256(ReverseEndianString(HexStr(vchSeed)));
-            return true;
-        }
-        strErr = "read seed from wallet";
-    }
-
-    return error("%s: Failed to %s\n", __func__, strErr);
-
-
-//    return error("Failed to decrypt deterministic seed %s", IsLocked() ? "Wallet is locked!" : "");
 }

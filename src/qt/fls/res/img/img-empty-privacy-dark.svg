@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="ic_empty_Dark_zfls" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+<g id="Group_9081">
+	<path id="Path_19026" fill="#413D4A" d="M50,26c-13.255,0-24,10.745-24,24s10.745,24,24,24s24-10.745,24-24S63.255,26,50,26z
+		 M50,68c-9.941,0-18-8.059-18-18c0-9.941,8.059-18,18-18c9.941,0,18,8.059,18,18C68,59.941,59.941,68,50,68z"/>
+	<g id="Group_9080">
+		<g id="Group_9078">
+			<path id="Path_19027" fill="#A09EA5" d="M50,31c-10.493,0-19,8.507-19,19s8.507,19,19,19s19-8.507,19-19
+				C68.988,39.511,60.488,31.012,50,31z M50,67c-9.389,0-17-7.611-17-17s7.611-17,17-17s17,7.611,17,17
+				C66.99,59.385,59.385,66.989,50,67z"/>
+			<path id="Rectangle_4744" fill="#A09EA5" d="M83,56h2v4h-2V56z"/>
+			<path id="Rectangle_4745" fill="#A09EA5" d="M83,44h2v8h-2V44z"/>
+			<path id="Rectangle_4746" fill="#A09EA5" d="M15,48h2v8h-2V48z"/>
+			<path id="Rectangle_4747" fill="#A09EA5" d="M15,40h2v4h-2V40z"/>
+			<path id="Path_19028" fill="#A09EA5" d="M95.162,71H85v-7h-2v9h7.838L76,90.456L61.162,73H68v-2h-4.461
+				c11.607-7.467,14.964-22.928,7.498-34.535c-6.39-9.933-18.859-14.036-29.898-9.839L24,6.456L4.838,29H15v7h2v-9H9.162L24,9.544
+				L38.838,27H32v2h4.461c-11.607,7.466-14.964,22.928-7.498,34.535c6.389,9.933,18.859,14.036,29.898,9.839L76,93.544L95.162,71z
+				 M27,50c0-12.703,10.297-23,23-23c12.703,0,23,10.297,23,23c0,12.703-10.297,23-23,23C37.303,72.986,27.014,62.697,27,50z"/>
+		</g>
+	</g>
+</g>
+<path id="Rectangle_4748" fill="none" d="M0,0h100v100H0V0z"/>
+<image overflow="visible" opacity="0.51" width="640" height="640" xlink:href="../../fls.png"  transform="matrix(0.0517 0 0 0.0517 33.4551 32.9546)">
+</image>
+</svg>

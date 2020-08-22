@@ -1,8 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2016-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2016-2019 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -57,7 +55,7 @@ bool validateURL(std::string strURL, std::string& strErr, unsigned int maxSize) 
 
     // check fronts
     bool found = false;
-    for (int i=0; i < reqPre.size() && !found; i++) {
+    for (int i=0; i < (int) reqPre.size() && !found; i++) {
         if (strURL.find(reqPre[i]) == 0) found = true;
     }
     if ((!found) && (reqPre.size() > 0)) {

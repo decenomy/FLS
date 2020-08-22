@@ -1,8 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2017-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -348,4 +346,11 @@ inline bool operator>(const CBigNum& a, const CBigNum& b)  { return (mpz_cmp(a.b
 inline std::ostream& operator<<(std::ostream &strm, const CBigNum &b) { return strm << b.ToString(10); }
 
 typedef CBigNum Bignum;
+
+/** constant bignum instances */
+const CBigNum BN_ZERO = CBigNum(0);
+const CBigNum BN_ONE = CBigNum(1);
+const CBigNum BN_TWO = CBigNum(2);
+const CBigNum BN_THREE = CBigNum(3);
+
 #endif

@@ -1,8 +1,9 @@
 // Copyright (c) 2012-2013 The Bitcoin Core developers
+// Copyright (c) 2019 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include "addrman.h"
-#include "test/test_fls.h"
+#include "test/test_flits.h"
 #include <string>
 #include <boost/test/unit_test.hpp>
 #include <crypto/common.h> // for ReadLE64
@@ -24,7 +25,7 @@ public:
     void MakeDeterministic()
     {
         nKey.SetNull();
-        seed_insecure_rand(true);
+        insecure_rand = FastRandomContext(true);
     }
 
     int RandomInt(int nMax)
@@ -179,10 +180,11 @@ BOOST_AUTO_TEST_CASE(addrman_select)
     BOOST_CHECK(addrman.size() == 7);
 
     // Test 12: Select pulls from new and tried regardless of port number.
-    BOOST_CHECK(addrman.Select().ToString() == "250.4.6.6:8333");
-    BOOST_CHECK(addrman.Select().ToString() == "250.3.2.2:9999");
-    BOOST_CHECK(addrman.Select().ToString() == "250.3.3.3:9999");
-    BOOST_CHECK(addrman.Select().ToString() == "250.4.4.4:8333");
+    std::set<uint16_t> ports;
+    for (int i = 0; i < 20; ++i) {
+        ports.insert(addrman.Select().GetPort());
+    }
+    BOOST_CHECK_EQUAL(ports.size(), 3);
 }
 
 BOOST_AUTO_TEST_CASE(addrman_new_collisions)

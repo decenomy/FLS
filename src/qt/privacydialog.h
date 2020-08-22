@@ -1,6 +1,4 @@
-// Copyright (c) 2017-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The Flits-Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -48,7 +46,7 @@ public:
 
     void setModel(WalletModel* model);
     void showOutOfSyncWarning(bool fShow);
-    void setZFlsControlLabels(int64_t nAmount, int nQuantity);
+    void setzflsControlLabels(int64_t nAmount, int nQuantity);
 
 public slots:
     void setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
@@ -78,19 +76,19 @@ private:
 
     int nDisplayUnit;
     bool updateLabel(const QString& address);
-    void sendzFLS();
+    void sendzfls();
 
 private slots:
     void on_payTo_textChanged(const QString& address);
     void on_addressBookButton_clicked();
 //    void coinControlFeatureChanged(bool);
-// MINT disabled   void coinControlButtonClicked();
+    void coinControlButtonClicked();
 //    void coinControlChangeChecked(int);
 //    void coinControlChangeEdited(const QString&);
-// MINT disabled    void coinControlUpdateLabels();
+    void coinControlUpdateLabels();
 
-// MINT disabled    void coinControlClipboardQuantity();
-// MINT disabled    void coinControlClipboardAmount();
+    void coinControlClipboardQuantity();
+    void coinControlClipboardAmount();
 //    void coinControlClipboardFee();
 //    void coinControlClipboardAfterFee();
 //    void coinControlClipboardBytes();
@@ -98,11 +96,11 @@ private slots:
 //    void coinControlClipboardLowOutput();
 //    void coinControlClipboardChange();
 
-// MINT disabled    void on_pushButtonMintzFLS_clicked();
+    void on_pushButtonMintzfls_clicked();
     void on_pushButtonMintReset_clicked();
     void on_pushButtonSpentReset_clicked();
-    void on_pushButtonSpendzFLS_clicked();
-    void on_pushButtonZFlsControl_clicked();
+    void on_pushButtonSpendzfls_clicked();
+    void on_pushButtonzflsControl_clicked();
     void on_pushButtonHideDenoms_clicked();
     void on_pushButtonShowDenoms_clicked();
     void on_pasteButton_clicked();

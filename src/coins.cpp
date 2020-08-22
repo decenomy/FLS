@@ -1,7 +1,6 @@
 // Copyright (c) 2012-2014 The Bitcoin developers
 // Copyright (c) 2015-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2020 The Flits developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -56,14 +55,14 @@ bool CCoins::Spend(const COutPoint& out, CTxInUndo& undo)
 bool CCoins::Spend(int nPos)
 {
     CTxInUndo undo;
-    COutPoint out(0, nPos);
+    COutPoint out(UINT256_ZERO, nPos);
     return Spend(out, undo);
 }
 
 
 bool CCoinsView::GetCoins(const uint256& txid, CCoins& coins) const { return false; }
 bool CCoinsView::HaveCoins(const uint256& txid) const { return false; }
-uint256 CCoinsView::GetBestBlock() const { return uint256(0); }
+uint256 CCoinsView::GetBestBlock() const { return UINT256_ZERO; }
 bool CCoinsView::BatchWrite(CCoinsMap& mapCoins, const uint256& hashBlock) { return false; }
 bool CCoinsView::GetStats(CCoinsStats& stats) const { return false; }
 
@@ -78,7 +77,7 @@ bool CCoinsViewBacked::GetStats(CCoinsStats& stats) const { return base->GetStat
 
 CCoinsKeyHasher::CCoinsKeyHasher() : salt(GetRandHash()) {}
 
-CCoinsViewCache::CCoinsViewCache(CCoinsView* baseIn) : CCoinsViewBacked(baseIn), hasModifier(false), hashBlock(0) {}
+CCoinsViewCache::CCoinsViewCache(CCoinsView* baseIn) : CCoinsViewBacked(baseIn), hasModifier(false) {}
 
 CCoinsViewCache::~CCoinsViewCache()
 {
@@ -154,7 +153,7 @@ bool CCoinsViewCache::HaveCoins(const uint256& txid) const
 
 uint256 CCoinsViewCache::GetBestBlock() const
 {
-    if (hashBlock == uint256(0))
+    if (hashBlock.IsNull())
         hashBlock = base->GetBestBlock();
     return hashBlock;
 }
@@ -250,12 +249,17 @@ bool CCoinsViewCache::HaveInputs(const CTransaction& tx) const
     return true;
 }
 
+bool CCoinsViewCache::IsOutputAvailable(const uint256& txId, int index) {
+    const CCoins* coins = AccessCoins(txId);
+    return coins && coins->IsAvailable(index);
+}
+
 double CCoinsViewCache::GetPriority(const CTransaction& tx, int nHeight) const
 {
     if (tx.IsCoinBase() || tx.IsCoinStake())
         return 0.0;
     double dResult = 0.0;
-    for (const CTxIn& txin:  tx.vin) {
+    for (const CTxIn& txin : tx.vin) {
         const CCoins* coins = AccessCoins(txin.prevout.hash);
         assert(coins);
         if (!coins->IsAvailable(txin.prevout.n)) continue;

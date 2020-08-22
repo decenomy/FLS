@@ -1,7 +1,7 @@
 /**
  * @file       Accumulator.cpp
  *
- * @brief      Accumulator and AccumulatorWitness classes for the Zerocoin library.
+ * @brief      Accumulator class for the Zerocoin library.
  *
  * @author     Ian Miers, Christina Garman and Matthew Green
  * @date       June 2013
@@ -10,8 +10,6 @@
  * @license    This project is released under the MIT license.
  **/
 // Copyright (c) 2017-2019 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 
 #include <sstream>
 #include <iostream>
@@ -96,55 +94,6 @@ Accumulator& Accumulator::operator += (const PublicCoin& c) {
 
 bool Accumulator::operator == (const Accumulator rhs) const {
     return this->value == rhs.value;
-}
-
-//AccumulatorWitness class
-AccumulatorWitness::AccumulatorWitness(const ZerocoinParams* p,
-                                       const Accumulator& checkpoint, const PublicCoin coin): witness(checkpoint), element(coin) {
-}
-
-void AccumulatorWitness::resetValue(const Accumulator& checkpoint, const PublicCoin coin) {
-    this->witness.setValue(checkpoint.getValue());
-    this->element = coin;
-}
-
-void AccumulatorWitness::AddElement(const PublicCoin& c) {
-    if(element.getValue() != c.getValue()) {
-        witness += c;
-    }
-}
-
-//warning check pubcoin value & denom outside of this function!
-void AccumulatorWitness::addRawValue(const CBigNum& bnValue) {
-        witness.increment(bnValue);
-}
-
-const CBigNum& AccumulatorWitness::getValue() const {
-    return this->witness.getValue();
-}
-
-const PublicCoin& AccumulatorWitness::getPublicCoin() const {
-    return this->element;
-}
-
-bool AccumulatorWitness::VerifyWitness(const Accumulator& a, const PublicCoin &publicCoin) const {
-    Accumulator temp(witness);
-    temp += element;
-    if (!(temp == a)) {
-        std::cout << "VerifyWitness: failed verify temp does not equal a\n";
-        return false;
-    } else if (this->element != publicCoin) {
-        std::cout << "VerifyWitness: failed verify pubcoins not equal\n";
-        return false;
-    }
-
-    return true;
-}
-
-AccumulatorWitness& AccumulatorWitness::operator +=(
-    const PublicCoin& rhs) {
-    this->AddElement(rhs);
-    return *this;
 }
 
 } /* namespace libzerocoin */

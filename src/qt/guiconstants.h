@@ -1,8 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,7 +13,7 @@ static const int MODEL_UPDATE_DELAY = 1000;
 /* AskPassphraseDialog -- Maximum passphrase length */
 static const int MAX_PASSPHRASE_SIZE = 1024;
 
-/* Fls GUI -- Size of icons in status bar */
+/* fls GUI -- Size of icons in status bar */
 static const int STATUSBAR_ICONSIZE = 16;
 
 static const bool DEFAULT_SPLASHSCREEN = true;
@@ -40,7 +38,7 @@ static const bool DEFAULT_SPLASHSCREEN = true;
 /* Transaction list -- TX status decoration - orphan (Light Gray #D3D3D3) */
 #define COLOR_ORPHAN QColor(211, 211, 211)
 /* Transaction list -- TX status decoration - stake (BlueViolet #8A2BE2) */
-#define COLOR_STAKE QColor(179,143,0)
+#define COLOR_STAKE QColor(138,43,226)
 /* Tooltips longer than this (in characters) are converted into rich text,
    so that they can be word-wrapped.
  */
@@ -57,7 +55,7 @@ static const int MAX_URI_LENGTH = 255;
 
 #define QAPP_ORG_NAME "FLS"
 #define QAPP_ORG_DOMAIN "fls.org"
-#define QAPP_APP_NAME_DEFAULT "FLS-Qt"
-#define QAPP_APP_NAME_TESTNET "FLS-Qt-testnet"
+#define QAPP_APP_NAME_DEFAULT "flits-qt"
+#define QAPP_APP_NAME_TESTNET "flits-qt-testnet"
 
 #endif // BITCOIN_QT_GUICONSTANTS_H

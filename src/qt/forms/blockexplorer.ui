@@ -168,7 +168,7 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="../fls.qrc"/>
+  <include location="../flits.qrc"/>
  </resources>
  <connections/>
 </ui>

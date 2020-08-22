@@ -4,10 +4,10 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test the wallet accounts properly when there are cloned transactions with malleated scriptsigs."""
 
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import flsTestFramework
 from test_framework.util import *
 
-class TxnMallTest(BitcoinTestFramework):
+class TxnMallTest(flsTestFramework):
     def set_test_params(self):
         self.num_nodes = 4
 
@@ -126,7 +126,7 @@ class TxnMallTest(BitcoinTestFramework):
         tx2 = self.nodes[0].gettransaction(txid2)
 
         # Verify expected confirmations
-        assert_equal(tx1["confirmations"], -1)
+        assert_equal(tx1["confirmations"], -2)
         assert_equal(tx1_clone["confirmations"], 2)
         assert_equal(tx2["confirmations"], 1)
 

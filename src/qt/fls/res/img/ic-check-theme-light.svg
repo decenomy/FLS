@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="ic_light_theme" shape-rendering="geometricPrecision"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px"
+	 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="Group_8846">
+	<path id="Path_18900" fill="#007BFE" d="M12,7c-2.761,0-5,2.239-5,5c0,2.762,2.239,5,5,5c2.762,0,5-2.238,5-5
+		C16.996,9.24,14.76,7.003,12,7z M12,15c-1.657,0-3-1.344-3-3c0-1.657,1.343-3,3-3c1.656,0,3,1.343,3,3C15,13.656,13.656,15,12,15z"
+		/>
+	<path id="Rectangle_4418" fill="#007BFE" d="M11,2h2v4h-2V2z"/>
+	<path id="Rectangle_4419" fill="#007BFE" d="M11,18h2v4h-2V18z"/>
+	<path id="Rectangle_4420" fill="#007BFE" d="M2,11h4v2H2V11z"/>
+	<path id="Rectangle_4421" fill="#007BFE" d="M18,11h4v2h-4V11z"/>
+	<path id="Rectangle_4422" fill="#007BFE" d="M4.222,5.636l1.414-1.414L8.464,7.05L7.05,8.464L4.222,5.636z"/>
+	<path id="Rectangle_4423" fill="#007BFE" d="M15.536,16.949l1.414-1.414l2.829,2.828l-1.414,1.414L15.536,16.949z"/>
+	<path id="Rectangle_4424" fill="#007BFE" d="M4.222,18.363l2.828-2.828l1.415,1.414l-2.829,2.829L4.222,18.363z"/>
+	<path id="Rectangle_4425" fill="#007BFE" d="M15.536,7.05l2.829-2.829l1.414,1.415l-2.828,2.828L15.536,7.05z"/>
+</g>
+<path id="Rectangle_4426" fill="none" d="M0,0h24v24H0V0z"/>
+</svg>

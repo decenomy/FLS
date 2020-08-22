@@ -3,10 +3,20 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """Test the wallet."""
-from test_framework.test_framework import BitcoinTestFramework
-from test_framework.util import *
+from test_framework.test_framework import flsTestFramework
+from test_framework.util import (
+    assert_array_result,
+    assert_equal,
+    assert_fee_amount,
+    assert_raises_rpc_error,
+    connect_nodes,
+    Decimal,
+    sync_blocks,
+    sync_mempools,
+    wait_until,
+)
 
-class WalletTest(BitcoinTestFramework):
+class WalletTest(flsTestFramework):
     def set_test_params(self):
         self.num_nodes = 4
         self.setup_clean_chain = True
@@ -16,9 +26,9 @@ class WalletTest(BitcoinTestFramework):
         self.start_node(0)
         self.start_node(1)
         self.start_node(2)
-        connect_nodes_bi(self.nodes,0,1)
-        connect_nodes_bi(self.nodes,1,2)
-        connect_nodes_bi(self.nodes,0,2)
+        connect_nodes(self.nodes[0], 1)
+        connect_nodes(self.nodes[1], 2)
+        connect_nodes(self.nodes[0], 2)
         self.sync_all([self.nodes[0:3]])
 
     def check_fee_amount(self, curr_balance, balance_with_fee, fee_per_byte, tx_size):
@@ -60,7 +70,7 @@ class WalletTest(BitcoinTestFramework):
         assert_equal(len(self.nodes[1].listunspent()), 1)
         assert_equal(len(self.nodes[2].listunspent()), 0)
 
-        # Send 21 BTC from 0 to 2 using sendtoaddress call.
+        # Send 21 FLS from 0 to 2 using sendtoaddress call.
         # Second transaction will be child of first, and will require a fee
         self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 21)
         #self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 10)
@@ -85,7 +95,7 @@ class WalletTest(BitcoinTestFramework):
         self.nodes[1].generate(100)
         self.sync_all([self.nodes[0:3]])
 
-        # node0 should end up with 100 btc in block rewards plus fees, but
+        # node0 should end up with 100 FLS in block rewards plus fees, but
         # minus the 21 plus fees sent to node2
         assert_equal(self.nodes[0].getbalance(), 500-21)
         assert_equal(self.nodes[2].getbalance(), 21)
@@ -118,7 +128,7 @@ class WalletTest(BitcoinTestFramework):
         assert_equal(self.nodes[2].getbalance(), 500)
         assert_equal(self.nodes[2].getbalance("from1"), 500-21)
 
-        # Send 10 BTC normal
+        # Send 10 FLS normal
         address = self.nodes[0].getnewaddress("test")
         fee_per_byte = Decimal('0.001') / 1000
         self.nodes[2].settxfee(float(fee_per_byte * 1000))
@@ -127,10 +137,9 @@ class WalletTest(BitcoinTestFramework):
         self.nodes[2].generate(1)
         self.sync_all([self.nodes[0:3]])
         node_2_bal = self.nodes[2].getbalance()
-        #node_2_bal = self.check_fee_amount(balance, Decimal(balance - fee), fee_per_byte, self.get_vsize(self.nodes[2].getrawtransaction(txid)))
         assert_equal(self.nodes[0].getbalance(), Decimal('10'))
 
-        # Send 10 BTC with subtract fee from amount
+        # Send 10 FLS with subtract fee from amount
         txid = self.nodes[2].sendtoaddress(address, 10, "", "")
         self.nodes[2].generate(1)
         self.sync_all([self.nodes[0:3]])
@@ -139,7 +148,7 @@ class WalletTest(BitcoinTestFramework):
         node_0_bal = self.nodes[0].getbalance()
         assert_equal(node_0_bal, Decimal('20'))
 
-        # Sendmany 10 BTC
+        # Sendmany 10 FLS
         txid = self.nodes[2].sendmany('from1', {address: 10}, 0, "")
         self.nodes[2].generate(1)
         self.sync_all([self.nodes[0:3]])
@@ -148,7 +157,7 @@ class WalletTest(BitcoinTestFramework):
         #node_2_bal = self.check_fee_amount(self.nodes[2].getbalance(), node_2_bal - Decimal('10'), fee_per_byte, self.get_vsize(self.nodes[2].getrawtransaction(txid)))
         assert_equal(self.nodes[0].getbalance(), node_0_bal)
 
-        # Sendmany 10 BTC with subtract fee from amount
+        # Sendmany 10 FLS with subtract fee from amount
         txid = self.nodes[2].sendmany('from1', {address: 10}, 0, "")
         self.nodes[2].generate(1)
         self.sync_all([self.nodes[0:3]])
@@ -165,14 +174,8 @@ class WalletTest(BitcoinTestFramework):
         sync_mempools(self.nodes[0:2])
 
         self.start_node(3)
-        connect_nodes_bi(self.nodes, 0, 3)
+        connect_nodes(self.nodes[0], 3)
         sync_blocks(self.nodes)
-
-        #relayed = self.nodes[0].resendwallettransactions()
-        #assert_equal(set(relayed), {txid1, txid2})
-        #sync_mempools(self.nodes)
-
-        #assert(txid1 in self.nodes[3].getrawmempool())
 
         # Exercise balance rpcs
         assert_equal(self.nodes[0].getwalletinfo()["unconfirmed_balance"], 1)
@@ -193,62 +196,6 @@ class WalletTest(BitcoinTestFramework):
         decRawTx = self.nodes[1].decoderawtransaction(signedRawTx['hex'])
         zeroValueTxid= decRawTx['txid']
         assert_raises_rpc_error(-25, "", self.nodes[1].sendrawtransaction, signedRawTx['hex'])
-
-        self.sync_all([self.nodes[0:3]])
-        self.nodes[1].generate(1) #mine a block
-        self.sync_all([self.nodes[0:3]])
-
-        #unspentTxs = self.nodes[0].listunspent() #zero value tx must be in listunspents output
-        #found = False
-        #for uTx in unspentTxs:
-        #    if uTx['txid'] == zeroValueTxid:
-        #        found = True
-        #        assert_equal(uTx['amount'], Decimal('0'))
-        #assert(found)
-
-        #do some -walletbroadcast tests
-        self.stop_nodes()
-        self.start_node(0, ["-walletbroadcast=0"])
-        self.start_node(1, ["-walletbroadcast=0"])
-        self.start_node(2, ["-walletbroadcast=0"])
-        connect_nodes_bi(self.nodes,0,1)
-        connect_nodes_bi(self.nodes,1,2)
-        connect_nodes_bi(self.nodes,0,2)
-        self.sync_all([self.nodes[0:3]])
-
-        txIdNotBroadcasted  = self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 2)
-        txObjNotBroadcasted = self.nodes[0].gettransaction(txIdNotBroadcasted)
-        self.nodes[1].generate(1) #mine a block, tx should not be in there
-        self.sync_all([self.nodes[0:3]])
-        assert_equal(self.nodes[2].getbalance(), node_2_bal + (fee * 3)) #should not be changed because tx was not broadcasted
-
-        #now broadcast from another node, mine a block, sync, and check the balance
-        self.nodes[1].sendrawtransaction(txObjNotBroadcasted['hex'])
-        self.nodes[1].generate(1)
-        self.sync_all([self.nodes[0:3]])
-        node_2_bal += 2
-        txObjNotBroadcasted = self.nodes[0].gettransaction(txIdNotBroadcasted)
-        assert_equal(self.nodes[2].getbalance(), node_2_bal + (fee * 3))
-
-        #create another tx
-        txIdNotBroadcasted  = self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 2)
-
-        #restart the nodes with -walletbroadcast=1
-        self.stop_nodes()
-        self.start_node(0)
-        self.start_node(1)
-        self.start_node(2)
-        connect_nodes_bi(self.nodes,0,1)
-        connect_nodes_bi(self.nodes,1,2)
-        connect_nodes_bi(self.nodes,0,2)
-        sync_blocks(self.nodes[0:3])
-
-        self.nodes[0].generate(1)
-        sync_blocks(self.nodes[0:3])
-        node_2_bal += 2
-
-        #tx should be added to balance because after restarting the nodes tx should be broadcastet
-        assert_equal(self.nodes[2].getbalance(), node_2_bal + (fee * 3))
 
         # This will raise an exception since generate does not accept a string
         assert_raises_rpc_error(-1, "not an integer", self.nodes[0].generate, "2")
