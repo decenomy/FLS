@@ -30,7 +30,7 @@ packages:
 - "fonts-tuffy"
 remotes:
 - "url": "https://github.com/flitsnode/Flits-Core.git"
-  "dir": "flits"
+  "dir": "Flits-Core"
 files:
 - "MacOSX10.11.sdk.tar.gz"
 script: |
