@@ -7,7 +7,7 @@
 
 #define BOOST_TEST_MODULE Fls Test Suite
 
-#include "test_fls.h"
+#include "test_flits.h"
 
 #include "main.h"
 #include "random.h"
