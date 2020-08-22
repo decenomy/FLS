@@ -24,8 +24,8 @@ packages:
 - "python3"
 - "rename"
 remotes:
-- "url": "https://github.com/Simple-Software-Solutions/Flits-Core.git"
-  "dir": "Flits-Core"
+- "url": "https://github.com/flitsnode/Flits-Core.git"
+  "dir": "flits"
 files: []
 script: |
   set -e -o pipefail
