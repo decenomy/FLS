@@ -7,7 +7,7 @@
 #  spendfrom.py  # Lists available funds
 #  spendfrom.py --from=ADDRESS --to=ADDRESS --amount=11.00
 #
-# Assumes it will talk to a flsd or fls-Qt running
+# Assumes it will talk to a flitsd or flits-qt running
 # on localhost.
 #
 # Depends on jsonrpc
@@ -67,12 +67,12 @@ def connect_JSON(config):
     testnet = config.get('testnet', '0')
     testnet = (int(testnet) > 0)  # 0/1 in config file, convert to True/False
     if not 'rpcport' in config:
-        config['rpcport'] = 12273 if testnet else 12271
+        config['rpcport'] = 12272 if testnet else 12271
     connect = "http://%s:%s@127.0.0.1:%s"%(config['rpcuser'], config['rpcpassword'], config['rpcport'])
     try:
         result = ServiceProxy(connect)
         # ServiceProxy is lazy-connect, so send an RPC command mostly to catch connection errors,
-        # but also make sure the flsd we're talking to is/isn't testnet:
+        # but also make sure the flitsd we're talking to is/isn't testnet:
         if result.getmininginfo()['testnet'] != testnet:
             sys.stderr.write("RPC server at "+connect+" testnet setting mismatch\n")
             sys.exit(1)
@@ -81,32 +81,32 @@ def connect_JSON(config):
         sys.stderr.write("Error connecting to RPC server at "+connect+"\n")
         sys.exit(1)
 
-def unlock_wallet(flsd):
-    info = flsd.getinfo()
+def unlock_wallet(flitsd):
+    info = flitsd.getinfo()
     if 'unlocked_until' not in info:
         return True # wallet is not encrypted
     t = int(info['unlocked_until'])
     if t <= time.time():
         try:
             passphrase = getpass.getpass("Wallet is locked; enter passphrase: ")
-            flsd.walletpassphrase(passphrase, 5)
+            flitsd.walletpassphrase(passphrase, 5)
         except:
             sys.stderr.write("Wrong passphrase\n")
 
-    info = flsd.getinfo()
+    info = flitsd.getinfo()
     return int(info['unlocked_until']) > time.time()
 
-def list_available(flsd):
+def list_available(flitsd):
     address_summary = dict()
 
     address_to_account = dict()
-    for info in flsd.listreceivedbyaddress(0):
+    for info in flitsd.listreceivedbyaddress(0):
         address_to_account[info["address"]] = info["account"]
 
-    unspent = flsd.listunspent(0)
+    unspent = flitsd.listunspent(0)
     for output in unspent:
         # listunspent doesn't give addresses, so:
-        rawtx = flsd.getrawtransaction(output['txid'], 1)
+        rawtx = flitsd.getrawtransaction(output['txid'], 1)
         vout = rawtx["vout"][output['vout']]
         pk = vout["scriptPubKey"]
 
@@ -139,8 +139,8 @@ def select_coins(needed, inputs):
         n += 1
     return (outputs, have-needed)
 
-def create_tx(flsd, fromaddresses, toaddress, amount, fee):
-    all_coins = list_available(flsd)
+def create_tx(flitsd, fromaddresses, toaddress, amount, fee):
+    all_coins = list_available(flitsd)
 
     total_available = Decimal("0.0")
     needed = amount+fee
@@ -159,7 +159,7 @@ def create_tx(flsd, fromaddresses, toaddress, amount, fee):
     # Note:
     # Python's json/jsonrpc modules have inconsistent support for Decimal numbers.
     # Instead of wrestling with getting json.dumps() (used by jsonrpc) to encode
-    # Decimals, I'm casting amounts to float before sending them to flsd.
+    # Decimals, I'm casting amounts to float before sending them to flitsd.
     #
     outputs = { toaddress : float(amount) }
     (inputs, change_amount) = select_coins(needed, potential_inputs)
@@ -170,8 +170,8 @@ def create_tx(flsd, fromaddresses, toaddress, amount, fee):
         else:
             outputs[change_address] = float(change_amount)
 
-    rawtx = flsd.createrawtransaction(inputs, outputs)
-    signed_rawtx = flsd.signrawtransaction(rawtx)
+    rawtx = flitsd.createrawtransaction(inputs, outputs)
+    signed_rawtx = flitsd.signrawtransaction(rawtx)
     if not signed_rawtx["complete"]:
         sys.stderr.write("signrawtransaction failed\n")
         sys.exit(1)
@@ -179,10 +179,10 @@ def create_tx(flsd, fromaddresses, toaddress, amount, fee):
 
     return txdata
 
-def compute_amount_in(flsd, txinfo):
+def compute_amount_in(flitsd, txinfo):
     result = Decimal("0.0")
     for vin in txinfo['vin']:
-        in_info = flsd.getrawtransaction(vin['txid'], 1)
+        in_info = flitsd.getrawtransaction(vin['txid'], 1)
         vout = in_info['vout'][vin['vout']]
         result = result + vout['value']
     return result
@@ -193,12 +193,12 @@ def compute_amount_out(txinfo):
         result = result + vout['value']
     return result
 
-def sanity_test_fee(flsd, txdata_hex, max_fee):
+def sanity_test_fee(flitsd, txdata_hex, max_fee):
     class FeeError(RuntimeError):
         pass
     try:
-        txinfo = flsd.decoderawtransaction(txdata_hex)
-        total_in = compute_amount_in(flsd, txinfo)
+        txinfo = flitsd.decoderawtransaction(txdata_hex)
+        total_in = compute_amount_in(flitsd, txinfo)
         total_out = compute_amount_out(txinfo)
         if total_in-total_out > max_fee:
             raise FeeError("Rejecting transaction, unreasonable fee of "+str(total_in-total_out))
@@ -240,10 +240,10 @@ def main():
     check_json_precision()
     config = read_bitcoin_config(options.datadir)
     if options.testnet: config['testnet'] = True
-    flsd = connect_JSON(config)
+    flitsd = connect_JSON(config)
 
     if options.amount is None:
-        address_summary = list_available(flsd)
+        address_summary = list_available(flitsd)
         for address,info in address_summary.iteritems():
             n_transactions = len(info['outputs'])
             if n_transactions > 1:
@@ -253,14 +253,14 @@ def main():
     else:
         fee = Decimal(options.fee)
         amount = Decimal(options.amount)
-        while unlock_wallet(flsd) == False:
+        while unlock_wallet(flitsd) == False:
             pass # Keep asking for passphrase until they get it right
-        txdata = create_tx(flsd, options.fromaddresses.split(","), options.to, amount, fee)
-        sanity_test_fee(flsd, txdata, amount*Decimal("0.01"))
+        txdata = create_tx(flitsd, options.fromaddresses.split(","), options.to, amount, fee)
+        sanity_test_fee(flitsd, txdata, amount*Decimal("0.01"))
         if options.dry_run:
             print(txdata)
         else:
-            txid = flsd.sendrawtransaction(txdata)
+            txid = flitsd.sendrawtransaction(txdata)
             print(txid)
 
 if __name__ == '__main__':

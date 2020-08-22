@@ -1,10 +1,10 @@
 (note: this is a temporary file, to be added-to by anybody, and moved to release-notes at release time)
 
-FLS Core version *version* is now available from:  <https://github.com/flitsnode/fls/releases>
+SSS Core version *version* is now available from:  <https://github.com/Simple-Software-Solutions/Flits-Core/releases>
 
 This is a new major version release, including various bug fixes and performance improvements, as well as updated translations.
 
-Please report bugs using the issue tracker at github: <https://github.com/flitsnode/fls/issues>
+Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/Flits-Core/issues>
 
 
 Mandatory Update
@@ -14,178 +14,151 @@ Mandatory Update
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/FLS-Qt (on Mac) or flsd/fls-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sssolutionsd/sssolutions-qt (on Linux).
 
 
 Compatibility
 ==============
 
-FLS Core is extensively tested on multiple operating systems using the Linux kernel, macOS 10.10+, and Windows 7 and later.
+SSS Core is extensively tested on multiple operating systems using the Linux kernel, macOS 10.10+, and Windows 7 and later.
 
 Microsoft ended support for Windows XP on [April 8th, 2014](https://www.microsoft.com/en-us/WindowsForBusiness/end-of-xp-support), No attempt is made to prevent installing or running the software on Windows XP, you can still do so at your own risk but be aware that there are known instabilities and issues. Please do not report issues about Windows XP to the issue tracker.
 
-Apple released it's last Mountain Lion update August 13, 2015, and officially ended support on [December 14, 2015](http://news.fnal.gov/2015/10/mac-os-x-mountain-lion-10-8-end-of-life-december-14/). FLS Core software starting with v3.2.0 will no longer run on MacOS versions prior to Yosemite (10.10). Please do not report issues about MacOS versions prior to Yosemite to the issue tracker.
+Apple released it's last Mountain Lion update August 13, 2015, and officially ended support on [December 14, 2015](http://news.fnal.gov/2015/10/mac-os-x-mountain-lion-10-8-end-of-life-december-14/). SSS Core software starting with v3.2.0 will no longer run on MacOS versions prior to Yosemite (10.10). Please do not report issues about MacOS versions prior to Yosemite to the issue tracker.
 
-FLS Core should also work on most other Unix-like systems but is not frequently tested on them.
+SSS Core should also work on most other Unix-like systems but is not frequently tested on them.
 
- 
+
 Notable Changes
 ==============
 
-Minimum Supported MacOS Version
-------
+(Developers: add your notes here as part of your pull requests whenever possible)
 
-The minimum supported version of MacOS (OSX) has been moved from 10.8 Mountain Lion to 10.10 Yosemite. Users still running a MacOS version prior to Yosemite will need to upgrade their OS if they wish to continue using the latest version(s) of the FLS Core wallet.
+### Hierarchical Deterministic Wallet (HD Wallet)
 
-Attacks, Exploits, and Mitigations
-------
+Wallets under a tree derivation structure in which keypairs are generated deterministically from a single seed, which can be shared partially or entirely with different systems, each with or without the ability to spend coins, [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki).
 
-### Fake Stake
+Enabling major improvements over the keystore management, the SSS wallet doesn't require regular backups as before, keys are following a deterministic creation path that can be verified at any time (before HD Wallet, every keypair was randomly created and added to the keypool, forcing the user to backup the wallet every certain amount of time or could end up loosing coins forever if the latest `wallet.dat` was not being used).
+As well as new possibilities like the account extended public key that enables deterministic public keys creation without the private keys requisite inside the wallet (A good use case could be online stores generating fresh addresses).
 
-On Janurary 22 2019, Decentralized Systems Lab out of the University of Illinois published a study entitled “[‘Fake Stake’ attacks on chain-based Proof-of-Stake cryptocurrencies](https://medium.com/@dsl_uiuc/fake-stake-attacks-on-chain-based-proof-of-stake-cryptocurrencies-b8b05723f806)”, which outlined a type of Denial of Service attack that could take place on a number of Proof of Stake based networks by exhausting a client's RAM or Disk resources.
+This work includes a customization/extension to the [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) standard. We have included an unique staking keys derivation path which introduced the deterministic generation/recovery of staking addresses.
 
-A full report provided by FLS developers is available on the [FLS Website](https://fls.org/fake-stake-official-fls-report/), which includes additional findings, mitigation details, and resources for testing. This type of attack has no risk to users' privacy and does not affect their holdings.
+An extended description of this large work can be found in the PR [here](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1327).
 
-### Wrapped Serials
+#### HD Wallet FAQ
 
-On March 6th 2019, an attack was detected on the FLS network zerocoin protocol, or zFLS. The vulnerability allows an attacker to fake serials accepted by the network and thus to spend zerocoins that have never been minted. As severe as it is, it does not harm users’ privacy and does not affect their holdings directly.
+ - How do i upgrade to HD Wallet?
 
-As a result of this, all zFLS functionality was disabled via one of our sporks shortly after verification of this exploit. A full report, detailing how this attack was performed, as well as investigation results and mitigation methods is available [On Medium](https://medium.com/@dev.fls/report-wrapped-serials-attack-5f4bf7b51701).
+    GUI:
+    1) A dialog will appear on every wallet startup notifying you that you are running a pre-HD wallet and letting you upgrade it from there.
+    2) If you haven't upgraded your wallet, the topbar (bar with icons that appears at the top of your wallet) will have an "HD" icon. Click it and the upgrade dialog will be launched.
 
-zFLS functions will be restored after v3.2.0 is pushed out and the majority of the network has upgraded.
+    RPC:
+    1) If your wallet is unlocked, use the `-upgradewallet` flag at startup and will automatically upgrade your wallet.
+    2) If your wallet is encrypted, use the `upgradewallet` rpc command. It will upgrade your wallet to the latest wallet version.
 
-Major New Features
-------
+ - How do i know if i'm already running an HD Wallet?
 
-### BIP65 (CHECKLOCKTIMEVERIFY) Soft-Fork
+    1) GUI: Go to settings, press on the Debug option, then Information.
+    2) RPC: call `getwalletinfo`, the `walletversion` field must be `169900` (HD Wallet Feature).
 
-FLS Core v3.2.0 introduces new consensus rules for scripting pathways to support the [BIP65](https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki) standard. This is being carried out as a soft-fork in order to provide ample time for stakers to update their wallet version.
 
-### Automint Addresses
+### Functional Changes
 
-A new "Automint Addresses" feature has been added to the wallet that allows for the creation of new addresses who's purpose is to automatically convert any FLS funds received by such addresses to zFLS. The feature as a whole can be enabled/disabled either at runtime using the `-enableautoconvertaddress` option, via RPC/Console with the `enableautomintaddress` command, or via the GUI's options dialog, with the default being enabled.
+Automatic zSSS backup has been disabled. Thus, the following configuration options have been removed  (either as entries in the sss.conf file or as startup flags):
+- `autozsssbackup`
+- `backupzsss`
+- `zsssbackuppath`
 
-Creation of these automint addresses is currently only available via the RPC/Console `createautomintaddress` command, which takes no additional arguments. The command returns a new FLS address each time, but addresses created by this command can be re-used if desired.
+### Stake-Split threshold
+The stake split threshold is no longer required to be integer. It can be a fractional amount. A threshold value of 0 disables the stake-split functionality.
+The default value for the stake-split threshold has been lowered from 2000 SSS, down  to 500 SSS.
 
-### In-wallet Proposal Voting
 
-A new UI wallet tab has been introduced that allows users to view the current budget proposals, their vote counts, and vote on proposals if the wallet is acting as a masternode controller. The visual design is to be considered temporary, and will be undergoing further design and display improvements in the future.
+Dependencies
+------------
 
-### Zerocoin Lite Node Protocol
+The minimum required version of QT has been increased from 5.0 to 5.5.1 (the [depends system](https://github.com/Simple-Software-Solutions/Flits-Core/blob/master/depends/README.md) provides 5.9.7)
 
-Support for the ZLN Protocol has been added, which allows for a node to opt-in to providing extended network services for the protocol. By default, this functionality is disabled, but can be enabled by using the `-peerbloomfilterszc` runtime option.
-
-A full technical writeup of the protocol can be found [Here](https://fls.org/wp-content/uploads/2018/11/Zerocoin_Light_Node_Protocol.pdf).
-
-### Precomputed Zerocoin Proofs
-
-This introduces the ability to do most of the heavy computation required for zFLS spends **before** actually initiating the spend. A new thread, `ThreadPrecomputeSpends`, is added which constantly runs in the background.
-
-`ThreadPrecomputeSpends`' purpose is to monitor the wallet's zFLS mints and perform partial witness accumulations up to `nHeight - 20` blocks from the chain's tip (to ensure that it only ever computes data that is at least 2 accumulator checkpoints deep), retaining the results in memory.
-
-Additionally, a file based cache is introduced, `precomputes.dat`, which serves as a place to store any precomputed data between sessions, or when the in-memory cache size is exhausted. Swapping data between memory and disk file is done as needed, and periodic cache flushes to the disk are routine.
-
-This also introduces 2 new runtime configuration options:
-
-* `-precompute` is a binary boolean option (`1` or `0`) that determines wither or not pre-computation should be activated at runtime (default value is to activate, `1`).
-* `-precomputecachelength` is a numeric value between `500` and `2000` that tells the precompute thread how many blocks to include during each pass (default is `1000`).
-
-A new RPC command, `clearspendcache`, has been added that allows for the clearing/resetting of the precompute cache (both memory and disk). This command takes no additional arguments.
-
-Finally, the "security level" option for spending zFLS has been completely removed, and all zFLS spends now spend at what was formerly "security level" `100`. This change has been reflected in any RPC command that previously took a security level argument, as well as in the GUI's Privacy section for spending zFLS.
-
-### Regression Test Suite
-
-The RegTest network mode has been re-worked to once again allow for the generation of on-demand PoW and PoS blocks. Additionally, many of the existing functional test scripts have been adapted for use with FLS, and we now have a solid testing base for highly customizable tests to be written.
-
-With this, the old `setgenerate` RPC command no longer functions in regtest mode, instead a new `generate` command has been introduced that is more suited for use in regtest mode.
-
-GUI Changes
-------
-
-### Console Security Warning
-
-Due to an increase in social engineering attacks/scams that rely on users relaying information from console commands, a new warning message has been added to the Console window's initial welcome message.
-
-### Optional Hiding of Orphan Stakes
-
-The options dialog now contains a checkbox option to hide the display of orphan stakes from both the overview and transaction history sections. Further, a right-click context menu option has been introduced in the transaction history tab to achieve the same effect.
-
-**Note:** This option only affects the visual display of orphan stakes, and will not prevent them nor remove them from the underlying wallet database.
-
-### Transaction Type Recoloring
-
-The color of various transaction types has been reworked to provide better visual feedback. Staking and masternode rewards are now purple, orphan stakes are now light gray, other rejected transactions are in red, and normal receive/send transactions are black.
-
-### Receive Tab Changes
-
-The address to be used when creating a new payment request is now automatically displayed in the form. This field is not user-editable, and will be updated as needed by the wallet.
-
-A new button has been added below the payment request form, "Receiving Addresses", which allows for quicker access to all the known receiving addresses. This one-click button is the same as using the `File->Receiving Addresses...` menu command, and will open up the Receiving Addresses UI dialog.
-
-Historical payment requests now also display the address used for the request in the history table. While this information was already available when clicking the "Show" button, it was an extra step that shouldn't have been necessary.
-
-### Privacy Tab Changes
-
-The entire right half of the privacy tab can now be toggled (shown/hidden) via a new UI button. This was done to reduce "clutter" for users that may not wish to see the detailed information regarding individual denomination counts.
 
 RPC Changes
-------
+--------------
 
-### Backupwallet Sanity
+### Modified input/output for existing commands
 
-The `backupwallet` RPC command no longer allows for overwriting the currently in use wallet.dat file. This was done to avoid potential file corruption caused by multiple conflicting file access operations.
+- "CoinStake" JSON object in `getblock` output is removed, and replaced with the strings "stakeModifier" and "hashProofOfStake"
+- "obfcompat" JSON field in `getmasternodecount` output is removed as it is/was redundant with the `enabled` field.
 
-### Spendzerocoin Security Level Removed
 
-The `securitylevel` argument has been removed from the `spendzerocoin` RPC command.
+- "moneysupply" and "zsssSupply" attributes in `getblock` output are removed.
 
-### Spendzerocoinmints Added
 
-Introduce the `spendzerocoinmints` RPC call to enable spending specific zerocoins, provided as an array of hex strings (serial hashes).
+- "isPublicSpend" boolean (optional) input parameter is removed from the following commands:
+ - `createrawzerocoinspend`
+ - `spendzerocoin`
+ - `spendzerocoinmints`
+ - `spendrawzerocoin`
 
-### Getreceivedbyaddress Update
+ These commands are now able to create only *public* spends (private spends were already enabled only on regtest).
 
-When calling `getreceivedbyaddress` with a non-wallet address, return a proper error code/message instead of just `0`
 
-### Validateaddress More Verbosity
+- "mintchange" and "minimizechange" boolean input parameters are removed from the following commands:
+ - `spendzerocoin`
 
-`validateaddress` now has the ability to return more (non-critical or identifying) details about P2SH (multisig) addresses by removing the needless check against ISMINE_NO.
+ Mints are disabled, therefore it is no longer possible to mint the change of a zerocoin spend. The change is minimized by default.
 
-### Listmintedzerocoins Additional Options
 
-Add a `fVerbose` boolean optional argument (default=false) to `listmintedzerocoins` call to have a more detailed output.
+- `setstakesplitthreshold` now accepts decimal amounts. If the provided value is `0`, split staking gets disabled. `getstakesplitthreshold` returns a double.
 
-If `fVerbose` is specified as first argument, then a second optional boolean argument `fMatureOnly` (default=false) can be used to filter-out immature mints.
+- `dumpwallet` no longer allows overwriting files. This is a security measure
+   as well as prevents dangerous user mistakes.
 
-### Getblock & Getblockheader
+- The output of `getstakingstatus` was reworked. It now shows the following information:
+  ```
+  {
+     "staking_status": true|false,       (boolean) whether the wallet is staking or not
+     "staking_enabled": true|false,      (boolean) whether staking is enabled/disabled in sss.conf
+     "coldstaking_enabled": true|false,  (boolean) whether cold-staking is enabled/disabled in sss.conf
+     "haveconnections": true|false,      (boolean) whether network connections are present
+     "mnsync": true|false,               (boolean) whether masternode data is synced
+     "walletunlocked": true|false,       (boolean) whether the wallet is unlocked
+     "stakeablecoins": n,                (numeric) number of stakeable UTXOs
+     "stakingbalance": d,                (numeric) SSS value of the stakeable coins (minus reserve balance, if any)
+     "stakesplitthreshold": d,           (numeric) value of the current threshold for stake split
+     "lastattempt_age": n,               (numeric) seconds since last stake attempt
+     "lastattempt_depth": n,             (numeric) depth of the block on top of which the last stake attempt was made
+     "lastattempt_hash": xxx,            (hex string) hash of the block on top of which the last stake attempt was made
+     "lastattempt_coins": n,             (numeric) number of stakeable coins available during last stake attempt
+     "lastattempt_tries": n,             (numeric) number of stakeable coins checked during last stake attempt
+   }
+   ```
 
-A minor change to these two RPC commands to now display the `mediantime`, used primarialy during functional tests.
 
-### Getwalletinfo
+### Removed commands
 
-The `getwalletinfo` RPC command now outputs the configured transaction fee (`paytxfee` field).
+The following commands have been removed from the RPC interface:
+- `createrawzerocoinstake`
+- `getmintsinblocks`
+- `reservebalance`
+- `getpoolinfo`
 
-Build System Changes
-------
+### Newly introduced commands
 
-### Completely Disallow Qt4
+The following new commands have been added to the RPC interface:
+- `logging` <br>Gets and sets the logging configuration.<br>
+When called without an argument, returns the list of categories that are currently being debug logged.<br>
+When called with arguments, adds or removes categories from debug logging.<br>
+E.g. `logging "[\"all\"]" "[\"http\"]""`
 
-Compiling the FLS Core wallet against Qt4 hasn't been supported for quite some time now, but the build system still recognized Qt4 as a valid option if Qt5 couldn't be found. This has now been remedied and Qt4 will no longer be considered valid during the `configure` pre-compilation phase.
 
-### Further OpenSSL Deprecation
+Details about each new command can be found below.
 
-Up until now, the zerocoin library relied exclusively on OpenSSL for it's bignum implementation. This has now been changed with the introduction of GMP as an arithmetic operator and the bignum implementation has now been redesigned around GMP. Users can still opt to use OpenSSL for bignum by passing `--with-zerocoin-bignum=openssl` to the `configure` script, however such configuration is now deprecated.
 
-**Note:** This change introduces a new dependency on GMP (libgmp) by default.
+Changed command-line options
+-----------------------------
 
-### RISC-V Support
+- `-debuglogfile=<file>` can be used to specify an alternative debug logging file. This can be an absolute path or a path relative to the data directory
 
-Support for the new RISC-V 64bit processors has been added, though still experimental. Pre-compiled binaries for this CPU architecture are available for linux, and users can self-compile using gitian, depends, or an appropriate host system natively.
-
-### New Gitian Build Script
-
-The previous `gitian-build.sh` shell script has been replaced with a more feature rich python version; `gitian-build.py`. This script now supports the use of a docker container in addition to LXC or KVM virtualization, as well as the ability to build against a pull request by number.
 
 *version* Change log
 ==============
@@ -195,21 +168,49 @@ Detailed release notes follow. This overview includes changes that affect behavi
 ### Core Features
 
 ### Build System
- 
+
 ### P2P Protocol and Network Code
 
+The p2p alert system has been removed in [PR #1372](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1372) and the 'alert' message is no longer supported.
+
 ### GUI
- 
+
+**Keyboard navigation**: dialogs can now be accepted with the `ENTER` (`RETURN`) key, and dismissed with the `ESC` key ([#1392](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1392)).
+
+
+**Address sorting**: address sorting in "My Addresses" / "Contacts" / "Cold Staking" can now be customized, setting it either by label (default), by address, or by creation date, ascending (default) or descending order.
+Addresses in the dropdown of the "Send Transaction" and "Send Delegation" widgets are now automatically sorted by label with ascending order ([#1393](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1393)).
+
+
+**Custom Fee**: The custom fee selected when sending a transaction is now saved in the wallet database and persisted across multiple sends and wallet's restarts ([#1406](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1406)).
+
+
+**Include delegations in send**: The send and cold-staking page present a checkbox ([#1391](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1391)) to make the automatic input selection algorithm include delegated (P2CS) utxos if needed. The option is unchecked by default.
+
+
+**Staking Charts**: can now be hidden at startup (with a flag `--hidecharts`) or at runtime with a checkbox in settings --> options --> display ([PR #1475](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1475)).
+
+
+
 ### RPC/REST
 
 ### Wallet
- 
+
+
+__Context Lock/Unlock__ [[PR #1387](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1387)]:<br>
+Present the unlock dialog directly (instead of an error message), whenever an action on encrypted/locked wallet requires full unlock.<br>
+Restore the previous locking state ("locked" or "locked for staking only") when the action is completed.
+
+
+__Configuration Options__:
+
+- The `-reservebalance` configuration/startup option has been removed ([PR #1373](https://github.com/Simple-Software-Solutions/Flits-Core/pull/1373)).
+
 ### Miscellaneous
- 
- 
+
 ## Credits
 
 Thanks to everyone who directly contributed to this release:
 
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/flitsnode-translations/), the QA team during Testing and the Node hosts supporting our Testnet.
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/Flits-Core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.

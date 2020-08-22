@@ -1,0 +1,3 @@
+usr/local/bin/flitsd usr/bin
+usr/local/bin/flits-cli usr/bin
+debian/examples/fls.conf etc/fls

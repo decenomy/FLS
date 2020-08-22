@@ -1,0 +1,6 @@
+usr/local/bin/flits-qt usr/bin
+share/pixmaps/fls32.xpm usr/share/pixmaps
+share/pixmaps/fls16.xpm usr/share/pixmaps
+share/pixmaps/fls128.png usr/share/pixmaps
+debian/flits-qt.desktop usr/share/applications
+debian/flits-qt.protocol usr/share/kde4/services/
