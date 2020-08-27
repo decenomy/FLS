@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2018-2019 The Bitcoin Core developers
-# Copyright (c) 2019 The flitsdevelopers
+# Copyright (c) 2019 The flits developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -105,12 +105,12 @@ def setup_darwin():
 def setup_repos():
     if not os.path.isdir('gitian.sigs'):
         subprocess.check_call(['git', 'clone', 'https://github.com/dogecash/gitian.sigs.git'])
-    if not os.path.isdir('fls-detached-sigs'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/dogecash/fls-detached-sigs.git'])
+    if not os.path.isdir('detached-sigs'):
+        subprocess.check_call(['git', 'clone', 'https://github.com/dogecash/detached-sigs.git'])
     if not os.path.isdir('gitian-builder'):
         subprocess.check_call(['git', 'clone', 'https://github.com/devrandom/gitian-builder.git'])
     if not os.path.isdir('Flits-Core'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/Simple-Software-Solutions/Flits-Core.git'])
+        subprocess.check_call(['git', 'clone', 'https://github.com/flitsnode/Flits-Core.git'])
     os.chdir('gitian-builder')
     make_image_prog = ['bin/make-base-vm', '--suite', 'bionic', '--arch', 'amd64']
     if args.docker:
@@ -137,7 +137,7 @@ def setup_repos():
 def build():
     global args, workdir
 
-    os.makedirs('fls-binaries/' + args.version, exist_ok=True)
+    os.makedirs('flits-binaries/' + args.version, exist_ok=True)
     print('\nBuilding Dependencies\n')
     os.chdir('gitian-builder')
     os.makedirs('inputs', exist_ok=True)
@@ -152,21 +152,21 @@ def build():
         print('\nCompiling ' + args.version + ' Linux')
         subprocess.check_call(['bin/gbuild', '-j', args.jobs, '-m', args.memory, '--commit', 'Flits-Core='+args.commit, '--url', 'Flits-Core='+args.url, '../Flits-Core/contrib/gitian-descriptors/gitian-linux.yml'])
         subprocess.check_call(['bin/gsign', '-p', args.sign_prog, '--signer', args.signer, '--release', args.version+'-linux', '--destination', '../gitian.sigs/', '../Flits-Core/contrib/gitian-descriptors/gitian-linux.yml'])
-        subprocess.check_call('mv build/out/fls-*.tar.gz build/out/src/fls-*.tar.gz ../fls-binaries/'+args.version, shell=True)
+        subprocess.check_call('mv build/out/fls-*.tar.gz build/out/src/fls-*.tar.gz ../flits-binaries/'+args.version, shell=True)
 
     if args.windows:
         print('\nCompiling ' + args.version + ' Windows')
         subprocess.check_call(['bin/gbuild', '-j', args.jobs, '-m', args.memory, '--commit', 'Flits-Core='+args.commit, '--url', 'Flits-Core='+args.url, '../Flits-Core/contrib/gitian-descriptors/gitian-win.yml'])
         subprocess.check_call(['bin/gsign', '-p', args.sign_prog, '--signer', args.signer, '--release', args.version+'-win-unsigned', '--destination', '../gitian.sigs/', '../Flits-Core/contrib/gitian-descriptors/gitian-win.yml'])
         subprocess.check_call('mv build/out/fls-*-win-unsigned.tar.gz inputs/', shell=True)
-        subprocess.check_call('mv build/out/fls-*.zip build/out/fls-*.exe build/out/src/fls-*.tar.gz ../fls-binaries/'+args.version, shell=True)
+        subprocess.check_call('mv build/out/fls-*.zip build/out/fls-*.exe build/out/src/fls-*.tar.gz ../flits-binaries/'+args.version, shell=True)
 
     if args.macos:
         print('\nCompiling ' + args.version + ' MacOS')
         subprocess.check_call(['bin/gbuild', '-j', args.jobs, '-m', args.memory, '--commit', 'Flits-Core='+args.commit, '--url', 'Flits-Core='+args.url, '../Flits-Core/contrib/gitian-descriptors/gitian-osx.yml'])
         subprocess.check_call(['bin/gsign', '-p', args.sign_prog, '--signer', args.signer, '--release', args.version+'-osx-unsigned', '--destination', '../gitian.sigs/', '../Flits-Core/contrib/gitian-descriptors/gitian-osx.yml'])
         subprocess.check_call('mv build/out/fls-*-osx-unsigned.tar.gz inputs/', shell=True)
-        subprocess.check_call('mv build/out/fls-*.tar.gz build/out/fls-*.dmg build/out/src/fls-*.tar.gz ../fls-binaries/'+args.version, shell=True)
+        subprocess.check_call('mv build/out/fls-*.tar.gz build/out/fls-*.dmg build/out/src/fls-*.tar.gz ../flits-binaries/'+args.version, shell=True)
 
     os.chdir(workdir)
 
@@ -186,27 +186,27 @@ def sign():
 
     # TODO: Skip making signed windows sigs until we actually start producing signed windows binaries
     #print('\nSigning ' + args.version + ' Windows')
-    #subprocess.check_call('cp inputs/flits-' + args.version + '-win-unsigned.tar.gz inputs/flits-win-unsigned.tar.gz', shell=True)
+    #subprocess.check_call('cp inputs/Flits-Core-' + args.version + '-win-unsigned.tar.gz inputs/flits-win-unsigned.tar.gz', shell=True)
     #subprocess.check_call(['bin/gbuild', '--skip-image', '--upgrade', '--commit', 'signature='+args.commit, '../Flits-Core/contrib/gitian-descriptors/gitian-win-signer.yml'])
     #subprocess.check_call(['bin/gsign', '-p', args.sign_prog, '--signer', args.signer, '--release', args.version+'-win-signed', '--destination', '../gitian.sigs/', '../Flits-Core/contrib/gitian-descriptors/gitian-win-signer.yml'])
-    #subprocess.check_call('mv build/out/fls-*win64-setup.exe ../fls-binaries/'+args.version, shell=True)
-    #subprocess.check_call('mv build/out/fls-*win32-setup.exe ../fls-binaries/'+args.version, shell=True)
+    #subprocess.check_call('mv build/out/fls-*win64-setup.exe ../flits-binaries/'+args.version, shell=True)
+    #subprocess.check_call('mv build/out/fls-*win32-setup.exe ../flits-binaries/'+args.version, shell=True)
 
     print('\nSigning ' + args.version + ' MacOS')
-    subprocess.check_call('cp inputs/flits-' + args.version + '-osx-unsigned.tar.gz inputs/flits-osx-unsigned.tar.gz', shell=True)
+    subprocess.check_call('cp inputs/Flits-Core-' + args.version + '-osx-unsigned.tar.gz inputs/fls-osx-unsigned.tar.gz', shell=True)
     subprocess.check_call(['bin/gbuild', '--skip-image', '--upgrade', '--commit', 'signature='+args.commit, '../Flits-Core/contrib/gitian-descriptors/gitian-osx-signer.yml'])
     subprocess.check_call(['bin/gsign', '-p', args.sign_prog, '--signer', args.signer, '--release', args.version+'-osx-signed', '--destination', '../gitian.sigs/', '../Flits-Core/contrib/gitian-descriptors/gitian-osx-signer.yml'])
-    subprocess.check_call('mv build/out/fls-osx-signed.dmg ../fls-binaries/'+args.version+'/fls-'+args.version+'-osx.dmg', shell=True)
+    subprocess.check_call('mv build/out/fls-osx-signed.dmg ../flits-binaries/'+args.version+'/fls-'+args.version+'-osx.dmg', shell=True)
 
     os.chdir(workdir)
 
     if args.commit_files:
         os.chdir('gitian.sigs')
         commit = False
-        if os.path.isfile(args.version+'-win-signed/'+args.signer+'/fls-win-signer-build.assert.sig'):
+        if os.path.isfile(args.version+'-win-signed/'+args.signer+'/flits-win-signer-build.assert.sig'):
             subprocess.check_call(['git', 'add', args.version+'-win-signed/'+args.signer])
             commit = True
-        if os.path.isfile(args.version+'-osx-signed/'+args.signer+'/fls-dmg-signer-build.assert.sig'):
+        if os.path.isfile(args.version+'-osx-signed/'+args.signer+'/flits-dmg-signer-build.assert.sig'):
             subprocess.check_call(['git', 'add', args.version+'-osx-signed/'+args.signer])
             commit = True
         if commit:
@@ -258,7 +258,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script for running full Gitian builds.')
     parser.add_argument('-c', '--commit', action='store_true', dest='commit', help='Indicate that the version argument is for a commit or branch')
     parser.add_argument('-p', '--pull', action='store_true', dest='pull', help='Indicate that the version argument is the number of a github repository pull request')
-    parser.add_argument('-u', '--url', dest='url', default='https://github.com/Simple-Software-Solutions/Flits-Core', help='Specify the URL of the repository. Default is %(default)s')
+    parser.add_argument('-u', '--url', dest='url', default='https://github.com/flitsnode/flits-core', help='Specify the URL of the repository. Default is %(default)s')
     parser.add_argument('-v', '--verify', action='store_true', dest='verify', help='Verify the Gitian build')
     parser.add_argument('-b', '--build', action='store_true', dest='build', help='Do a Gitian build')
     parser.add_argument('-s', '--sign', action='store_true', dest='sign', help='Make signed binaries for Windows and MacOS')
@@ -359,9 +359,9 @@ def main():
     os.chdir('Flits-Core')
     if args.pull:
         subprocess.check_call(['git', 'fetch', args.url, 'refs/pull/'+args.version+'/merge'])
-        if not os.path.isdir('../gitian-builder/inputs/flits-core'):
-            os.makedirs('../gitian-builder/inputs/flits-core')
-        os.chdir('../gitian-builder/inputs/flits-core')
+        if not os.path.isdir('../gitian-builder/inputs/Flits-Core'):
+            os.makedirs('../gitian-builder/inputs/Flits-Core')
+        os.chdir('../gitian-builder/inputs/Flits-Core')
         if not os.path.isdir('.git'):
             subprocess.check_call(['git', 'init'])
         subprocess.check_call(['git', 'fetch', args.url, 'refs/pull/'+args.version+'/merge'])
