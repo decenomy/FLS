@@ -1,5 +1,5 @@
 ---
-name: "flits-linux-4.1"
+name: "fls-linux-4.1"
 enable_cache: true
 distro: "ubuntu"
 suites:
