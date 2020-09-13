@@ -293,7 +293,7 @@ fs::path GetDefaultDataDir()
 // Unix: ~/.fls
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "FlitsCore";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "FLS";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -305,10 +305,10 @@ fs::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectory(pathRet);
-    return pathRet / "flits";
+    return pathRet / "FLS";
 #else
     // Unix
-    return pathRet / ".flits";
+    return pathRet / ".fls";
 #endif
 #endif
 }
