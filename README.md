@@ -1,59 +1,70 @@
-SSS Core integration/staging repository
+FLS Core integration/staging repository
 =====================================
 
-[![Build Status](https://travis-ci.org/Flits-Core/SSS.svg?branch=master)](https://travis-ci.org/Flits-Core/SSS) [![GitHub version](https://badge.fury.io/gh/Flits-Core%2FSSS.svg)](https://badge.fury.io/gh/Flits-Core%2FSSS)
+[![Build Status](https://travis-ci.org/Flits-Core/FLS.svg?branch=master)](https://travis-ci.org/Flits-Core/SSS) [![GitHub version](https://badge.fury.io/gh/Flits-Core%2FSSS.svg)](https://badge.fury.io/gh/Flits-Core%2FSSS)
 
-SSS is an open source crypto-currency focused on fast private transactions using the Zerocoin protocol, with low transaction fees & environmental footprint.  It utilizes the first ever anonymous proof of stake protocol, called zPoS, combined with regular PoS and masternodes for securing its network. zPoS incentivises using the privacy features available in SSS by granting a higher block reward for zPoS over regular PoS and masternodes. In practice SSS has between 4 to 10 times higher use of it's privacy features in comparison to other coins that combine public and private transactions. This is thanks to innovations like zPoS and integrating the Zerocoin protocol into light/mobile wallets, allowing for a complete and lightweight privacy protocol that can be used on the go. As well as security improvements like [deterministic generation of zSSS for easy backups.](https://www.reddit.com/r/sss/comments/8gbjf7/how_to_use_deterministic_zerocoin_generation/)
-The goal of SSS is to achieve a decentralized sustainable crypto currency with near instant full-time private transactions, fair governance and community intelligence.
-- Anonymized transactions & consensus using the [_Zerocoin Protocol_](http://www.sss.org/zsss) and [zPoS](https://sssolutions.io/zpos/).
-- light/mobile wallet privacy using the [Zerocoin Light Node Protocol](https://sssolutions.io/wp-content/uploads/2018/11/Zerocoin_Light_Node_Protocol.pdf)
-- Fast transactions featuring guaranteed zero confirmation transactions, we call it _SwiftX_.
+The goal of FLS is to achieve a decentralized sustainable crypto currency with near instant transactions, fair governance and community intelligence and to be the power of the Flits app ecosystem.
 - Decentralized blockchain voting utilizing Masternode technology to form a DAO. The blockchain will distribute monthly treasury funds based on successful proposals submitted by the community and voted on by the DAO.
+- Power behind the non-custodial Flits Wallet app for passive income solutions.
 
-More information at [sss.org](http://www.sss.org) Visit our ANN thread at [BitcoinTalk](http://www.bitcointalk.org/index.php?topic=1262920)
+More information at [flitswallet.app](http://fitswallet.app)
 
 ### Coin Specs
 <table>
 <tr><td>Algo</td><td>Quark</td></tr>
-<tr><td>Block Time</td><td>60 Seconds</td></tr>
+<tr><td>Block Time</td><td>80 Seconds</td></tr>
 <tr><td>Difficulty Retargeting</td><td>Every Block</td></tr>
-<tr><td>Max Coin Supply (PoW Phase)</td><td>43,199,500 SSS</td></tr>
-<tr><td>Max Coin Supply (PoS Phase)</td><td>Infinite</td></tr>
-<tr><td>Premine</td><td>60,000 SSS*</td></tr>
+<tr><td>Max Coin Supply</td><td>10,000,000</td></tr>
+<tr><td>Premine</td><td>110,000 FLS</td></tr>
 </table>
-
-*60,000 SSS Premine was burned in block [279917](http://www.presstab.pw/phpexplorer/SSS/block.php?blockhash=206d9cfe859798a0b0898ab00d7300be94de0f5469bb446cecb41c3e173a57e0)
 
 ### Reward Distribution
 
 <table>
 <th colspan=4>Genesis Block</th>
 <tr><th>Block Height</th><th>Reward Amount</th><th>Notes</th></tr>
-<tr><td>1</td><td>60,000 SSS</td><td>Initial Pre-mine, burnt in block <a href="http://www.presstab.pw/phpexplorer/SSS/block.php?blockhash=206d9cfe859798a0b0898ab00d7300be94de0f5469bb446cecb41c3e173a57e0">279917</a></td></tr>
+<tr><td>1</td><td>110,000 SSS</td><td>Initial Pre-mine</td></tr>
 </table>
 
 ### PoW Rewards Breakdown
 
 <table>
-<th>Block Height</th><th>Masternodes</th><th>Miner</th><th>Budget</th>
-<tr><td>2-43200</td><td>20% (50 SSS)</td><td>80% (200 SSS)</td><td>N/A</td></tr>
-<tr><td>43201-151200</td><td>20% (50 SSS)</td><td>70% (200 SSS)</td><td>10% (25 SSS)</td></tr>
-<tr><td>151201-259200</td><td>45% (22.5 SSS)</td><td>45% (22.5 SSS)</td><td>10% (5 SSS)</td></tr>
+<th>Block Height</th><th>Masternodes</th><th>Miner</th>
+<tr><td>2-200</td><td>0% (0 FLS)</td><td>0% (0 FLS)</td></tr>
 </table>
 
 ### PoS Rewards Breakdown
 
 <table>
-<th>Phase</th><th>Block Height</th><th>Reward</th><th>Masternodes & Stakers</th><th>Budget</th>
-<tr><td>Phase 0</td><td>259201-302399</td><td>50 SSS</td><td>90% (45 SSS)</td><td>10% (5 SSS)</td></tr>
-<tr><td>Phase 1</td><td>302400-345599</td><td>45 SSS</td><td>90% (40.5 SSS)</td><td>10% (4.5 SSS)</td></tr>
-<tr><td>Phase 2</td><td>345600-388799</td><td>40 SSS</td><td>90% (36 SSS)</td><td>10% (4 SSS)</td></tr>
-<tr><td>Phase 3</td><td>388800-431999</td><td>35 SSS</td><td>90% (31.5 SSS)</td><td>10% (3.5 SSS)</td></tr>
-<tr><td>Phase 4</td><td>432000-475199</td><td>30 SSS</td><td>90% (27 SSS)</td><td>10% (3 SSS)</td></tr>
-<tr><td>Phase 5</td><td>475200-518399</td><td>25 SSS</td><td>90% (22.5 SSS)</td><td>10% (2.5 SSS)</td></tr>
-<tr><td>Phase 6</td><td>518400-561599</td><td>20 SSS</td><td>90% (18 SSS)</td><td>10% (2 SSS)</td></tr>
-<tr><td>Phase 7</td><td>561600-604799</td><td>15 SSS</td><td>90% (13.5 SSS)</td><td>10% (1.5 SSS)</td></tr>
-<tr><td>Phase 8</td><td>604800-647999</td><td>10 SSS</td><td>90% (9 SSS)</td><td>10% (1 SSS)</td></tr>
-<tr><td>Phase 9</td><td>648000-1154203</td><td>5 SSS</td><td>90% (4.5 SSS)</td><td>10% (0.5 SSS)</td></tr>
-<tr><td>Phase X</td><td>1154203-∞</td><td>6 SSS</td><td>84% (5 SSS/zSSS)</td><td>16% (1 SSS)</td></tr>
+<th>Phase</th><th>Block Height</th><th>Reward</th><th>Masternodes</th><th>Stakers</th>
+<tr><td>Phase 0</td><td>201-10080</td><td>0.2 FLS</td><td>80% (0.16 FLS)</td><td>20% (0.04 FLS)</td></tr>
+<tr><td>Phase 1</td><td>10081-20000</td><td>0.6 FLS</td><td>80% (0.48 FLS)</td><td>20% (0.12 FLS)</td></tr>
+<tr><td>Phase 2</td><td>20001-40000</td><td>0.9 FLS</td><td>80% (0.72 FLS)</td><td>20% (0.18 FLS)</td></tr>
+<tr><td>Phase 3</td><td>40001-60000</td><td>1.3 FLS</td><td>80% (1.04 FLS)</td><td>20% (0.26 FLS)</td></tr>
+<tr><td>Phase 4</td><td>60001-80000</td><td>1.4 FLS</td><td>80% (1.12 FLS)</td><td>20% (0.28 FLS)</td></tr>
+<tr><td>Phase 5</td><td>80001-100000</td><td>1.6 FLS</td><td>80% (1.28 FLS)</td><td>20% (0.32 FLS)</td></tr>
+<tr><td>Phase 6</td><td>100001-140000</td><td>1.9 FLS</td><td>80% (1.52 FLS)</td><td>20% (0.38 FLS)</td></tr>
+<tr><td>Phase 7</td><td>140001-180000</td><td>2.2 FLS</td><td>80% (1.76 FLS)</td><td>20% (0.44 FLS)</td></tr>
+<tr><td>Phase 8</td><td>180001-220000</td><td>2.4 FLS</td><td>80% (1.92 FLS)</td><td>20% (0.48 FLS)</td></tr>
+<tr><td>Phase 9</td><td>220001-260000</td><td>2.6 FLS</td><td>80% (2.08 FLS)</td><td>20% (0.52 FLS)</td></tr>
+<tr><td>Phase 9</td><td>260001-300000</td><td>2.8 FLS</td><td>80% (2.24 FLS)</td><td>20% (0.56 FLS)</td></tr>
+<tr><td>Phase 10</td><td>300001-340000</td><td>3 FLS</td><td>80% (2.4 FLS)</td><td>20% (0.60 FLS)</td></tr>
+<tr><td>Phase 11</td><td>340001-380000</td><td>3.25 FLS</td><td>80% (2.6 FLS)</td><td>20% (0.65 FLS)</td></tr>
+<tr><td>Phase 12</td><td>380001-420000</td><td>3.5 FLS</td><td>80% (2.8 FLS)</td><td>20% (0.70 FLS)</td></tr>
+<tr><td>Phase 13</td><td>420001-460000</td><td>3.75 FLS</td><td>80% (3 FLS)</td><td>20% (0.75 FLS)</td></tr>
+<tr><td>Phase 14</td><td>460001-500000</td><td>4 FLS</td><td>80% (3.2 FLS)</td><td>20% (0.8 FLS)</td></tr>
+<tr><td>Phase 15</td><td>500001-600000</td><td>4.6 FLS</td><td>80% (3.68 FLS)</td><td>20% (0.92 FLS)</td></tr>
+<tr><td>Phase 16</td><td>600001-700000</td><td>5.25 FLS</td><td>80% (4.2 FLS)</td><td>20% (1.05 FLS)</td></tr>
+<tr><td>Phase 17</td><td>700001-800000</td><td>5.6 FLS</td><td>80% (4.48 FLS)</td><td>20% (1.12 FLS)</td></tr>
+<tr><td>Phase 18</td><td>800001-900000</td><td>6.25 FLS</td><td>80% (5 FLS)</td><td>20% (1.25 FLS)</td></tr>
+<tr><td>Phase 18</td><td>900001-1000000</td><td>6.9 FLS</td><td>80% (5.52 FLS)</td><td>20% (1.38 FLS)</td></tr>
+<tr><td>Phase 19</td><td>1000001-1200000</td><td>5 FLS</td><td>80% (4 FLS)</td><td>20% (1 FLS)</td></tr>
+<tr><td>Phase 20</td><td>1200001-1400000</td><td>3.75 FLS</td><td>80% (3 FLS)</td><td>20% (0.75 FLS)</td></tr>
+<tr><td>Phase 20</td><td>1400001-1600000</td><td>2.5 FLS</td><td>80% (2 FLS)</td><td>20% (0.5 FLS)</td></tr>
+<tr><td>Phase 21</td><td>1600001-2000000</td><td>2.25 FLS</td><td>80% (1.8 FLS)</td><td>20% (0.45 FLS)</td></tr>
+<tr><td>Phase 22</td><td>2000001-2400000</td><td>2 FLS</td><td>80% (1.6 FLS)</td><td>20% (0.4 FLS)</td></tr>
+<tr><td>Phase 23</td><td>2400001-2800000</td><td>1.75 FLS</td><td>80% (1.4 FLS)</td><td>20% (0.35 FLS)</td></tr>
+<tr><td>Phase 24</td><td>2800001-3200000</td><td>1.5 FLS</td><td>80% (1.2 FLS)</td><td>20% (0.3 FLS)</td></tr>
+<tr><td>Phase 25</td><td>3200001-3600000</td><td>1.25 FLS</td><td>80% (1 FLS)</td><td>20% (0.25 FLS)</td></tr>
+<tr><td>Phase X</td><td>3600001-end</td><td>0.504 FLS</td><td>80% (1 FLS)</td><td>20% (0.126 FLS)</td></tr>
 </table>
