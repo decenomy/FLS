@@ -3443,6 +3443,18 @@ bool FindUndoPos(CValidationState& state, int nFile, CDiskBlockPos& pos, unsigne
     return true;
 }
 
+int GetBudgetCycleBlocks()
+{
+    CBlockIndex* pindexPrev = chainActive.Tip();
+    if (pindexPrev == NULL) return -1;
+
+    if(pindexPrev->nHeight < 615000) {
+        return 11500;
+    } else {
+        return Params().GetConsensus().nBudgetCycleBlocks;
+    }
+}
+
 bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, bool fCheckPOW)
 {
     // Check proof of work matches claimed amount

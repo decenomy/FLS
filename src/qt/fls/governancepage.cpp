@@ -124,9 +124,9 @@ void GovernancePage::updateProposalList()
         pindexPrev = chainActive.Tip();
     }
     if (!pindexPrev) return;
-    int nBlockStart = pindexPrev->nHeight - pindexPrev->nHeight % Params().GetConsensus().nBudgetCycleBlocks + Params().GetConsensus().nBudgetCycleBlocks;
+    int nBlockStart = pindexPrev->nHeight - pindexPrev->nHeight % GetBudgetCycleBlocks() + GetBudgetCycleBlocks();
     int nBlocksLeft = nBlockStart - pindexPrev->nHeight;
-    int nBlockEnd = nBlockStart + Params().GetConsensus().nBudgetCycleBlocks - 1;
+    int nBlockEnd = nBlockStart + GetBudgetCycleBlocks() - 1;
     int mnCount = mnodeman.CountEnabled(ActiveProtocol());
 
     for (CBudgetProposal* pbudgetProposal : proposalsList) {

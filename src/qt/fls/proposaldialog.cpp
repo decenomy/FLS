@@ -108,7 +108,7 @@ ProposalDialog::ProposalDialog(Mode mode, QWidget* parent) : QDialog(parent), ui
     // Load next superblock number.
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (!pindexPrev) return;
-    int nNext = pindexPrev->nHeight - pindexPrev->nHeight % Params().GetConsensus().nBudgetCycleBlocks + Params().GetConsensus().nBudgetCycleBlocks;
+    int nNext = pindexPrev->nHeight - pindexPrev->nHeight % GetBudgetCycleBlocks() + GetBudgetCycleBlocks();
     ui->blockEdit->setText(QString::number(nNext));
 
     // Start periodic updates to handle submit block depth validation.
@@ -252,17 +252,17 @@ bool ProposalDialog::validateProposal()
     // Start must be in the next budget cycle
     int nBlockMin = 0;
     CBlockIndex* pindexPrev = chainActive.Tip();
-    if (pindexPrev != NULL) nBlockMin = pindexPrev->nHeight - pindexPrev->nHeight % Params().GetConsensus().nBudgetCycleBlocks + Params().GetConsensus().nBudgetCycleBlocks;
+    if (pindexPrev != NULL) nBlockMin = pindexPrev->nHeight - pindexPrev->nHeight % GetBudgetCycleBlocks() + GetBudgetCycleBlocks();
 
     int nBlockStart = ui->blockEdit->text().toInt();
     if (nBlockStart < nBlockMin) strError = "Invalid block start, must be more than current height.";
-    if (nBlockStart % (Params().GetConsensus().nBudgetCycleBlocks + 1) != 0)
+    if (nBlockStart % (GetBudgetCycleBlocks() + 1) != 0)
     {
-        int nNext = pindexPrev->nHeight - pindexPrev->nHeight % Params().GetConsensus().nBudgetCycleBlocks + Params().GetConsensus().nBudgetCycleBlocks;
+        int nNext = pindexPrev->nHeight - pindexPrev->nHeight % GetBudgetCycleBlocks() + GetBudgetCycleBlocks();
         strError = strprintf("Invalid block start - must be a budget cycle block. Next valid block: %d", nNext);
     }
 
-    int nBlockEnd = nBlockStart + (Params().GetConsensus().nBudgetCycleBlocks * nPaymentCount); // End must be AFTER current cycle
+    int nBlockEnd = nBlockStart + (GetBudgetCycleBlocks() * nPaymentCount); // End must be AFTER current cycle
     if (nBlockEnd < pindexPrev->nHeight) strError = "Invalid ending block, starting block + (payment_cycle*payments) must be more than current height.";
 
     CBitcoinAddress address(ui->addressEdit->text().toStdString());

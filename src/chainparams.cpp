@@ -158,10 +158,10 @@ public:
         consensus.nTimeSlotLength = 20;
 
         // spork keys
-        consensus.strSporkPubKey = "0426c24ed88f8c36b3b0e97766a6f94e72e860b7faa4cc489c68386cf5f8a9f4eef881aea324a2bf7fe0ca1c4bd6c015f910224df5f42a718c1660b1a14808e6c2";
+        consensus.strSporkPubKey = "04878dd2f3979e8f97b7c34e48c6e5585deb3e21426bcc9ebdaf1a652299c5ebec5d6e912613e0dd75ad89d99abfd91a86b25dd66102fb4b5f7fa0f048fb929996";
         consensus.strSporkPubKeyOld = "0426c24ed88f8c36b3b0e97766a6f94e72e860b7faa4cc489c68386cf5f8a9f4eef881aea324a2bf7fe0ca1c4bd6c015f910224df5f42a718c1660b1a14808e6c2";
-        consensus.nTime_EnforceNewSporkKey = 1554402932;    //!> August 26, 2019 11:00:00 PM GMT
-        consensus.nTime_RejectOldSporkKey = 1554402932;     //!> September 26, 2019 11:00:00 PM GMT
+        consensus.nTime_EnforceNewSporkKey = 1600110000;    //!> September 14, 2020 8:00:00 PM GMT+1
+        consensus.nTime_RejectOldSporkKey = 1600110000;     //!> September 14, 2020 8:00:00 PM GMT+1
 
         // height-based activations
         consensus.height_last_PoW = 200;
@@ -169,10 +169,10 @@ public:
         consensus.height_last_ZC_WrappedSerials = INT_MAX;
         consensus.height_start_BIP65 = 1;             // Block v5: 82629b7a9978f5c7ea3f70a12db92633a7d2e436711500db28b97efd48b1e527
         consensus.height_start_InvalidUTXOsCheck = INT_MAX;
-        consensus.height_start_MessSignaturesV2 = 586680;  // height_start_TimeProtoV2
+        consensus.height_start_MessSignaturesV2 = 611500;  // height_start_TimeProtoV2
         consensus.height_start_StakeModifierNewSelection = 177980;
         consensus.height_start_StakeModifierV2 = 178000;   // Block v6: 0ef2556e40f3b9f6e02ce611b832e0bbfe7734a8ea751c7b555310ee49b61456
-        consensus.height_start_TimeProtoV2 = 586700;       // Block v7: 14e477e597d24549cac5e59d97d32155e6ec2861c1003b42d0566f9bf39b65d5
+        consensus.height_start_TimeProtoV2 = 611520;       // Block v7: 14e477e597d24549cac5e59d97d32155e6ec2861c1003b42d0566f9bf39b65d5
         consensus.height_start_ZC = 205;                 // Block v4: 5b2482eca24caf2a46bb22e0545db7b7037282733faa3a42ec20542509999a64
         consensus.height_start_ZC_InvalidSerials = INT_MAX;
         consensus.height_start_ZC_PublicSpends = 178000;
