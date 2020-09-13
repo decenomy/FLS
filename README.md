@@ -23,7 +23,7 @@ More information at [flitswallet.app](http://fitswallet.app)
 <table>
 <th colspan=4>Genesis Block</th>
 <tr><th>Block Height</th><th>Reward Amount</th><th>Notes</th></tr>
-<tr><td>1</td><td>110,000 SSS</td><td>Initial Pre-mine</td></tr>
+<tr><td>1</td><td>110,000 FLS</td><td>Initial pre-mine</td></tr>
 </table>
 
 ### PoW Rewards Breakdown
