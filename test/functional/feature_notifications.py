@@ -5,10 +5,14 @@
 """Test the -alertnotify, -blocknotify and -walletnotify options."""
 import os
 
-from test_framework.test_framework import BitcoinTestFramework
-from test_framework.util import assert_equal, wait_until, connect_nodes_bi
+from test_framework.test_framework import flsTestFramework
+from test_framework.util import (
+    assert_equal,
+    wait_until,
+    connect_nodes,
+)
 
-class NotificationsTest(BitcoinTestFramework):
+class NotificationsTest(flsTestFramework):
     def set_test_params(self):
         self.num_nodes = 2
         self.setup_clean_chain = True
@@ -52,7 +56,7 @@ class NotificationsTest(BitcoinTestFramework):
         self.log.info("test -walletnotify after rescan")
         # restart node to rescan to force wallet notifications
         self.restart_node(1)
-        connect_nodes_bi(self.nodes, 0, 1)
+        connect_nodes(self.nodes[0], 1)
 
         wait_until(lambda: os.path.isfile(self.tx_filename) and os.stat(self.tx_filename).st_size >= (block_count * 65), timeout=10)
 
@@ -66,7 +70,7 @@ class NotificationsTest(BitcoinTestFramework):
         self.nodes[1].generate(51)
         self.sync_all()
 
-        # Give bitcoind 10 seconds to write the alert notification
+        # Give flitsd 10 seconds to write the alert notification
         wait_until(lambda: os.path.isfile(self.alert_filename) and os.path.getsize(self.alert_filename), timeout=10)
 
         with open(self.alert_filename, 'r', encoding='utf8') as f:

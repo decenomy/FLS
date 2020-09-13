@@ -63,11 +63,11 @@
     </message>
     <message>
         <source>These are your FLS addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Dies sind ihre FLS-Adressen zum Tätigen von Überweisungen. Bitte prüfen Sie den Betrag und die Empfangsadresse, bevor Sie FLS überweisen.</translation>
+        <translation>Dies sind ihre flits-Adressen zum Tätigen von Überweisungen. Bitte prüfen Sie den Betrag und die Empfangsadresse, bevor Sie FLS überweisen.</translation>
     </message>
     <message>
         <source>These are your FLS addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Dies sind ihre FLS-Adressen zum Empfangen von Zahlungen. Es wird empfohlen für jede Transaktion eine neue Empfangsadresse zu verwenden.</translation>
+        <translation>Dies sind ihre flits-Adressen zum Empfangen von Zahlungen. Es wird empfohlen für jede Transaktion eine neue Empfangsadresse zu verwenden.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -255,11 +255,11 @@
     </message>
     <message>
         <source>Enter a FLS Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Bitte die FLS-Adresse eingeben, welche mittels BIP 38 verschlüsselt werden soll. Bitte ein Passwort in die mittlere Box eintragen. Klicken Sie auf "Verschlüsslen" um den privaten Schlüssel zu generieren.</translation>
+        <translation>Bitte die flits-Adresse eingeben, welche mittels BIP 38 verschlüsselt werden soll. Bitte ein Passwort in die mittlere Box eintragen. Klicken Sie auf "Verschlüsslen" um den privaten Schlüssel zu generieren.</translation>
     </message>
     <message>
         <source>The FLS address to encrypt</source>
-        <translation>Die zu verschlüsselnde FLS-Adresse</translation>
+        <translation>Die zu verschlüsselnde flits-Adresse</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -291,7 +291,7 @@
     </message>
     <message>
         <source>Encrypt the private key for this FLS address</source>
-        <translation>Den privaten Schlüssel für diese FLS-Adresse verschlüsseln</translation>
+        <translation>Den privaten Schlüssel für diese flits-Adresse verschlüsseln</translation>
     </message>
     <message>
         <source>Reset all fields</source>
@@ -650,7 +650,7 @@
     </message>
     <message>
         <source>Send coins to a FLS address</source>
-        <translation>An eine FLS-Adresse überweisen</translation>
+        <translation>An eine flits-Adresse überweisen</translation>
     </message>
     <message>
         <source>Request payments (generates QR codes and fls: URIs)</source>
@@ -682,11 +682,11 @@
     </message>
     <message>
         <source>Sign messages with your FLS addresses to prove you own them</source>
-        <translation>Unterschreibt eine Nachricht mit Ihrer FLS-Adresse und beweist, dass sie Ihnen gehört</translation>
+        <translation>Unterschreibt eine Nachricht mit Ihrer flits-Adresse und beweist, dass sie Ihnen gehört</translation>
     </message>
     <message>
         <source>Verify messages to ensure they were signed with specified FLS addresses</source>
-        <translation>Überprüft eine Nachricht um zu prüfen ob diese mit einer bestimmten FLS-Adresse signiert wurde</translation>
+        <translation>Überprüft eine Nachricht um zu prüfen ob diese mit einer bestimmten flits-Adresse signiert wurde</translation>
     </message>
     <message>
         <source>&amp;BIP38 tool</source>
@@ -730,7 +730,7 @@
     </message>
     <message>
         <source>Show the FLS Core help message to get a list with possible FLS command-line options</source>
-        <translation>Zeige die FLS-Core Hilfe, um mögliche FLS Kommando-Zeilen-Optionen anzuzeigen</translation>
+        <translation>Zeige die flits-Core Hilfe, um mögliche FLS Kommando-Zeilen-Optionen anzuzeigen</translation>
     </message>
     <message>
         <source>FLS Core client</source>
@@ -1165,7 +1165,7 @@ Adresse: %4</translation>
     </message>
     <message>
         <source>The entered address "%1" is not a valid FLS address.</source>
-        <translation>Die eingegebene Adresse "%1" ist keine gültige FLS-Adresse.</translation>
+        <translation>Die eingegebene Adresse "%1" ist keine gültige flits-Adresse.</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
@@ -1438,8 +1438,8 @@ Adresse: %4</translation>
 To Add: enter percentage to give and FLS address to add to the MultiSend vector.
 To Delete: Enter address to delete and press delete.
 MultiSend will not be activated unless you have clicked Activate</source>
-        <translation>MultiSend ermöglicht es automatisch bis zu 100% Ihrer Stake- oder Masternode-Belohnung zu einer Liste von anderen FLS-Adressen zu senden.
-Zum hinzufügen: Gebe den Prozentsätze ein, um die FLS-Adressen des MultiSend-Vektor hinzuzufügen.
+        <translation>MultiSend ermöglicht es automatisch bis zu 100% Ihrer Stake- oder Masternode-Belohnung zu einer Liste von anderen flits-Adressen zu senden.
+Zum hinzufügen: Gebe den Prozentsätze ein, um die flits-Adressen des MultiSend-Vektor hinzuzufügen.
 Zum entfernen: Gebe die zu löschende Adresse ein und drücke löschen.
 MultiSend wird nicht aktiviert bis Sie auf Aktivieren geklickt haben.</translation>
     </message>
@@ -1628,7 +1628,7 @@ Bitte haben Sie etwas Geduld, nachdem Sie auf Importieren geklickt haben.</trans
     </message>
     <message>
         <source>Add destinations to send FLS to</source>
-        <translation>Füge Transaktionsziele für FLS-Überweisung hinzu</translation>
+        <translation>Füge Transaktionsziele für flits-Überweisung hinzu</translation>
     </message>
     <message>
         <source>Add &amp;Destination</source>
@@ -1762,7 +1762,7 @@ Bitte haben Sie etwas Geduld, nachdem Sie auf Importieren geklickt haben.</trans
     </message>
     <message>
         <source>Automatically open the FLS client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Automatisches öffnen des FLS-Client-Port im Router. Dies funktioniert nur, wenn ihr Router UPnP unterstützt und es eingeschaltet ist.</translation>
+        <translation>Automatisches öffnen des flits-client-Port im Router. Dies funktioniert nur, wenn ihr Router UPnP unterstützt und es eingeschaltet ist.</translation>
     </message>
     <message>
         <source>Accept connections from outside</source>
@@ -1828,7 +1828,7 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</tran
     </message>
     <message>
         <source>Enable automatic minting of FLS units to zFLS</source>
-        <translation>Aktivieren Sie die automatische Prägung von FLS-Einheiten zu zFLS</translation>
+        <translation>Aktivieren Sie die automatische Prägung von flits-Einheiten zu zFLS</translation>
     </message>
     <message>
         <source>Enable zFLS Automint</source>
@@ -2031,7 +2031,7 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</tran
     </message>
     <message>
         <source>Your current FLS balance, unconfirmed and immature transactions included</source>
-        <translation>Ihr aktueller FLS-Saldo, unbestätigte und unreife Transaktionen sind enthalten</translation>
+        <translation>Ihr aktueller flits-Saldo, unbestätigte und unreife Transaktionen sind enthalten</translation>
     </message>
     <message>
         <source>zFLS Balance</source>
@@ -2051,7 +2051,7 @@ Unreif: Bestätigt, aber keine Prägung in der selben Stückelung seit erfolgter
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the FLS network after a connection is established, but this process has not completed yet.</source>
-        <translation>Die angezeigte Information ist möglicherweise nicht mehr aktuell. Ihre Wallet synchronisiert sich automatisch mit dem FLS-Netzwerk, nachdem eine Verbindung hergestellt wurde. Aber dieser Vorgang ist noch nicht abgeschlossen.</translation>
+        <translation>Die angezeigte Information ist möglicherweise nicht mehr aktuell. Ihre Wallet synchronisiert sich automatisch mit dem flits-Netzwerk, nachdem eine Verbindung hergestellt wurde. Aber dieser Vorgang ist noch nicht abgeschlossen.</translation>
     </message>
     <message>
         <source>OVERVIEW</source>
@@ -2168,7 +2168,7 @@ Um das automatische Prägen zu aktivieren ändere 'enablezeromint=0' zu 'enablez
     </message>
     <message>
         <source>URI cannot be parsed! This can be caused by an invalid FLS address or malformed URI parameters.</source>
-        <translation>URI kann nicht analysiert werden! Dies kann durch eine ungültige FLS-Adresse oder fehlerhafte URI-Parameter verursacht worden sein.</translation>
+        <translation>URI kann nicht analysiert werden! Dies kann durch eine ungültige flits-Adresse oder fehlerhafte URI-Parameter verursacht worden sein.</translation>
     </message>
     <message>
         <source>Payment request file cannot be read! This can be caused by an invalid payment request file.</source>
@@ -2254,7 +2254,7 @@ Um das automatische Prägen zu aktivieren ändere 'enablezeromint=0' zu 'enablez
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the FLS network after a connection is established, but this process has not completed yet.</source>
-        <translation>Die angezeigte Information ist möglicherweise nicht mehr aktuell. Ihre Wallet synchronisiert sich automatisch mit dem FLS-Netzwerk, nachdem eine Verbindung hergestellt wurde. Aber dieser Vorgang ist noch nicht abgeschlossen.</translation>
+        <translation>Die angezeigte Information ist möglicherweise nicht mehr aktuell. Ihre Wallet synchronisiert sich automatisch mit dem flits-Netzwerk, nachdem eine Verbindung hergestellt wurde. Aber dieser Vorgang ist noch nicht abgeschlossen.</translation>
     </message>
     <message>
         <source>Mint Zerocoin</source>
@@ -2338,7 +2338,7 @@ zFLS sind ausgereift wenn sie mehr als 20 Bestätigungen und mehr als 2 Prägung
     </message>
     <message>
         <source>The FLS address to send the payment to. Creates local payment to yourself when empty.</source>
-        <translation>Die FLS-Adresse, an die die Zahlung gesendet wird. Erstellt eine lokale Zahlung an Sie selbst, wenn die Zeile leer ist.</translation>
+        <translation>Die flits-Adresse, an die die Zahlung gesendet wird. Erstellt eine lokale Zahlung an Sie selbst, wenn die Zeile leer ist.</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2717,7 +2717,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Invalid Fls Address</source>
-        <translation>Ungültige FLS-Adresse </translation>
+        <translation>Ungültige flits-Adresse </translation>
     </message>
     <message>
         <source>Invalid Send Amount</source>
@@ -2795,7 +2795,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Enter a FLS address (e.g. %1)</source>
-        <translation>FLS-Adresse eingeben (z.B. %1)</translation>
+        <translation>flits-Adresse eingeben (z.B. %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -2937,7 +2937,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Open the FLS debug log file from the current data directory. This can take a few seconds for large log files.</source>
-        <translation>Öffne FLS-Debug-Protokolldatei aus dem aktuellen Datenverzeichnis. Dies kann bei großen Protokolldateien einige Sekunden dauern.</translation>
+        <translation>Öffne flits-Debug-Protokolldatei aus dem aktuellen Datenverzeichnis. Dies kann bei großen Protokolldateien einige Sekunden dauern.</translation>
     </message>
     <message>
         <source>Number of Masternodes</source>
@@ -3280,7 +3280,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the FLS network.</source>
-        <translation>Eine optionale Nachricht an die Zahlungsaufforderung anhängen, die bei der Eröffnung der Anforderung angezeigt wird. Hinweis: Die Nachricht wird nicht mit der Zahlung über das FLS-Netzwerk gesendet.</translation>
+        <translation>Eine optionale Nachricht an die Zahlungsaufforderung anhängen, die bei der Eröffnung der Anforderung angezeigt wird. Hinweis: Die Nachricht wird nicht mit der Zahlung über das flits-Netzwerk gesendet.</translation>
     </message>
     <message>
         <source>RECEIVE</source>
@@ -3288,7 +3288,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the FLS network.</source>
-        <translation>Eine optionale Nachricht an die Zahlungsaufforderung anhängen, die bei der Eröffnung der Anforderung angezeigt wird.&lt;br&gt;Hinweis: Die Nachricht wird nicht mit der Zahlung über das FLS-Netzwerk gesendet.</translation>
+        <translation>Eine optionale Nachricht an die Zahlungsaufforderung anhängen, die bei der Eröffnung der Anforderung angezeigt wird.&lt;br&gt;Hinweis: Die Nachricht wird nicht mit der Zahlung über das flits-Netzwerk gesendet.</translation>
     </message>
     <message>
         <source>Use this form to request payments. All fields are &lt;b&gt;optional&lt;/b&gt;.</source>
@@ -3585,7 +3585,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for FLS transactions than the network can process.</source>
-        <translation>Nur die minimale Gebühr zu zahlen ist nur gut, solange es weniger Transaktionsvolumen als Platz in den Blocken gibt.&lt;br /&gt;Aber seien Sie sich bewusst, dass dies in einer niemals bestätigende Transaktion enden kann, sobald die Nachfrage nach FLS-Transaktionen höher ist, als was das Netzwerk verarbeiten kann.</translation>
+        <translation>Nur die minimale Gebühr zu zahlen ist nur gut, solange es weniger Transaktionsvolumen als Platz in den Blocken gibt.&lt;br /&gt;Aber seien Sie sich bewusst, dass dies in einer niemals bestätigende Transaktion enden kann, sobald die Nachfrage nach flits-Transaktionen höher ist, als was das Netzwerk verarbeiten kann.</translation>
     </message>
     <message>
         <source>normal</source>
@@ -3681,7 +3681,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Warning: Invalid FLS address</source>
-        <translation>Warnung: Ungültige FLS-Adresse</translation>
+        <translation>Warnung: Ungültige flits-Adresse</translation>
     </message>
     <message>
         <source>%1 to %2</source>
@@ -3780,7 +3780,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>The FLS address to send the payment to</source>
-        <translation>FLS-Adresse, an die überwiesen werden soll</translation>
+        <translation>flits-Adresse, an die überwiesen werden soll</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -3820,7 +3820,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>A message that was attached to the FLS: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the FLS network.</source>
-        <translation>Eine an die FLS-URI angefügte Nachricht, die zusammen mit der Transaktion gespeichert wird. Hinweis: Diese Nachricht wird nicht über das FLS-Netzwerk gesendet.</translation>
+        <translation>Eine an die flits-URI angefügte Nachricht, die zusammen mit der Transaktion gespeichert wird. Hinweis: Diese Nachricht wird nicht über das flits-Netzwerk gesendet.</translation>
     </message>
     <message>
         <source>This is an unverified payment request.</source>
@@ -3910,7 +3910,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Verify the message to ensure it was signed with the specified FLS address</source>
-        <translation>Überprüfen Sie die Nachricht, um sicherzustellen, dass sie mit der angegebenen FLS-Adresse signiert wurde.</translation>
+        <translation>Überprüfen Sie die Nachricht, um sicherzustellen, dass sie mit der angegebenen flits-Adresse signiert wurde.</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -4631,7 +4631,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>(1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)</source>
         <translation>(1 = behalte Tx-Meta-Daten z.B. Betrag, Besitzer und Zahlungsanforderungsinformationen, 2 = verwerfe Tx-Meta-Daten)</translation>
@@ -5270,7 +5270,7 @@ Bitte haben Sie etwas Geduld...</translation>
     </message>
     <message>
         <source>Disable all FLS specific functionality (Masternodes, Zerocoin, SwiftX, Budgeting) (0-1, default: %u)</source>
-        <translation>Deaktivieren Sie alle FLS-spezifischen Funktionen (Masternodes, Zerocoin, SwiftX, Budgetierung) (0-1, Standard: %u)</translation>
+        <translation>Deaktivieren Sie alle flits-spezifischen Funktionen (Masternodes, Zerocoin, SwiftX, Budgetierung) (0-1, Standard: %u)</translation>
     </message>
     <message>
         <source>Enable SwiftX, show confirmations for locked transactions (bool, default: %s)</source>

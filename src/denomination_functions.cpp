@@ -1,6 +1,4 @@
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -157,10 +155,10 @@ void listSpends(const std::vector<CZerocoinMint>& vSelectedMints)
 
     CAmount nTotal = 0;
     for (auto& denom : libzerocoin::zerocoinDenomList) {
-        LogPrint("zero", "%s %d coins for denomination %d used\n", __func__, mapZerocoinSupply.at(denom), denom);
+        LogPrint(BCLog::LEGACYZC, "%s %d coins for denomination %d used\n", __func__, mapZerocoinSupply.at(denom), denom);
         nTotal += libzerocoin::ZerocoinDenominationToAmount(denom);
     }
-    LogPrint("zero", "Total value of coins %d\n", nTotal);
+    LogPrint(BCLog::LEGACYZC, "Total value of coins %d\n", nTotal);
 }
 
 // -------------------------------------------------------------------------------------------------------
@@ -310,7 +308,6 @@ int minimizeChange(
 // -------------------------------------------------------------------------------------------------------
 int calculateChange(
     int nMaxNumberOfSpends,
-    bool fMinimizeChange,
     const CAmount nValueTarget,
     const std::map<libzerocoin::CoinDenomination, CAmount>& mapOfDenomsHeld,
     std::map<libzerocoin::CoinDenomination, CAmount>& mapOfDenomsUsed)
@@ -336,21 +333,20 @@ int calculateChange(
         std::map<libzerocoin::CoinDenomination, CAmount> mapChange = getChange(nChangeAmount);
         int nChangeCount = getNumberOfCoinsUsed(mapChange);
 
-        if (fMinimizeChange) {
-            libzerocoin::CoinDenomination nextToMaxDenom = getNextLowerDenomHeld(minDenomOverTarget, mapOfDenomsHeld);
-            int newChangeCount = minimizeChange(nMaxNumberOfSpends, nChangeCount,
-                                                nextToMaxDenom, nValueTarget,
-                                                mapOfDenomsHeld, mapOfDenomsUsed);
+        // always try to minimize change
+        libzerocoin::CoinDenomination nextToMaxDenom = getNextLowerDenomHeld(minDenomOverTarget, mapOfDenomsHeld);
+        int newChangeCount = minimizeChange(nMaxNumberOfSpends, nChangeCount,
+                                            nextToMaxDenom, nValueTarget,
+                                            mapOfDenomsHeld, mapOfDenomsUsed);
 
-            // Alternative method yields less mints and is less than MaxNumberOfSpends if true
-            if (newChangeCount < nChangeCount) return newChangeCount;
+        // Alternative method yields less mints and is less than MaxNumberOfSpends if true
+        if (newChangeCount < nChangeCount) return newChangeCount;
 
-            // Reclear
-            for (const auto& denom : libzerocoin::zerocoinDenomList)
-                mapOfDenomsUsed.at(denom) = 0;
-            // Then reset as before previous clearing
-            mapOfDenomsUsed.at(minDenomOverTarget) = 1;
-        }
+        // Reclear
+        for (const auto& denom : libzerocoin::zerocoinDenomList)
+            mapOfDenomsUsed.at(denom) = 0;
+        // Then reset as before previous clearing
+        mapOfDenomsUsed.at(minDenomOverTarget) = 1;
 
         return nChangeCount;
 
@@ -383,17 +379,9 @@ int calculateChange(
 
         // Assign for size (only)
         std::map<libzerocoin::CoinDenomination, CAmount> mapOfMinDenomsUsed = mapOfDenomsUsed;
-
         int nChangeCount = minimizeChange(nMaxNumberOfSpends, nMaxChangeCount,
                                           maxDenomHeld, nValueTarget,
                                           mapOfDenomsHeld, mapOfMinDenomsUsed);
-
-        int nNumSpends = getNumberOfCoinsUsed(mapOfMinDenomsUsed);
-
-        if (!fMinimizeChange && (nCoinCount < nNumSpends)) {
-            return nMaxChangeCount;
-        }
-
         mapOfDenomsUsed = mapOfMinDenomsUsed;
         return nChangeCount;
     }
@@ -403,7 +391,7 @@ int calculateChange(
 // Given a Target Spend Amount, attempt to meet it with a set of coins where less than nMaxNumberOfSpends
 // 'spends' are required
 // -------------------------------------------------------------------------------------------------------
-std::vector<CMintMeta> SelectMintsFromList(const CAmount nValueTarget, CAmount& nSelectedValue, int nMaxNumberOfSpends, bool fMinimizeChange,
+std::vector<CMintMeta> SelectMintsFromList(const CAmount nValueTarget, CAmount& nSelectedValue, int nMaxNumberOfSpends,
                                                int& nCoinsReturned, const std::list<CMintMeta>& listMints,
                                                const std::map<libzerocoin::CoinDenomination, CAmount> mapOfDenomsHeld, int& nNeededSpends)
 {
@@ -426,13 +414,13 @@ std::vector<CMintMeta> SelectMintsFromList(const CAmount nValueTarget, CAmount& 
     }
     // Since either too many spends needed or can not spend the exact amount,
     // calculate the change needed and the map of coins used
-    nCoinsReturned = calculateChange(nMaxNumberOfSpends, fMinimizeChange, nValueTarget, mapOfDenomsHeld, mapOfDenomsUsed);
+    nCoinsReturned = calculateChange(nMaxNumberOfSpends, nValueTarget, mapOfDenomsHeld, mapOfDenomsUsed);
     if (nCoinsReturned == 0) {
-        LogPrint("zero", "%s: Problem getting change (TBD) or Too many spends %d\n", __func__, nValueTarget);
+        LogPrint(BCLog::LEGACYZC, "%s: Problem getting change (TBD) or Too many spends %d\n", __func__, nValueTarget);
         vSelectedMints.clear();
     } else {
         vSelectedMints = getSpends(listMints, mapOfDenomsUsed, nSelectedValue);
-        LogPrint("zero", "%s: %d coins in change for %d\n", __func__, nCoinsReturned, nValueTarget);
+        LogPrint(BCLog::LEGACYZC, "%s: %d coins in change for %d\n", __func__, nCoinsReturned, nValueTarget);
     }
     return vSelectedMints;
 }

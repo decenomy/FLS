@@ -1567,7 +1567,7 @@
     </message>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>Error</source>
         <translation>Greška</translation>

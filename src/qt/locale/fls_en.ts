@@ -6359,7 +6359,7 @@ Please be patient...</source>
     </message>
 </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <location filename="../flsstrings.cpp" line="+15"/>
         <source>(1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)</source>

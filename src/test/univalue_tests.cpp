@@ -1,7 +1,5 @@
 // Copyright 2014 BitPay, Inc.
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,7 +8,7 @@
 #include <string>
 #include <map>
 #include <univalue.h>
-#include "test/test_fls.h"
+#include "test/test_flits.h"
 
 #include <boost/test/unit_test.hpp>
 

@@ -44,7 +44,7 @@ public:
 
     bool addWitWork(CGenWit wit) {
         if (!isWorkerRunning) {
-            LogPrintf("%s not running trying to add wit work \n", "fls-light-thread");
+            LogPrintf("%s not running trying to add wit work \n", "flits-light-thread");
             return false;
         }
         requestsQueue.push(wit);
@@ -52,13 +52,13 @@ public:
     }
 
     void StartLightZflsThread(boost::thread_group& threadGroup) {
-        LogPrintf("%s thread start\n", "fls-light-thread");
+        LogPrintf("%s thread start\n", "flits-light-thread");
         threadIns = boost::thread(boost::bind(&CLightWorker::ThreadLightZFLSSimplified, this));
     }
 
     void StopLightZflsThread() {
         threadIns.interrupt();
-        LogPrintf("%s thread interrupted\n", "fls-light-thread");
+        LogPrintf("%s thread interrupted\n", "flits-light-thread");
     }
 
 private:

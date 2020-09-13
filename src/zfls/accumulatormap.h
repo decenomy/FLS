@@ -1,11 +1,9 @@
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The Flits-Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef FLS_ACCUMULATORMAP_H
-#define FLS_ACCUMULATORMAP_H
+#ifndef flits_ACCUMULATORMAP_H
+#define flits_ACCUMULATORMAP_H
 
 #include "libzerocoin/Accumulator.h"
 #include "libzerocoin/Coin.h"
@@ -28,4 +26,4 @@ public:
     void Reset();
     void Reset(libzerocoin::ZerocoinParams* params2);
 };
-#endif //FLS_ACCUMULATORMAP_H
+#endif //flits_ACCUMULATORMAP_H

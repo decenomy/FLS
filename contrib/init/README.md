@@ -1,11 +1,11 @@
 Sample configuration files for:
 ```
-SystemD: flsd.service
-Upstart: flsd.conf
-OpenRC:  flsd.openrc
-         flsd.openrcconf
-CentOS:  flsd.init
-macOS:    org.fls.flsd.plist
+SystemD: sssolutionsd.service
+Upstart: sssolutionsd.conf
+OpenRC:  sssolutionsd.openrc
+         sssolutionsd.openrcconf
+CentOS:  sssolutionsd.init
+macOS:    org.sss.sssolutionsd.plist
 ```
 have been made available to assist packagers in creating node packages here.
 

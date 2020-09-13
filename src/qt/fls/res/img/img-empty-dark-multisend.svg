@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="ic_empty_dark_multisend" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+<g id="Group_9062">
+	<g id="Group_9060">
+		<path id="Rectangle_4717" fill="#413D4A" d="M45,18h10v9H45V18z"/>
+		<g id="Group_9059">
+			<path id="Rectangle_4718" fill="#413D4A" d="M14,66h6v10h-6V66z"/>
+			<path id="Rectangle_4719" fill="#413D4A" d="M80,66h6v10h-6V66z"/>
+			<path id="Rectangle_4720" fill="#413D4A" d="M47,66h6v10h-6V66z"/>
+		</g>
+	</g>
+	<g id="Group_9061">
+		<path id="Rectangle_4722" fill="#A09EA5" d="M67,40h2v4h-2V40z"/>
+		<circle id="Ellipse_643" fill="#A09EA5" cx="50" cy="73" r="1"/>
+		<circle id="Ellipse_644" fill="#A09EA5" cx="83" cy="73" r="1"/>
+		<path id="Rectangle_4723" fill="#A09EA5" d="M32,58h4v2h-4V58z"/>
+		<path id="Path_19007" fill="#A09EA5" d="M16,65h-3v3H7v4h2v-2h4v7h8v-7h4v21H9V76H7v17h20V68h-6v-3h-3v-5h10v-2H16V65z M19,67v8
+			h-4v-8H19z"/>
+		<circle id="Ellipse_645" fill="#A09EA5" cx="17" cy="73" r="1"/>
+		<path id="Path_19008" fill="#A09EA5" d="M87,68v-3h-3v-7H51v-5h18v-5h-2v3H33V28h34v8h2v-8h4V17H59.46
+			c2.212-2.463,2.009-6.252-0.454-8.465c-2.463-2.212-6.252-2.009-8.465,0.454C50.344,9.209,50.163,9.443,50,9.69
+			c-1.819-2.766-5.537-3.534-8.303-1.715c-2.767,1.819-3.534,5.537-1.715,8.303c0.167,0.254,0.354,0.496,0.558,0.722H27v11h4v25h18
+			v5h-9v2h9v5h-3v3h-6v16h2V70h4v7h8v-7h4v21H42v-3h-2v5h20V68h-6v-3h-3v-5h31v5h-3v3h-6v12h2V70h4v7h8v-7h4v21H75v-7h-2v9h20V68H87
+			z M71,19v7H56v-7H71z M51,13c0-2.209,1.791-4,4-4s4,1.791,4,4s-1.791,4-4,4h-4V13z M51,19h3v7h-8v-7H51z M45,9
+			c2.209,0,4,1.791,4,4v4h-4c-2.209,0-4-1.791-4-4S42.791,9,45,9z M29,26v-7h15v7H29z M52,67v8h-4v-8H52z M85,75h-4v-8h4V75z"/>
+	</g>
+</g>
+<path id="Rectangle_4724" fill="none" d="M0,0h100v100H0V0z"/>
+</svg>

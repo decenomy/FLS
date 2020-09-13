@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" shape-rendering="geometricPrecision"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px"
+	 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="check_active" transform="translate(-290 -244)">
+	<g id="Group_8199" transform="translate(291 245)">
+		<path id="check_on_light" fill="#007BFE" d="M19.557,0H2.444C1.096,0.004,0.004,1.096,0,2.444v17.113
+			C0.004,20.904,1.096,21.996,2.444,22h17.113c1.348-0.004,2.439-1.096,2.443-2.443V2.444C21.996,1.096,20.904,0.004,19.557,0z
+			 M8.556,17.111l-6.112-5.876L4.156,9.59l4.4,4.23l9.29-8.931l1.711,1.645L8.556,17.111z"/>
+	</g>
+	<path id="Rectangle_4538" fill="none" d="M290,244h24v24h-24V244z"/>
+</g>
+</svg>

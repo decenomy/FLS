@@ -19,7 +19,8 @@ else
 LIBUNIVALUE = $(UNIVALUE_LIBS)
 endif
 
-BITCOIN_INCLUDES=-I$(builddir) $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
+BITCOIN_CONFIG_INCLUDES=-I$(builddir)/config
+BITCOIN_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
 
 BITCOIN_INCLUDES += -I$(srcdir)/secp256k1/include
 BITCOIN_INCLUDES += $(UNIVALUE_CFLAGS)
@@ -66,19 +67,18 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += flsd
+  bin_PROGRAMS += flitsd
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += fls-cli fls-tx
+  bin_PROGRAMS += flits-cli flits-tx
 endif
 
 .PHONY: FORCE check-symbols check-security
-# fls core #
+# Flits Core #
 BITCOIN_CORE_H = \
   activemasternode.h \
   addrman.h \
-  alert.h \
   allocators.h \
   amount.h \
   base58.h \
@@ -99,13 +99,19 @@ BITCOIN_CORE_H = \
   compat/endian.h \
   compat/sanity.h \
   compressor.h \
+  consensus/consensus.h \
+  consensus/merkle.h \
+  consensus/validation.h \
+  consensus/tx_verify.h \
+  consensus/zerocoin_verify.h \
+  consensus/params.h \
   primitives/block.h \
   primitives/transaction.h \
   core_io.h \
   crypter.h \
+  pairresult.h \
+  addressbook.h \
   denomination_functions.h \
-  obfuscation.h \
-  obfuscation-relay.h \
   wallet/db.h \
   hash.h \
   httprpc.h \
@@ -114,12 +120,15 @@ BITCOIN_CORE_H = \
   invalid.h \
   invalid_outpoints.json.h \
   invalid_serials.json.h \
+  legacy/stakemodifier.h \
   kernel.h \
   swifttx.h \
   key.h \
+  key_io.h \
   keystore.h \
   leveldbwrapper.h \
   limitedmap.h \
+  logging.h \
   main.h \
   masternode.h \
   masternode-payments.h \
@@ -128,6 +137,7 @@ BITCOIN_CORE_H = \
   masternodeman.h \
   masternodeconfig.h \
   merkleblock.h \
+  messagesigner.h \
   miner.h \
   mruset.h \
   netbase.h \
@@ -144,6 +154,7 @@ BITCOIN_CORE_H = \
   rpc/server.h \
   scheduler.h \
   script/interpreter.h \
+  script/keyorigin.h \
   script/script.h \
   script/sigcache.h \
   script/sign.h \
@@ -152,6 +163,7 @@ BITCOIN_CORE_H = \
   serialize.h \
   spork.h \
   sporkdb.h \
+  sporkid.h \
   stakeinput.h \
   streams.h \
   support/cleanse.h \
@@ -163,32 +175,31 @@ BITCOIN_CORE_H = \
   txdb.h \
   txmempool.h \
   guiinterface.h \
+  guiinterfaceutil.h \
   uint256.h \
   undo.h \
+  util/memory.h \
   util.h \
+  util/macros.h \
+  util/threadnames.h \
   utilstrencodings.h \
   utilmoneystr.h \
   utiltime.h \
   validationinterface.h \
   version.h \
+  wallet/hdchain.h \
+  wallet/scriptpubkeyman.h \
   wallet/wallet.h \
   wallet/wallet_ismine.h \
   wallet/walletdb.h \
   zflschain.h \
-  zfls/accumulators.h \
-  zfls/accumulatorcheckpoints.h \
-  zfls/accumulatorcheckpoints.json.h \
-  zfls/accumulatormap.h \
   zfls/deterministicmint.h \
   zfls/mintpool.h \
-  zfls/witness.h \
   zfls/zerocoin.h \
   zfls/zflstracker.h \
   zfls/zflswallet.h \
   zfls/zflsmodule.h \
-  genwit.h \
-  concurrentqueue.h \
-  lightzflsthread.h \
+  zfls/zpos.h \
   zmq/zmqabstractnotifier.h \
   zmq/zmqconfig.h \
   zmq/zmqnotificationinterface.h \
@@ -200,16 +211,17 @@ obj/build.h: FORCE
 	  "$(abs_top_srcdir)"
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: shared between flsd and fls-qt
+# server: shared between flitsd and flits-qt
 libbitcoin_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_server_a_SOURCES = \
   addrman.cpp \
-  alert.cpp \
   bloom.cpp \
   blocksignature.cpp \
   chain.cpp \
   checkpoints.cpp \
+  consensus/tx_verify.cpp \
+  consensus/zerocoin_verify.cpp \
   httprpc.cpp \
   httpserver.cpp \
   init.cpp \
@@ -248,7 +260,7 @@ libbitcoin_zmq_a_SOURCES = \
   zmq/zmqpublishnotifier.cpp
 endif
 
-# wallet: shared between flsd and fls-qt, but only linked
+# wallet: shared between flitsd and flits-qt, but only linked
 # when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -256,10 +268,9 @@ libbitcoin_wallet_a_SOURCES = \
   activemasternode.cpp \
   bip38.cpp \
   denomination_functions.cpp \
-  obfuscation.cpp \
-  obfuscation-relay.cpp \
-  wallet/db.cpp \
+  addressbook.cpp \
   crypter.cpp \
+  key_io.cpp \
   swifttx.cpp \
   masternode.cpp \
   masternode-budget.cpp \
@@ -267,23 +278,26 @@ libbitcoin_wallet_a_SOURCES = \
   masternode-sync.cpp \
   masternodeconfig.cpp \
   masternodeman.cpp \
+  messagesigner.cpp \
+  legacy/stakemodifier.cpp \
+  kernel.cpp \
+  wallet/db.cpp \
   wallet/rpcdump.cpp \
   wallet/rpcwallet.cpp \
-  kernel.cpp \
+  wallet/hdchain.cpp \
+  wallet/scriptpubkeyman.cpp \
   wallet/wallet.cpp \
   wallet/wallet_ismine.cpp \
+  wallet/wallet_zerocoin.cpp \
   wallet/walletdb.cpp \
   zfls/deterministicmint.cpp \
   zfls/zerocoin.cpp \
-  zfls/accumulators.cpp \
   zfls/mintpool.cpp \
-  zfls/witness.cpp \
   zfls/zflswallet.cpp \
   zfls/zflstracker.cpp \
   stakeinput.cpp \
-  genwit.cpp \
   zfls/zflsmodule.cpp \
-  lightzflsthread.cpp \
+  zfls/zpos.cpp \
   $(BITCOIN_CORE_H)
 
 # crypto primitives library
@@ -293,6 +307,8 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/sha1.cpp \
   crypto/sha256.cpp \
   crypto/sha512.cpp \
+  crypto/chacha20.h \
+  crypto/chacha20.cpp \
   crypto/hmac_sha256.cpp \
   crypto/rfc6979_hmac_sha256.cpp \
   crypto/hmac_sha512.cpp \
@@ -327,27 +343,24 @@ libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
 libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libzerocoin_libbitcoin_zerocoin_a_SOURCES = \
   libzerocoin/Accumulator.h \
-  libzerocoin/AccumulatorProofOfKnowledge.h \
   libzerocoin/bignum.h \
   libzerocoin/Coin.h \
+  libzerocoin/CoinRandomnessSchnorrSignature.h \
   libzerocoin/CoinSpend.h \
   libzerocoin/Commitment.h \
   libzerocoin/Denominations.h \
   libzerocoin/ParamGeneration.h \
   libzerocoin/Params.h \
-  libzerocoin/SerialNumberSignatureOfKnowledge.h \
   libzerocoin/SpendType.h \
   libzerocoin/ZerocoinDefines.h \
   libzerocoin/bignum.cpp \
   libzerocoin/Accumulator.cpp \
-  libzerocoin/AccumulatorProofOfKnowledge.cpp \
   libzerocoin/Coin.cpp \
-  libzerocoin/Denominations.cpp \
+  libzerocoin/CoinRandomnessSchnorrSignature.cpp \
   libzerocoin/CoinSpend.cpp \
-  libzerocoin/Commitment.cpp \
+  libzerocoin/Denominations.cpp \
   libzerocoin/ParamGeneration.cpp \
-  libzerocoin/Params.cpp \
-  libzerocoin/SerialNumberSignatureOfKnowledge.cpp
+  libzerocoin/Params.cpp
 if USE_NUM_GMP
   libzerocoin_libbitcoin_zerocoin_a_SOURCES += libzerocoin/bignum_gmp.cpp
 endif
@@ -355,13 +368,10 @@ if USE_NUM_OPENSSL
   libzerocoin_libbitcoin_zerocoin_a_SOURCES += libzerocoin/bignum_openssl.cpp
 endif
 
-# common: shared between flsd, and fls-qt and non-server tools
+# common: shared between flitsd, and flits-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
-  zfls/accumulators.cpp \
-  zfls/accumulatorcheckpoints.cpp \
-  zfls/accumulatormap.cpp \
   allocators.cpp \
   amount.cpp \
   base58.cpp \
@@ -369,6 +379,7 @@ libbitcoin_common_a_SOURCES = \
   chainparams.cpp \
   coins.cpp \
   compressor.cpp \
+  consensus/merkle.cpp \
   primitives/block.cpp \
   zfls/deterministicmint.cpp \
   primitives/transaction.cpp \
@@ -404,6 +415,7 @@ libbitcoin_util_a_SOURCES = \
   compat/glibc_sanity.cpp \
   compat/glibcxx_sanity.cpp \
   compat/strnlen.cpp \
+  logging.cpp \
   random.cpp \
   rpc/protocol.cpp \
   support/cleanse.cpp \
@@ -411,6 +423,7 @@ libbitcoin_util_a_SOURCES = \
   uint256.cpp \
   util.cpp \
   utilmoneystr.cpp \
+  util/threadnames.cpp \
   utilstrencodings.cpp \
   utiltime.cpp \
   $(BITCOIN_CORE_H)
@@ -420,7 +433,7 @@ libbitcoin_util_a_SOURCES += compat/glibc_compat.cpp
 AM_LDFLAGS += $(COMPAT_LDFLAGS)
 endif
 
-# cli: shared between fls-cli and fls-qt
+# cli: shared between flits-cli and flits-qt
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
@@ -430,16 +443,16 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# flsd binary #
-flsd_SOURCES = flsd.cpp
-flsd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-flsd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-flsd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# flitsd binary #
+flitsd_SOURCES = flitsd.cpp
+flitsd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+flitsd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+flitsd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-flsd_SOURCES += flsd-res.rc
+flitsd_SOURCES += flitsd-res.rc
 endif
-flsd_LDADD = \
+flitsd_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMON) \
@@ -453,38 +466,38 @@ flsd_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-flsd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
+flitsd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
 
-# fls-cli binary #
-fls_cli_SOURCES = fls-cli.cpp
-fls_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-fls_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-fls_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# flits-cli binary #
+flits_cli_SOURCES = flits-cli.cpp
+flits_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+flits_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+flits_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-fls_cli_SOURCES += fls-cli-res.rc
+flits_cli_SOURCES += flits-cli-res.rc
 endif
 
-fls_cli_LDADD = \
+flits_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
 
-fls_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+flits_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
-# fls-tx binary #
-fls_tx_SOURCES = fls-tx.cpp
-fls_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-fls_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-fls_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# flits-tx binary #
+flits_tx_SOURCES = flits-tx.cpp
+flits_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+flits_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+flits_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-fls_tx_SOURCES += fls-tx-res.rc
+flits_tx_SOURCES += flits-tx-res.rc
 endif
 
-fls_tx_LDADD = \
+flits_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_ZEROCOIN) \
@@ -492,7 +505,7 @@ fls_tx_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
 
-fls_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+flits_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
 # bitcoinconsensus library #
@@ -531,6 +544,7 @@ CLEANFILES = $(EXTRA_LIBRARIES)
 
 CLEANFILES += *.gcda *.gcno
 CLEANFILES += compat/*.gcda compat/*.gcno
+CLEANFILES += consensus/*.gcda consensus/*.gcno
 CLEANFILES += crypto/*.gcda crypto/*.gcno
 CLEANFILES += libzerocoin/*.gcda libzerocoin/*.gcno
 CLEANFILES += primitives/*.gcda primitives/*.gcno
@@ -547,12 +561,12 @@ CLEANFILES += obj/build.h
 EXTRA_DIST =
 
 
-config/fls-config.h: config/stamp-h1
+config/flits-config.h: config/stamp-h1
 	@$(MAKE) -C $(top_builddir) $(subdir)/$(@)
-config/stamp-h1: $(top_srcdir)/$(subdir)/config/fls-config.h.in $(top_builddir)/config.status
+config/stamp-h1: $(top_srcdir)/$(subdir)/config/flits-config.h.in $(top_builddir)/config.status
 	$(AM_V_at)$(MAKE) -C $(top_builddir) $(subdir)/$(@)
-$(top_srcdir)/$(subdir)/config/fls-config.h.in:  $(am__configure_deps)
-	$(AM_V_at)$(MAKE) -C $(top_srcdir) $(subdir)/config/fls-config.h.in
+$(top_srcdir)/$(subdir)/config/flits-config.h.in:  $(am__configure_deps)
+	$(AM_V_at)$(MAKE) -C $(top_srcdir) $(subdir)/config/flits-config.h.in
 
 clean-local:
 	-$(MAKE) -C secp256k1 clean

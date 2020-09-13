@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2019 The PIVX Core developers
+# Copyright (c) 2019 The Flits Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,10 +8,10 @@ Performs the same check as in Test_02 verifying that zPoS forked blocks that sta
 '''
 
 from test_framework.authproxy import JSONRPCException
-from fake_stake.base_test import FLS_FakeStakeTest
+from fake_stake.base_test import flits_FakeStakeTest
 from time import sleep
 
-class zPoSFakeStakeAccepted(FLS_FakeStakeTest):
+class zPoSFakeStakeAccepted(flits_FakeStakeTest):
 
 
     def set_test_params(self):

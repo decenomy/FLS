@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" shape-rendering="crispEdges"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px"
+	 viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<title>Top BarTheme</title>
+<desc>Created with Sketch.</desc>
+<g id="Top-BarTheme">
+	<g id="Group-3" transform="translate(4.000000, 2.000000)">
+		<g id="Clip-2">
+		</g>
+		<defs>
+			<filter id="Adobe_OpacityMaskFilter" filterUnits="userSpaceOnUse" x="0" y="0" width="16.938" height="20">
+				<feColorMatrix  type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+			</filter>
+		</defs>
+		<mask maskUnits="userSpaceOnUse" x="0" y="0" width="16.938" height="20" id="mask-2">
+			<g filter="url(#Adobe_OpacityMaskFilter)">
+				<polygon id="path-1" fill="none" points="0,0 16.938,0 16.938,20 0,20 				"/>
+			</g>
+		</mask>
+		<path id="Fill-1" mask="url(#mask-2)" fill="#007BFE" d="M10.038,2c0.265,0,0.524,0.013,0.785,0.038
+			C7.879,3.604,6.038,6.666,6.038,10c0,3.335,1.841,6.396,4.785,7.962C10.563,17.986,10.303,18,10.038,18
+			c-4.416-0.005-7.995-3.584-8-8C2.043,5.584,5.622,2.005,10.038,2 M11.182,19.93c0.084-0.01,0.164-0.029,0.246-0.037
+			c0.301-0.043,0.607-0.101,0.906-0.166c0.081-0.021,0.16-0.041,0.239-0.063c0.307-0.081,0.61-0.175,0.907-0.284
+			c0.062-0.023,0.123-0.044,0.185-0.066c0.353-0.137,0.699-0.293,1.035-0.47l0.174-0.092c0.751-0.418,1.444-0.933,2.063-1.526
+			l-2.607-0.261C10.758,16.602,8.039,13.592,8.039,10c0-3.591,2.719-6.6,6.291-6.964l2.607-0.26
+			c-0.621-0.595-1.314-1.108-2.065-1.527l-0.175-0.092c-0.336-0.176-0.682-0.332-1.035-0.468c-0.061-0.024-0.123-0.045-0.186-0.068
+			c-0.299-0.109-0.6-0.2-0.906-0.284c-0.079-0.021-0.158-0.043-0.239-0.062c-0.3-0.07-0.601-0.124-0.905-0.167
+			c-0.082-0.012-0.162-0.028-0.244-0.038c-3.831-0.455-7.58,1.331-9.638,4.593c-2.059,3.26-2.059,7.414,0,10.675
+			C3.602,18.6,7.351,20.386,11.182,19.93"/>
+	</g>
+</g>
+</svg>

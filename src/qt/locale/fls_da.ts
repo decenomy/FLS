@@ -255,11 +255,11 @@
     </message>
     <message>
         <source>Enter a FLS Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Indtast en FLS-adresse, som du gerne vil kryptere ved hjælp af BIP 38. Indtast en adgangskode i mellemkassen. Tryk på krypteringen for at beregne den krypterede private nøgle.</translation>
+        <translation>Indtast en flits-adresse, som du gerne vil kryptere ved hjælp af BIP 38. Indtast en adgangskode i mellemkassen. Tryk på krypteringen for at beregne den krypterede private nøgle.</translation>
     </message>
     <message>
         <source>The FLS address to encrypt</source>
-        <translation>FLS-adressen for at kryptere</translation>
+        <translation>flits-adressen for at kryptere</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -291,7 +291,7 @@
     </message>
     <message>
         <source>Encrypt the private key for this FLS address</source>
-        <translation>Krypter den private nøgle for denne FLS-adresse</translation>
+        <translation>Krypter den private nøgle for denne flits-adresse</translation>
     </message>
     <message>
         <source>Reset all fields</source>
@@ -1847,7 +1847,7 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</tran
     </message>
     <message>
         <source>Enable automatic minting of FLS units to zFLS</source>
-        <translation>Aktivér automatisk mintning af FLS-enheder til zFLS</translation>
+        <translation>Aktivér automatisk mintning af flits-enheder til zFLS</translation>
     </message>
     <message>
         <source>Enable zFLS Automint</source>
@@ -2050,7 +2050,7 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</tran
     </message>
     <message>
         <source>Your current FLS balance, unconfirmed and immature transactions included</source>
-        <translation>Din nuværende FLS-saldo, ubekræftede og umodne transaktioner inkluderet</translation>
+        <translation>Din nuværende flits-saldo, ubekræftede og umodne transaktioner inkluderet</translation>
     </message>
     <message>
         <source>zFLS Balance</source>
@@ -2356,7 +2356,7 @@ zFLS er modne, når de har mere end 20 bekræftelser OG mere end 2 minutter med 
     </message>
     <message>
         <source>The FLS address to send the payment to. Creates local payment to yourself when empty.</source>
-        <translation>FLS-adressen for at sende betalingen til. Opretter lokal betaling til dig selv, når du er tom.</translation>
+        <translation>flits-adressen for at sende betalingen til. Opretter lokal betaling til dig selv, når du er tom.</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -4653,7 +4653,7 @@ Vær tålmodig...</translation>
     </message>
     </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>(1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)</source>
         <translation>(1 = beholdtx metadata. For eksempel information om kontoejer og betalngsanmodninger, 2 = drop TX metadata)</translation>
@@ -4713,7 +4713,7 @@ Vær tålmodig...</translation>
     </message>
     <message>
         <source>Enable or disable staking functionality for FLS inputs (0-1, default: %u)</source>
-        <translation>Aktiver eller deaktiver staking-funktionalitet for FLS-indgange (0-1, standard: %u)</translation>
+        <translation>Aktiver eller deaktiver staking-funktionalitet for flits-indgange (0-1, standard: %u)</translation>
     </message>
     <message>
         <source>Enable or disable staking functionality for zFLS inputs (0-1, default: %u)</source>

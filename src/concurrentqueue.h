@@ -1,12 +1,10 @@
 //
-// Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2015-2018 The Flits-Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef FLS_CONCURRENTQUEUE_H
-#define FLS_CONCURRENTQUEUE_H
+#ifndef flits_CONCURRENTQUEUE_H
+#define flits_CONCURRENTQUEUE_H
 
 
 #include <mutex>
@@ -50,4 +48,4 @@ public:
     }
 };
 
-#endif //FLS_CONCURRENTQUEUE_H
+#endif //flits_CONCURRENTQUEUE_H

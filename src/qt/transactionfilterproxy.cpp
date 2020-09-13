@@ -1,7 +1,5 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2020 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,12 +21,12 @@ TransactionFilterProxy::TransactionFilterProxy(QObject* parent) : QSortFilterPro
                                                                   dateFrom(MIN_DATE),
                                                                   dateTo(MAX_DATE),
                                                                   addrPrefix(),
-                                                                  typeFilter(COMMON_TYPES),
+                                                                  typeFilter(ALL_TYPES),
                                                                   watchOnlyFilter(WatchOnlyFilter_All),
                                                                   minAmount(0),
                                                                   limitRows(-1),
                                                                   showInactive(true),
-                                                                  fHideOrphans(false)
+                                                                  fHideOrphans(true)
 {
 }
 
@@ -48,7 +46,7 @@ bool TransactionFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex& 
         return false;
     if (fHideOrphans && isOrphan(status, type))
         return false;
-    if (!(TYPE(type) & typeFilter))
+    if (!(bool)(TYPE(type) & typeFilter))
         return false;
     if (involvesWatchAddress && watchOnlyFilter == WatchOnlyFilter_No)
         return false;
@@ -56,9 +54,19 @@ bool TransactionFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex& 
         return false;
     if (datetime < dateFrom || datetime > dateTo)
         return false;
-    if (!address.contains(addrPrefix, Qt::CaseInsensitive) && !label.contains(addrPrefix, Qt::CaseInsensitive))
-        return false;
+    if (!addrPrefix.isEmpty()) {
+        if (!address.contains(addrPrefix, Qt::CaseInsensitive) && !label.contains(addrPrefix, Qt::CaseInsensitive))
+            return false;
+    }
     if (amount < minAmount)
+        return false;
+    if (fOnlyZc && !isZcTx(type)){
+        return false;
+    }
+    if (fOnlyStakes && !isStakeTx(type))
+        return false;
+
+    if (fOnlyColdStaking && !isColdStake(type))
         return false;
 
     return true;
@@ -66,6 +74,8 @@ bool TransactionFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex& 
 
 void TransactionFilterProxy::setDateRange(const QDateTime& from, const QDateTime& to)
 {
+    if (from == this->dateFrom && to == this->dateTo)
+        return; // No need to set the range.
     this->dateFrom = from;
     this->dateTo = to;
     invalidateFilter();
@@ -112,6 +122,24 @@ void TransactionFilterProxy::setHideOrphans(bool fHide)
     invalidateFilter();
 }
 
+void TransactionFilterProxy::setShowZcTxes(bool fOnlyZc)
+{
+    this->fOnlyZc = fOnlyZc;
+    invalidateFilter();
+}
+
+void TransactionFilterProxy::setOnlyStakes(bool fOnlyStakes)
+{
+    this->fOnlyStakes = fOnlyStakes;
+    invalidateFilter();
+}
+
+void TransactionFilterProxy::setOnlyColdStakes(bool fOnlyColdStakes)
+{
+    this->fOnlyColdStaking = fOnlyColdStakes;
+    invalidateFilter();
+}
+
 int TransactionFilterProxy::rowCount(const QModelIndex& parent) const
 {
     if (limitRows != -1) {
@@ -127,3 +155,22 @@ bool TransactionFilterProxy::isOrphan(const int status, const int type)
             type == TransactionRecord::StakeZFLS || type == TransactionRecord::MNReward)
             && (status == TransactionStatus::Conflicted || status == TransactionStatus::NotAccepted) );
 }
+
+bool TransactionFilterProxy::isZcTx(int type) const {
+    return (type == TransactionRecord::ZerocoinMint || type == TransactionRecord::ZerocoinSpend || type == TransactionRecord::ZerocoinSpend_Change_zFLS
+            || type == TransactionRecord::ZerocoinSpend_FromMe || type == TransactionRecord::RecvFromZerocoinSpend);
+}
+
+bool TransactionFilterProxy::isStakeTx(int type) const {
+    return type == TransactionRecord::StakeMint || type == TransactionRecord::Generated || type == TransactionRecord::StakeZFLS || type == TransactionRecord::StakeDelegated;
+}
+
+bool TransactionFilterProxy::isColdStake(int type) const {
+    return type == TransactionRecord::P2CSDelegation || type == TransactionRecord::P2CSDelegationSent || type == TransactionRecord::P2CSDelegationSentOwner || type == TransactionRecord::StakeDelegated || type == TransactionRecord::StakeHot;
+}
+
+/*QVariant TransactionFilterProxy::dataFromSourcePos(int sourceRow, int role) const {
+    QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+    return index.data(index, role);
+}
+ */

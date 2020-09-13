@@ -58,13 +58,31 @@
       </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_Master" stretch="0,1">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
          <widget class="QFrame" name="frame_Header">
           <layout class="QVBoxLayout" name="verticalLayout_Header" stretch="0">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -183,7 +201,16 @@
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
@@ -232,7 +259,7 @@
                           <cursorShape>WhatsThisCursor</cursorShape>
                          </property>
                          <property name="toolTip">
-                          <string>The displayed information may be out of date. Your wallet automatically synchronizes with the FLS network after a connection is established, but this process has not completed yet.</string>
+                          <string>The displayed information may be out of date. Your wallet automatically synchronizes with the Flits network after a connection is established, but this process has not completed yet.</string>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">QLabel { color: red; }</string>
@@ -650,7 +677,7 @@
                        <item row="4" column="0">
                         <widget class="QLabel" name="labelLockedBalanceText">
                          <property name="toolTip">
-                          <string>Locked FLS or Masternode collaterals. These are excluded from zFLS minting.</string>
+                          <string>Locked FLS or Masternode collaterals. These are excluded from zfls minting.</string>
                          </property>
                          <property name="text">
                           <string>Locked:</string>
@@ -669,7 +696,7 @@
                           <cursorShape>IBeamCursor</cursorShape>
                          </property>
                          <property name="toolTip">
-                          <string>Locked FLS or Masternode collaterals. These are excluded from zFLS minting.</string>
+                          <string>Locked FLS or Masternode collaterals. These are excluded from zfls minting.</string>
                          </property>
                          <property name="text">
                           <string notr="true">0.000 000 00 FLS</string>
@@ -710,7 +737,7 @@
                        <item row="5" column="0">
                         <widget class="QLabel" name="labelTotalText">
                          <property name="toolTip">
-                          <string>Your current FLS balance, unconfirmed and immature transactions included</string>
+                          <string>Your current Flits balance, unconfirmed and immature transactions included</string>
                          </property>
                          <property name="text">
                           <string>Total:</string>
@@ -729,7 +756,7 @@
                           <cursorShape>IBeamCursor</cursorShape>
                          </property>
                          <property name="toolTip">
-                          <string>Your current FLS balance, unconfirmed and immature transactions included</string>
+                          <string>Your current flits balance, unconfirmed and immature transactions included</string>
                          </property>
                          <property name="text">
                           <string notr="true">0.000 000 00 FLS</string>
@@ -825,12 +852,12 @@
                           </font>
                          </property>
                          <property name="text">
-                          <string>zFLS Balance</string>
+                          <string>zfls Balance</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLabel" name="labelzFLSPercent">
+                        <widget class="QLabel" name="labelzflsPercent">
                          <property name="text">
                           <string notr="true">0 %</string>
                          </property>
@@ -879,7 +906,7 @@
                         <widget class="QLabel" name="labelzBalanceMatureText">
                          <property name="toolTip">
                           <string>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
-These zFLS are spendable.</string>
+These zfls are spendable.</string>
                          </property>
                          <property name="text">
                           <string>Available:</string>
@@ -896,7 +923,7 @@ These zFLS are spendable.</string>
                          </property>
                          <property name="toolTip">
                           <string>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
-These zFLS are spendable.</string>
+These zfls are spendable.</string>
                          </property>
                          <property name="text">
                           <string notr="true">0.000 000 00 FLS</string>
@@ -971,7 +998,7 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
                        <item row="4" column="0">
                         <widget class="QLabel" name="labelzBalanceText">
                          <property name="toolTip">
-                          <string>Your current zFLS balance, unconfirmed and immature zFLS included.</string>
+                          <string>Your current zfls balance, unconfirmed and immature zfls included.</string>
                          </property>
                          <property name="text">
                           <string>Total:</string>
@@ -990,7 +1017,7 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
                           <cursorShape>IBeamCursor</cursorShape>
                          </property>
                          <property name="toolTip">
-                          <string>Your current zFLS balance, unconfirmed and immature zFLS included.</string>
+                          <string>Your current zfls balance, unconfirmed and immature zfls included.</string>
                          </property>
                          <property name="text">
                           <string notr="true">0.000 000 00 FLS</string>
@@ -1084,7 +1111,7 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
                        <cursorShape>WhatsThisCursor</cursorShape>
                       </property>
                       <property name="toolTip">
-                       <string>The displayed information may be out of date. Your wallet automatically synchronizes with the FLS network after a connection is established, but this process has not completed yet.</string>
+                       <string>The displayed information may be out of date. Your wallet automatically synchronizes with the flits network after a connection is established, but this process has not completed yet.</string>
                       </property>
                       <property name="styleSheet">
                        <string notr="true">QLabel { color: red; }</string>

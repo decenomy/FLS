@@ -1935,7 +1935,7 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</tran
     </message>
     <message>
         <source>Enable automatic minting of FLS units to zFLS</source>
-        <translation>Schakel automatisch slaan van FLS-eenheden in op zFLS</translation>
+        <translation>Schakel automatisch slaan van flits-eenheden in op zFLS</translation>
     </message>
     <message>
         <source>Enable zFLS Automint</source>
@@ -2150,7 +2150,7 @@ https://www.transifex.com/CryptoDev-Project/CryptoDev-Project-translations</tran
     </message>
     <message>
         <source>Your current FLS balance, unconfirmed and immature transactions included</source>
-        <translation>Uw huidige FLS-saldo, onbevestigde en onvolgroeide transacties inbegrepen</translation>
+        <translation>Uw huidige flits-saldo, onbevestigde en onvolgroeide transacties inbegrepen</translation>
     </message>
     <message>
         <source>zFLS Balance</source>
@@ -4834,7 +4834,7 @@ Wees alsjeblieft geduldig...</translation>
     </message>
 </context>
 <context>
-    <name>fls-core</name>
+    <name>flits-core</name>
     <message>
         <source>(1 = keep tx meta data e.g. account owner and payment request information, 2 = drop tx meta data)</source>
         <translation>(1 = houd tx meta data, bijvoorbeeld account eigenaar en betalingsverzoek informatie, 2 = drop tx meta data)</translation>
@@ -5437,7 +5437,7 @@ Wees alsjeblieft geduldig...</translation>
     </message>
     <message>
         <source>Reindex the FLS and zFLS money supply statistics</source>
-        <translation>Indexeer de FLS- en zFLS-geldvoorraadstatistieken opnieuw</translation>
+        <translation>Indexeer de flits- en zFLS-geldvoorraadstatistieken opnieuw</translation>
     </message>
     <message>
         <source>Reindexing zerocoin database...</source>

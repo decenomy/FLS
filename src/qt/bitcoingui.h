@@ -1,7 +1,5 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2017-2019 The Flits-Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +7,7 @@
 #define BITCOIN_QT_BITCOINGUI_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/fls-config.h"
+#include "config/flits-config.h"
 #endif
 
 #include "amount.h"
@@ -21,7 +19,9 @@
 #include <QPoint>
 #include <QPushButton>
 #include <QSystemTrayIcon>
-
+#ifdef Q_OS_MAC
+#include "qt/macos_appnap.h"
+#endif
 class ClientModel;
 class NetworkStyle;
 class Notificator;
@@ -139,7 +139,9 @@ private:
     Notificator* notificator;
     RPCConsole* rpcConsole;
     BlockExplorer* explorerWindow;
-
+#ifdef Q_OS_MAC
+    CAppNapInhibitor* m_app_nap_inhibitor = nullptr;
+#endif
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
     int spinnerFrame;
@@ -188,7 +190,7 @@ public slots:
 
 #ifdef ENABLE_WALLET
     void setStakingStatus();
-    //void setAutoMintStatus();
+    void setAutoMintStatus();
 
     /** Set the encryption status as shown in the UI.
        @param[in] status            current encryption status
@@ -213,7 +215,7 @@ private slots:
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch to Governance Page */
-    //void gotoGovernancePage();
+    void gotoGovernancePage();
     /** Switch to Explorer Page */
     void gotoBlockExplorerPage();
     /** Switch to masternode page */
@@ -221,7 +223,7 @@ private slots:
     /** Switch to privacy page */
     void gotoReceiveCoinsPage();
     /** Switch to receive coins page */
-    //void gotoPrivacyPage();
+    // void gotoPrivacyPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 

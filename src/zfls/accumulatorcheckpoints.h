@@ -1,11 +1,9 @@
-// Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
+// Copyright (c) 2018 The Flits-Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef FLS_ACCUMULATORCHECKPOINTS_H
-#define FLS_ACCUMULATORCHECKPOINTS_H
+#ifndef flits_ACCUMULATORCHECKPOINTS_H
+#define flits_ACCUMULATORCHECKPOINTS_H
 
 #include <libzerocoin/bignum.h>
 #include <univalue/include/univalue.h>
@@ -20,4 +18,4 @@ namespace AccumulatorCheckpoints
     Checkpoint GetClosestCheckpoint(const int& nHeight, int& nHeightCheckpoint);
 }
 
-#endif //FLS_ACCUMULATORCHECKPOINTS_H
+#endif //flits_ACCUMULATORCHECKPOINTS_H

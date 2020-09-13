@@ -1,5 +1,6 @@
 ---
-name: "fls-dmg-signer"
+name: "flits-dmg-signer"
+distro: "ubuntu"
 suites:
 - "bionic"
 architectures:
@@ -7,11 +8,13 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/flitsnode/fls-detached-sigs.git"
+- "url": "https://github.com/DogeCash/detached-sigs.git"
   "dir": "signature"
 files:
-- "fls-osx-unsigned.tar.gz"
+- "flits-osx-unsigned.tar.gz"
 script: |
+  set -e -o pipefail
+
   WRAP_DIR=$HOME/wrapped
   mkdir -p ${WRAP_DIR}
   export PATH=`pwd`:$PATH
@@ -27,8 +30,8 @@ script: |
     chmod +x ${WRAP_DIR}/${prog}
   done
 
-  UNSIGNED=fls-osx-unsigned.tar.gz
-  SIGNED=fls-osx-signed.dmg
+  UNSIGNED=flits-osx-unsigned.tar.gz
+  SIGNED=flits-osx-signed.dmg
 
   tar -xf ${UNSIGNED}
   OSX_VOLNAME="$(cat osx_volname)"

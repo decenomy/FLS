@@ -1,12 +1,11 @@
 // Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019 The CryptoDev developers
-// Copyright (c) 2019 The Flits developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef FLS_ZFLSCHAIN_H
 #define FLS_ZFLSCHAIN_H
 
+#include "chain.h"
 #include "libzerocoin/Coin.h"
 #include "libzerocoin/Denominations.h"
 #include "libzerocoin/CoinSpend.h"
@@ -14,6 +13,7 @@
 #include <string>
 
 class CBlock;
+class CBlockIndex;
 class CBigNum;
 struct CMintMeta;
 class CTransaction;
@@ -30,7 +30,6 @@ void FindMints(std::vector<CMintMeta> vMintsToFind, std::vector<CMintMeta>& vMin
 int GetZerocoinStartHeight();
 bool GetZerocoinMint(const CBigNum& bnPubcoin, uint256& txHash);
 bool IsPubcoinInBlockchain(const uint256& hashPubcoin, uint256& txid);
-bool IsSerialKnown(const CBigNum& bnSerial);
 bool IsSerialInBlockchain(const CBigNum& bnSerial, int& nHeightTx);
 bool IsSerialInBlockchain(const uint256& hashSerial, int& nHeightTx, uint256& txidSpend);
 bool IsSerialInBlockchain(const uint256& hashSerial, int& nHeightTx, uint256& txidSpend, CTransaction& tx);
@@ -40,5 +39,10 @@ libzerocoin::CoinSpend TxInToZerocoinSpend(const CTxIn& txin);
 bool TxOutToPublicCoin(const CTxOut& txout, libzerocoin::PublicCoin& pubCoin, CValidationState& state);
 std::list<libzerocoin::CoinDenomination> ZerocoinSpendListFromBlock(const CBlock& block, bool fFilterInvalid);
 
+/** Global variable for the zerocoin supply */
+extern std::map<libzerocoin::CoinDenomination, int64_t> mapZerocoinSupply;
+int64_t GetZerocoinSupply();
+bool UpdateZFLSSupplyConnect(const CBlock& block, CBlockIndex* pindex, bool fJustCheck);
+bool UpdateZFLSSupplyDisconnect(const CBlock& block, CBlockIndex* pindex);
 
 #endif //FLS_ZFLSCHAIN_H
