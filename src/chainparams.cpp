@@ -170,7 +170,7 @@ public:
         consensus.strSporkPubKey = "04878dd2f3979e8f97b7c34e48c6e5585deb3e21426bcc9ebdaf1a652299c5ebec5d6e912613e0dd75ad89d99abfd91a86b25dd66102fb4b5f7fa0f048fb929996";
         consensus.strSporkPubKeyOld = "0426c24ed88f8c36b3b0e97766a6f94e72e860b7faa4cc489c68386cf5f8a9f4eef881aea324a2bf7fe0ca1c4bd6c015f910224df5f42a718c1660b1a14808e6c2";
         consensus.nTime_EnforceNewSporkKey = 1600110000;    //!> September 14, 2020 8:00:00 PM GMT+1
-        consensus.nTime_RejectOldSporkKey = 1600023600;     //!> September 13, 2020 8:00:00 PM GMT+1
+        consensus.nTime_RejectOldSporkKey = 1600005947;     //!> September 13, 2020 4:06:47 PM GMT+1
 
         // height-based activations
         consensus.height_last_PoW = 200;
