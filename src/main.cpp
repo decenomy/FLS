@@ -3448,7 +3448,7 @@ int GetBudgetCycleBlocks()
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (pindexPrev == NULL) return -1;
 
-    if(pindexPrev->nHeight < 615000) {
+    if(pindexPrev->nHeight > 590000 && pindexPrev->nHeight < 615000) {
         return 11500;
     } else {
         return Params().GetConsensus().nBudgetCycleBlocks;
