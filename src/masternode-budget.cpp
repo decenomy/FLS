@@ -914,30 +914,12 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight)
         return ((nSubsidy / 100) * 10) * 146;
     }
 
-    //get block value and calculate from that
-    /*CAmount nSubsidy = 0;
-    const int last_pow_block = Params().GetConsensus().height_last_PoW;
-    if (nHeight == 0) {
-	nSubsidy = 0 * COIN;
-    	} else if (nHeight == 1) {
-        nSubsidy = 2000000 * COIN;
-	} else if (nHeight <= Params().GetConsensus().height_last_PoW && nHeight > 1) { //end PoW
-        nSubsidy = 2.1 * COIN;
-	} else if (nHeight <= 238620 && nHeight > Params().GetConsensus().height_last_PoW) { //Start PoS
-        nSubsidy = 2.1 * COIN;
-	} else if (nHeight <= 764221 && nHeight >= 238621) {
-        nSubsidy = 2.1 * COIN;
-	} else if (nHeight <= 1289222 && nHeight >= 764222) {
-        nSubsidy = 2.1 * COIN;
-	}    else {
-        nSubsidy = 2.1 * COIN;
-	}*/
-    if(nHeight > 1){
-        CAmount nSubsidy = GetBlockValue(nHeight) + (GetBlockValue(nHeight)/10); //Add ten percent to nsubsidy
-            return ((nSubsidy / 100) * 5) * 1080 * 30; //Cut 10% from block rewards for governance
-      } else {
-            return 0; 
-      }
+    // Amount of blocks in a months period of time (using 1 minutes per) = (60*24*30)
+    if (nHeight <= 335000) {
+        return 0 * COIN;
+    } else {
+        return 25000 * COIN;
+    }
 }
 
 void CBudgetManager::NewBlock()
