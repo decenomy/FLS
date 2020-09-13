@@ -444,18 +444,18 @@ HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH*/
 }
 
 *[cssClass="text-title-topbar"] {
-    color:#a3a3a4;
+    color:#ffffff;
     font-size:16px;
     font-weight: ligther;
 }
 
 *[cssClass="amount-topbar"] {
-    color:#007bfe;
+    color:#ffffff;
     font-size:35px;
 }
 
 *[cssClass="amount-small-topbar"] {
-    color:#007bfe;
+    color:#ffffff;
     font-size:22px;
 }
 
