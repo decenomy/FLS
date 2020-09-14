@@ -82,7 +82,7 @@ The following consensus rule changes will be enforced on or shortly after block 
 
 Since the discovery of a critical exploit within the libzerocoin library in early 2019, remaining legacy v1 zFLS have been un-spendable. We're happy to say that, once the new consensus rules are in effect, users will once again be able to spend their v1 zFLS with public spends version 4 ([PR #936](https://github.com/Simple-Software-Solutions/FLS-Core/pull/936)).
 
-As with the previous version 3 public spends introduced in core wallet version 3.3.0 (enabling the spending of v2 zFLS), version 4 spends will also be public. A full technical writeup is available on the [FLS Wiki](https://github.com/Simple-Software-Solutions/FLS-Core/wiki/CoinRandomneFLSchnorrSignature).
+As with the previous version 3 public spends introduced in core wallet version 3.3.0 (enabling the spending of v2 zFLS), version 4 spends will also be public. A full technical writeup is available on the [FLS Wiki](https://github.com/Simple-Software-Solutions/FLS-Core/wiki/CoinRandomnessSchnorrSignature).
 
 ### OP_CHECKCOLDSTAKEVERIFY and P2CS
 

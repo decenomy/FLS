@@ -533,13 +533,13 @@ libzerocoin_libbitcoin_zerocoin_a_LIBADD =
 am__libzerocoin_libbitcoin_zerocoin_a_SOURCES_DIST =  \
 	libzerocoin/Accumulator.h libzerocoin/bignum.h \
 	libzerocoin/Coin.h \
-	libzerocoin/CoinRandomneFLSchnorrSignature.h \
+	libzerocoin/CoinRandomnessSchnorrSignature.h \
 	libzerocoin/CoinSpend.h libzerocoin/Commitment.h \
 	libzerocoin/Denominations.h libzerocoin/ParamGeneration.h \
 	libzerocoin/Params.h libzerocoin/SpendType.h \
 	libzerocoin/ZerocoinDefines.h libzerocoin/bignum.cpp \
 	libzerocoin/Accumulator.cpp libzerocoin/Coin.cpp \
-	libzerocoin/CoinRandomneFLSchnorrSignature.cpp \
+	libzerocoin/CoinRandomnessSchnorrSignature.cpp \
 	libzerocoin/CoinSpend.cpp libzerocoin/Denominations.cpp \
 	libzerocoin/ParamGeneration.cpp libzerocoin/Params.cpp \
 	libzerocoin/bignum_gmp.cpp libzerocoin/bignum_openssl.cpp
@@ -548,7 +548,7 @@ am__libzerocoin_libbitcoin_zerocoin_a_SOURCES_DIST =  \
 am_libzerocoin_libbitcoin_zerocoin_a_OBJECTS = libzerocoin/libzerocoin_libbitcoin_zerocoin_a-bignum.$(OBJEXT) \
 	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Accumulator.$(OBJEXT) \
 	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Coin.$(OBJEXT) \
-	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.$(OBJEXT) \
+	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.$(OBJEXT) \
 	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.$(OBJEXT) \
 	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Denominations.$(OBJEXT) \
 	libzerocoin/libzerocoin_libbitcoin_zerocoin_a-ParamGeneration.$(OBJEXT) \
@@ -2425,13 +2425,13 @@ libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS = $(AM_CPPFLAGS) $(BOOST_CPPFLAGS)
 libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libzerocoin_libbitcoin_zerocoin_a_SOURCES = libzerocoin/Accumulator.h \
 	libzerocoin/bignum.h libzerocoin/Coin.h \
-	libzerocoin/CoinRandomneFLSchnorrSignature.h \
+	libzerocoin/CoinRandomnessSchnorrSignature.h \
 	libzerocoin/CoinSpend.h libzerocoin/Commitment.h \
 	libzerocoin/Denominations.h libzerocoin/ParamGeneration.h \
 	libzerocoin/Params.h libzerocoin/SpendType.h \
 	libzerocoin/ZerocoinDefines.h libzerocoin/bignum.cpp \
 	libzerocoin/Accumulator.cpp libzerocoin/Coin.cpp \
-	libzerocoin/CoinRandomneFLSchnorrSignature.cpp \
+	libzerocoin/CoinRandomnessSchnorrSignature.cpp \
 	libzerocoin/CoinSpend.cpp libzerocoin/Denominations.cpp \
 	libzerocoin/ParamGeneration.cpp libzerocoin/Params.cpp \
 	$(am__append_3) $(am__append_4)
@@ -4021,7 +4021,7 @@ libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Accumulator.$(OBJEXT):  \
 libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Coin.$(OBJEXT):  \
 	libzerocoin/$(am__dirstamp) \
 	libzerocoin/$(DEPDIR)/$(am__dirstamp)
-libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.$(OBJEXT):  \
+libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.$(OBJEXT):  \
 	libzerocoin/$(am__dirstamp) \
 	libzerocoin/$(DEPDIR)/$(am__dirstamp)
 libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.$(OBJEXT):  \
@@ -4962,7 +4962,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@leveldb/util/$(DEPDIR)/leveldb_libleveldb_a-status.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-Accumulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-Coin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-Denominations.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-ParamGeneration.Po@am__quote@
@@ -7836,19 +7836,19 @@ libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Coin.obj: libzerocoin/Coin.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-Coin.obj `if test -f 'libzerocoin/Coin.cpp'; then $(CYGPATH_W) 'libzerocoin/Coin.cpp'; else $(CYGPATH_W) '$(srcdir)/libzerocoin/Coin.cpp'; fi`
 
-libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.o: libzerocoin/CoinRandomneFLSchnorrSignature.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -MT libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.o -MD -MP -MF libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Tpo -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.o `test -f 'libzerocoin/CoinRandomneFLSchnorrSignature.cpp' || echo '$(srcdir)/'`libzerocoin/CoinRandomneFLSchnorrSignature.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Tpo libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='libzerocoin/CoinRandomneFLSchnorrSignature.cpp' object='libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.o' libtool=no @AMDEPBACKSLASH@
+libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.o: libzerocoin/CoinRandomnessSchnorrSignature.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -MT libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.o -MD -MP -MF libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Tpo -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.o `test -f 'libzerocoin/CoinRandomnessSchnorrSignature.cpp' || echo '$(srcdir)/'`libzerocoin/CoinRandomnessSchnorrSignature.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Tpo libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='libzerocoin/CoinRandomnessSchnorrSignature.cpp' object='libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.o `test -f 'libzerocoin/CoinRandomneFLSchnorrSignature.cpp' || echo '$(srcdir)/'`libzerocoin/CoinRandomneFLSchnorrSignature.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.o `test -f 'libzerocoin/CoinRandomnessSchnorrSignature.cpp' || echo '$(srcdir)/'`libzerocoin/CoinRandomnessSchnorrSignature.cpp
 
-libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.obj: libzerocoin/CoinRandomneFLSchnorrSignature.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -MT libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.obj -MD -MP -MF libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Tpo -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.obj `if test -f 'libzerocoin/CoinRandomneFLSchnorrSignature.cpp'; then $(CYGPATH_W) 'libzerocoin/CoinRandomneFLSchnorrSignature.cpp'; else $(CYGPATH_W) '$(srcdir)/libzerocoin/CoinRandomneFLSchnorrSignature.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Tpo libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='libzerocoin/CoinRandomneFLSchnorrSignature.cpp' object='libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.obj' libtool=no @AMDEPBACKSLASH@
+libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.obj: libzerocoin/CoinRandomnessSchnorrSignature.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -MT libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.obj -MD -MP -MF libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Tpo -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.obj `if test -f 'libzerocoin/CoinRandomnessSchnorrSignature.cpp'; then $(CYGPATH_W) 'libzerocoin/CoinRandomnessSchnorrSignature.cpp'; else $(CYGPATH_W) '$(srcdir)/libzerocoin/CoinRandomnessSchnorrSignature.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Tpo libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='libzerocoin/CoinRandomnessSchnorrSignature.cpp' object='libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomneFLSchnorrSignature.obj `if test -f 'libzerocoin/CoinRandomneFLSchnorrSignature.cpp'; then $(CYGPATH_W) 'libzerocoin/CoinRandomneFLSchnorrSignature.cpp'; else $(CYGPATH_W) '$(srcdir)/libzerocoin/CoinRandomneFLSchnorrSignature.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinRandomnessSchnorrSignature.obj `if test -f 'libzerocoin/CoinRandomnessSchnorrSignature.cpp'; then $(CYGPATH_W) 'libzerocoin/CoinRandomnessSchnorrSignature.cpp'; else $(CYGPATH_W) '$(srcdir)/libzerocoin/CoinRandomnessSchnorrSignature.cpp'; fi`
 
 libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.o: libzerocoin/CoinSpend.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzerocoin_libbitcoin_zerocoin_a_CPPFLAGS) $(CPPFLAGS) $(libzerocoin_libbitcoin_zerocoin_a_CXXFLAGS) $(CXXFLAGS) -MT libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.o -MD -MP -MF libzerocoin/$(DEPDIR)/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.Tpo -c -o libzerocoin/libzerocoin_libbitcoin_zerocoin_a-CoinSpend.o `test -f 'libzerocoin/CoinSpend.cpp' || echo '$(srcdir)/'`libzerocoin/CoinSpend.cpp

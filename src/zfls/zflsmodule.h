@@ -9,7 +9,7 @@
 #include "libzerocoin/Denominations.h"
 #include "libzerocoin/CoinSpend.h"
 #include "libzerocoin/Coin.h"
-#include "libzerocoin/CoinRandomneFLSchnorrSignature.h"
+#include "libzerocoin/CoinRandomnessSchnorrSignature.h"
 #include "libzerocoin/SpendType.h"
 #include "primitives/transaction.h"
 #include "script/script.h"
@@ -45,7 +45,7 @@ public:
     // Members
     int coinVersion;
     CBigNum randomness;
-    libzerocoin::CoinRandomneFLSchnorrSignature schnorrSig;
+    libzerocoin::CoinRandomnessSchnorrSignature schnorrSig;
     // prev out values
     uint256 txHash;
     unsigned int outputIndex = -1;

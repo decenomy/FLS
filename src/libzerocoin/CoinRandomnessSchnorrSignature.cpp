@@ -2,11 +2,11 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "CoinRandomneFLSchnorrSignature.h"
+#include "CoinRandomnessSchnorrSignature.h"
 
 namespace libzerocoin {
 
-CoinRandomneFLSchnorrSignature::CoinRandomneFLSchnorrSignature(
+CoinRandomnessSchnorrSignature::CoinRandomnessSchnorrSignature(
         const ZerocoinParams* zcparams, const CBigNum randomness, const uint256 msghash)
 {
     const CBigNum p = zcparams->coinCommitmentGroup.modulus;
@@ -33,7 +33,7 @@ CoinRandomneFLSchnorrSignature::CoinRandomneFLSchnorrSignature(
 
 }
 
-bool CoinRandomneFLSchnorrSignature::Verify(
+bool CoinRandomnessSchnorrSignature::Verify(
         const ZerocoinParams* zcparams, const CBigNum& S, const CBigNum& C, const uint256 msghash) const
 {
     const CBigNum p = zcparams->coinCommitmentGroup.modulus;

@@ -37,7 +37,7 @@ PublicCoinSpend::PublicCoinSpend(libzerocoin::ZerocoinParams* params, const uint
     if (version < PUBSPEND_SCHNORR)
         this->randomness = randomness;
     else
-        this->schnorrSig = libzerocoin::CoinRandomneFLSchnorrSignature(params, randomness, ptxHash);
+        this->schnorrSig = libzerocoin::CoinRandomnessSchnorrSignature(params, randomness, ptxHash);
 
 }
 

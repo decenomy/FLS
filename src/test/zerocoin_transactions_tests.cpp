@@ -4,7 +4,7 @@
 
 #include "libzerocoin/Denominations.h"
 #include "libzerocoin/Coin.h"
-#include "libzerocoin/CoinRandomneFLSchnorrSignature.h"
+#include "libzerocoin/CoinRandomnessSchnorrSignature.h"
 #include "amount.h"
 #include "chainparams.h"
 #include "coincontrol.h"
@@ -93,24 +93,24 @@ BOOST_AUTO_TEST_CASE(zerocoin_schnorr_signature_test)
         const uint256 msghash = CBigNum::randKBitBignum(256).getuint256();
 
         // sign the msghash with the randomness of the v1 coin
-        libzerocoin::CoinRandomneFLSchnorrSignature crss_v1(ZCParams_v1, randomness_v1, msghash);
+        libzerocoin::CoinRandomnessSchnorrSignature crss_v1(ZCParams_v1, randomness_v1, msghash);
         CDataStream ser_crss_v1(SER_NETWORK, PROTOCOL_VERSION);
         ser_crss_v1 << crss_v1;
 
         // sign the msghash with the randomness of the v2 coin
-        libzerocoin::CoinRandomneFLSchnorrSignature crss_v2(ZCParams_v2, randomness_v2, msghash);
+        libzerocoin::CoinRandomnessSchnorrSignature crss_v2(ZCParams_v2, randomness_v2, msghash);
         CDataStream ser_crss_v2(SER_NETWORK, PROTOCOL_VERSION);
         ser_crss_v2 << crss_v2;
 
         // unserialize the v1 signature into a fresh object and verify it
-        libzerocoin::CoinRandomneFLSchnorrSignature new_crss_v1(ser_crss_v1);
+        libzerocoin::CoinRandomnessSchnorrSignature new_crss_v1(ser_crss_v1);
         BOOST_CHECK_MESSAGE(
                 new_crss_v1.Verify(ZCParams_v1, serialNumber_v1, pubCoinValue_v1, msghash),
                 "Failed to verify schnorr signature with v1 coin"
                 );
 
         // unserialize the v2 signature into a fresh object and verify it
-        libzerocoin::CoinRandomneFLSchnorrSignature new_crss_v2(ser_crss_v2);
+        libzerocoin::CoinRandomnessSchnorrSignature new_crss_v2(ser_crss_v2);
         BOOST_CHECK_MESSAGE(
                 new_crss_v2.Verify(ZCParams_v2, serialNumber_v2, pubCoinValue_v2, msghash),
                 "Failed to verify schnorr signature with v2 coin"

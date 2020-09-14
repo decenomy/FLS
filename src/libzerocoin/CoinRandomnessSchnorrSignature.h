@@ -16,10 +16,10 @@ namespace libzerocoin {
  *  necessary to open a public coin C (which is a pedersen commitment g^S h^v mod p) with
  * given serial number S.
  */
-class CoinRandomneFLSchnorrSignature {
+class CoinRandomnessSchnorrSignature {
 public:
-    CoinRandomneFLSchnorrSignature() {};
-    template <typename Stream> CoinRandomneFLSchnorrSignature(Stream& strm) {strm >> *this;}
+    CoinRandomnessSchnorrSignature() {};
+    template <typename Stream> CoinRandomnessSchnorrSignature(Stream& strm) {strm >> *this;}
 
     /** Creates a Schnorr signature object using the randomness of a public coin as private key sk.
      *
@@ -27,7 +27,7 @@ public:
      * @param randomness the coin we are going to use for the signature (sk := randomness, pk := h^sk mod p).
      * @param msghash hash of meta data to create a signature on.
      */
-    CoinRandomneFLSchnorrSignature(const ZerocoinParams* zcparams, const CBigNum randomness, const uint256 msghash);
+    CoinRandomnessSchnorrSignature(const ZerocoinParams* zcparams, const CBigNum randomness, const uint256 msghash);
 
     /** Verifies the Schnorr signature on message msghash with public key pk = Cg^-S mod p
      *
