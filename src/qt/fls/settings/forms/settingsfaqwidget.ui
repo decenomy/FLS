@@ -919,7 +919,7 @@
                         <property name="text">
                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;
                            A masternode is a computer running a full node Flits Core wallet with a
-                           requirement of 2,500 FLS secured collateral to provide extra services
+                           requirement of 1,000 FLS secured collateral to provide extra services
                            to the network and in return, receive a portion of the block reward
                            regularly.  These services include:
                            &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;
@@ -951,7 +951,7 @@
                            Requirements:
                            &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;
                            &lt;ul&gt;
-                           &lt;li&gt;2,500 FLS per single Masternode instance&lt;/li&gt;
+                           &lt;li&gt;1,000 FLS per single Masternode instance&lt;/li&gt;
                            &lt;li&gt;Must be stored in a core wallet&lt;/li&gt;
                            &lt;li&gt;Need dedicated IP address&lt;/li&gt;
                            &lt;li&gt;Masternode wallet to remain online&lt;/li&gt;
@@ -1047,7 +1047,7 @@
                       <item>
                        <widget class="QLabel" name="labelContent5">
                         <property name="text">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Masternode Controller wallet is where the 2,500 FLS collateral can reside during a Controller-Remote masternode setup. It is a wallet that can activate the remote masternode wallet(s) and allows you to keep your collateral coins offline while the remote masternode remains online. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Masternode Controller wallet is where the 1,000 FLS collateral can reside during a Controller-Remote masternode setup. It is a wallet that can activate the remote masternode wallet(s) and allows you to keep your collateral coins offline while the remote masternode remains online. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                          </string>
                         </property>
                         <property name="alignment">

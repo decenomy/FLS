@@ -124,7 +124,7 @@ NOTE: Offline builds must use the --url flag to ensure Gitian fetches only from 
 
 The gbuild invocations below <b>DO NOT DO THIS</b> by default.
 
-### Build and sign SSS Core for Linux, Windows, and macOS:
+### Build and sign Flits-Core for Linux, Windows, and macOS:
 
     pushd ./gitian-builder
     ./bin/gbuild --num-make 2 --memory 3000 --commit sss=v${VERSION} ../sss/contrib/gitian-descriptors/gitian-linux.yml

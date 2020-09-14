@@ -1,4 +1,4 @@
-SSS Core version *3.2.0* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
+Flits-Core version *3.2.0* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
 
 This is a new major version release, including various bug fixes and performance improvements, as well as updated translations.
 
@@ -8,7 +8,7 @@ Please report bugs using the issue tracker at github: <https://github.com/Simple
 Mandatory Update
 ==============
 
-SSS Core v3.2.0 is a **mandatory update** for all block creators, masternodes, and integrated services (exchanges). Old version 4 blocks will be rejected once 95% of a rolling 7 days worth of blocks have signaled the new version 5.
+Flits-Core v3.2.0 is a **mandatory update** for all block creators, masternodes, and integrated services (exchanges). Old version 4 blocks will be rejected once 95% of a rolling 7 days worth of blocks have signaled the new version 5.
 
 Masternodes will need to be restarted once both the masternode daemon and the controller wallet have been upgraded.
 
@@ -22,13 +22,13 @@ Wallets for existing users upgrading from an earlier version will undergo a supp
 Compatibility
 ==============
 
-SSS Core is extensively tested on multiple operating systems using the Linux kernel, macOS 10.10+, and Windows 7 and later.
+Flits-Core is extensively tested on multiple operating systems using the Linux kernel, macOS 10.10+, and Windows 7 and later.
 
 Microsoft ended support for Windows XP on [April 8th, 2014](https://www.microsoft.com/en-us/WindowsForBusiness/end-of-xp-support), No attempt is made to prevent installing or running the software on Windows XP, you can still do so at your own risk but be aware that there are known instabilities and issues. Please do not report issues about Windows XP to the issue tracker.
 
-Apple released it's last Mountain Lion update August 13, 2015, and officially ended support on [December 14, 2015](http://news.fnal.gov/2015/10/mac-os-x-mountain-lion-10-8-end-of-life-december-14/). SSS Core software starting with v3.2.0 will no longer run on MacOS versions prior to Yosemite (10.10). Please do not report issues about MacOS versions prior to Yosemite to the issue tracker.
+Apple released it's last Mountain Lion update August 13, 2015, and officially ended support on [December 14, 2015](http://news.fnal.gov/2015/10/mac-os-x-mountain-lion-10-8-end-of-life-december-14/). Flits-Core software starting with v3.2.0 will no longer run on MacOS versions prior to Yosemite (10.10). Please do not report issues about MacOS versions prior to Yosemite to the issue tracker.
 
-SSS Core should also work on most other Unix-like systems but is not frequently tested on them.
+Flits-Core should also work on most other Unix-like systems but is not frequently tested on them.
 
  
 Notable Changes
@@ -37,7 +37,7 @@ Notable Changes
 Minimum Supported MacOS Version
 ------
 
-The minimum supported version of MacOS (OSX) has been moved from 10.8 Mountain Lion to 10.10 Yosemite. Users still running a MacOS version prior to Yosemite will need to upgrade their OS if they wish to continue using the latest version(s) of the SSS Core wallet.
+The minimum supported version of MacOS (OSX) has been moved from 10.8 Mountain Lion to 10.10 Yosemite. Users still running a MacOS version prior to Yosemite will need to upgrade their OS if they wish to continue using the latest version(s) of the Flits-Core wallet.
 
 Attacks, Exploits, and Mitigations
 ------
@@ -46,7 +46,7 @@ Attacks, Exploits, and Mitigations
 
 On Janurary 22 2019, Decentralized Systems Lab out of the University of Illinois published a study entitled “[‘Fake Stake’ attacks on chain-based Proof-of-Stake cryptocurrencies](https://medium.com/@dsl_uiuc/fake-stake-attacks-on-chain-based-proof-of-stake-cryptocurrencies-b8b05723f806)”, which outlined a type of Denial of Service attack that could take place on a number of Proof of Stake based networks by exhausting a client's RAM or Disk resources.
 
-A full report provided by SSS developers is available on the [SSS Website](https://sssolutions.io/fake-stake-official-sss-report/), which includes additional findings, mitigation details, and resources for testing. This type of attack has no risk to users' privacy and does not affect their holdings.
+A full report provided by SSS developers is available on the [SSS Website](https://flitswallet.app/fake-stake-official-sss-report/), which includes additional findings, mitigation details, and resources for testing. This type of attack has no risk to users' privacy and does not affect their holdings.
 
 ### Wrapped Serials
 
@@ -61,7 +61,7 @@ Major New Features
 
 ### BIP65 (CHECKLOCKTIMEVERIFY) Soft-Fork
 
-SSS Core v3.2.0 introduces new consensus rules for scripting pathways to support the [BIP65](https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki) standard. This is being carried out as a soft-fork in order to provide ample time for stakers to update their wallet version.
+Flits-Core v3.2.0 introduces new consensus rules for scripting pathways to support the [BIP65](https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki) standard. This is being carried out as a soft-fork in order to provide ample time for stakers to update their wallet version.
 
 ### Automint Addresses
 
@@ -77,7 +77,7 @@ A new UI wallet tab has been introduced that allows users to view the current bu
 
 Support for the ZLN Protocol has been added, which allows for a node to opt-in to providing extended network services for the protocol. By default, this functionality is disabled, but can be enabled by using the `-peerbloomfilterszc` runtime option.
 
-A full technical writeup of the protocol can be found [Here](https://sssolutions.io/wp-content/uploads/2018/11/Zerocoin_Light_Node_Protocol.pdf).
+A full technical writeup of the protocol can be found [Here](https://flitswallet.app/wp-content/uploads/2018/11/Zerocoin_Light_Node_Protocol.pdf).
 
 ### Precomputed Zerocoin Proofs
 
@@ -173,7 +173,7 @@ Build System Changes
 
 ### Completely Disallow Qt4
 
-Compiling the SSS Core wallet against Qt4 hasn't been supported for quite some time now, but the build system still recognized Qt4 as a valid option if Qt5 couldn't be found. This has now been remedied and Qt4 will no longer be considered valid during the `configure` pre-compilation phase.
+Compiling the Flits-Core wallet against Qt4 hasn't been supported for quite some time now, but the build system still recognized Qt4 as a valid option if Qt5 couldn't be found. This has now been remedied and Qt4 will no longer be considered valid during the `configure` pre-compilation phase.
 
 ### Further OpenSSL Deprecation
 

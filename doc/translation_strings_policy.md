@@ -1,7 +1,7 @@
 Translation Strings Policy
 ===========================
 
-This document provides guidelines for internationalization of the SSS Core software.
+This document provides guidelines for internationalization of the Flits-Core software.
 
 How to translate?
 ------------------

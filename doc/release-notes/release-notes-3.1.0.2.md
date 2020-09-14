@@ -1,4 +1,4 @@
-SSS Core version *3.1.0.2* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
+Flits-Core version *3.1.0.2* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
 
 This is a new mandatory bugfix release, specifically addressing a bug with windows OS masternode control wallets as well as a missed commit from our private repository affecting the budget amount. 
 
@@ -10,7 +10,7 @@ Please report bugs using the issue tracker at github: <https://github.com/Simple
 Mandatory Update
 ==============
 
-SSS Core v3.1.0.2 is a mandatory update for all users. This release contains new consensus rules and improvements that are not backwards compatible with older versions. Users will have a grace period of one week to update their clients before enforcement of this update is enabled.
+Flits-Core v3.1.0.2 is a mandatory update for all users. This release contains new consensus rules and improvements that are not backwards compatible with older versions. Users will have a grace period of one week to update their clients before enforcement of this update is enabled.
 
 Users updating from a previous version after Tuesday, May 8, 2018 12:00:00 AM GMT will require a full resync of their local blockchain from either the P2P network or by way of the bootstrap.
 
@@ -23,11 +23,11 @@ If you are running an older version, shut it down. Wait until it has completely 
 Compatibility
 ==============
 
-SSS Core is extensively tested on multiple operating systems using the Linux kernel, macOS 10.8+, and Windows 7 and later.
+Flits-Core is extensively tested on multiple operating systems using the Linux kernel, macOS 10.8+, and Windows 7 and later.
 
 Microsoft ended support for Windows XP on [April 8th, 2014](https://www.microsoft.com/en-us/WindowsForBusiness/end-of-xp-support), No attempt is made to prevent installing or running the software on Windows XP, you can still do so at your own risk but be aware that there are known instabilities and issues. Please do not report issues about Windows XP to the issue tracker.
 
-SSS Core should also work on most other Unix-like systems but is not frequently tested on them.
+Flits-Core should also work on most other Unix-like systems but is not frequently tested on them.
 
 ### :exclamation::exclamation::exclamation: MacOS 10.13 High Sierra :exclamation::exclamation::exclamation:
 
