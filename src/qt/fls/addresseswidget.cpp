@@ -81,7 +81,7 @@ AddressesWidget::AddressesWidget(FLSGUI* parent) :
     ui->labelTitle->setText(tr("Contacts"));
     ui->labelSubtitle1->setText(tr("You can add a new one in the options menu to the side."));
     setCssTitleScreen(ui->labelTitle);
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     // Change address option
     ui->btnAddContact->setTitleClassAndText("btn-title-grey", "Add new contact");
@@ -103,7 +103,7 @@ AddressesWidget::AddressesWidget(FLSGUI* parent) :
     SortEdit* lineEditOrder = new SortEdit(ui->comboBoxSortOrder);
     connect(lineEditOrder, &SortEdit::Mouse_Pressed, [this](){ui->comboBoxSortOrder->showPopup();});
     connect(ui->comboBoxSortOrder, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AddressesWidget::onSortOrderChanged);
-    fillAddressSortControls(lineEdit, lineEditOrder, ui->comboBoxSort, ui->comboBoxSortOrder);
+    fillAddreFLSortControls(lineEdit, lineEditOrder, ui->comboBoxSort, ui->comboBoxSortOrder);
 
     //Empty List
     ui->emptyContainer->setVisible(false);

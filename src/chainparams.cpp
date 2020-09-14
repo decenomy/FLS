@@ -178,7 +178,7 @@ public:
         consensus.height_last_ZC_WrappedSerials = INT_MAX;
         consensus.height_start_BIP65 = 1;             // Block v5: 82629b7a9978f5c7ea3f70a12db92633a7d2e436711500db28b97efd48b1e527
         consensus.height_start_InvalidUTXOsCheck = INT_MAX;
-        consensus.height_start_MessSignaturesV2 = 611500;  // height_start_TimeProtoV2
+        consensus.height_start_MeFLSignaturesV2 = 611500;  // height_start_TimeProtoV2
         consensus.height_start_StakeModifierNewSelection = 177980;
         consensus.height_start_StakeModifierV2 = 178000;   // Block v6: 0ef2556e40f3b9f6e02ce611b832e0bbfe7734a8ea751c7b555310ee49b61456
         consensus.height_start_TimeProtoV2 = 611520;       // Block v7: 14e477e597d24549cac5e59d97d32155e6ec2861c1003b42d0566f9bf39b65d5
@@ -296,7 +296,7 @@ public:
         consensus.height_last_ZC_WrappedSerials = -1;
         consensus.height_start_BIP65 = 1;                  // Block v5: d1ec8838ba8f644e78dd4f8e861d31e75457dfe607b31deade30e806b5f46c1c
         consensus.height_start_InvalidUTXOsCheck = INT_MAX;
-        consensus.height_start_MessSignaturesV2 = INT_MAX;      // height_start_TimeProtoV2
+        consensus.height_start_MeFLSignaturesV2 = INT_MAX;      // height_start_TimeProtoV2
         consensus.height_start_StakeModifierNewSelection = 225;
         consensus.height_start_StakeModifierV2 = 225;       // Block v6: 1822577176173752aea33d1f60607cefe9e0b1c54ebaa77eb40201a385506199
         consensus.height_start_TimeProtoV2 = INT_MAX;           // Block v7: 30c173ffc09a13f288bf6e828216107037ce5b79536b1cebd750a014f4939882
@@ -421,7 +421,7 @@ public:
         consensus.height_last_ZC_WrappedSerials = -1;
         consensus.height_start_BIP65 = 851019;              // Not defined for regtest. Inherit TestNet value.
         consensus.height_start_InvalidUTXOsCheck = 999999999;
-        consensus.height_start_MessSignaturesV2 = 1;
+        consensus.height_start_MeFLSignaturesV2 = 1;
         consensus.height_start_StakeModifierNewSelection = 0;
         consensus.height_start_StakeModifierV2 = 251;       // start with modifier V2 on regtest
         consensus.height_start_TimeProtoV2 = 999999999;

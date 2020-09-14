@@ -26,7 +26,7 @@ SettingsWalletOptionsWidget::SettingsWalletOptionsWidget(FLSGUI* _window, QWidge
     ui->labelTitle->setText(tr("Wallet"));
     ui->labelSubtitle1->setText(tr("Customize the internal wallet options"));
     setCssTitleScreen(ui->labelTitle);
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     // Combobox
     ui->labelTitleStake->setText(tr("Stake split threshold:"));
@@ -43,7 +43,7 @@ SettingsWalletOptionsWidget::SettingsWalletOptionsWidget(FLSGUI* _window, QWidge
     ui->labelTitleNetwork->setText(tr("Network"));
     ui->labelSubtitleNetwork->setText(tr("Customize the node network options"));
     setCssTitleScreen(ui->labelTitleNetwork);
-    setCssSubtitleScreen(ui->labelSubtitleNetwork);
+    setCFLSubtitleScreen(ui->labelSubtitleNetwork);
 
     // Proxy
     ui->labelSubtitleProxy->setText(tr("Proxy IP:"));

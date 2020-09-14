@@ -1,4 +1,4 @@
-Flits-Core version *3.1.0* is now available from:  <https://github.com/Simple-Software-Solutions/sssreleases>
+Flits-Core version *3.1.0* is now available from:  <https://github.com/Simple-Software-Solutions/FLSreleases>
 
 This is a new major version release, including various bug fixes and performance improvements, as well as updated translations.
 
@@ -15,7 +15,7 @@ Users updating from a previous version after Tuesday, May 8, 2018 12:00:00 AM GM
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sss/sssolutions-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/flits-qt (on Mac) or FLS/flits-qt (on Linux).
 
 
 Compatibility
@@ -40,48 +40,48 @@ frequently tested on them.
 Notable Changes
 ==============
 
-zSSS Updates
+zFLS Updates
 --------------
 
-### zSSS Staking
+### zFLS Staking
 
-zSSS Staking is here! zSSS staking will be activated on the morning of the 8th of May 2018. With the release of zSSS staking, there are effectively 2 versions of zSSS, zSSS minted on the 3.0.6 SSS wallet or lower, and zSSS minted on SSS wallet version or higher. New features in this release will require the use of zSSS v2, zSSS minted on this wallet release 3.1.0 or later. If you currently hold zSSS v1 and wish to take advantage of zSSS staking and deterministic zSSS, you will need to spend the zSSS v1 to yourself and remint zSSS v2.
-Note: To find your zSSS version, click the privacy tab, then the zSSS Control button then expand the arrows next to the desired denomination.
-
-
-### Deterministic zSSS Seed Keys
-
-zSSS is now associated with a deterministic seed key. With this seed key, users are able to securely backup their zSSS outside of the wallet that the zSSS had been minted on. zSSS can also be transferred from wallet to wallet without the need of transferring the wallet data file.
+zFLS Staking is here! zFLS staking will be activated on the morning of the 8th of May 2018. With the release of zFLS staking, there are effectively 2 versions of zFLS, zFLS minted on the 3.0.6 FLS wallet or lower, and zFLS minted on FLS wallet version or higher. New features in this release will require the use of zFLS v2, zFLS minted on this wallet release 3.1.0 or later. If you currently hold zFLS v1 and wish to take advantage of zFLS staking and deterministic zFLS, you will need to spend the zFLS v1 to yourself and remint zFLS v2.
+Note: To find your zFLS version, click the privacy tab, then the zFLS Control button then expand the arrows next to the desired denomination.
 
 
-### Updated zSSS minting
+### Deterministic zFLS Seed Keys
 
-zSSS minting now only requires 1 further mint (down from 2) to mature. zSSS mints still require 20 confirmations.  Mints also require that the 'second' mint is at least two checkpoints deep in the chain (this was already the case, but the logic was not as precise).
-
-
-### zSSS Search
-
-Users will now have the ability to search the blockchain for a specific serial # to see if a zSSS denomination has been spent or not.
+zFLS is now associated with a deterministic seed key. With this seed key, users are able to securely backup their zFLS outside of the wallet that the zFLS had been minted on. zFLS can also be transferred from wallet to wallet without the need of transferring the wallet data file.
 
 
+### Updated zFLS minting
 
-SSS/zSSS Staking and Masternode Rewards
+zFLS minting now only requires 1 further mint (down from 2) to mature. zFLS mints still require 20 confirmations.  Mints also require that the 'second' mint is at least two checkpoints deep in the chain (this was already the case, but the logic was not as precise).
+
+
+### zFLS Search
+
+Users will now have the ability to search the blockchain for a specific serial # to see if a zFLS denomination has been spent or not.
+
+
+
+FLS/zFLS Staking and Masternode Rewards
 --------------
 
-### SSS, zSSS and Masternode Payment Schedule
+### FLS, zFLS and Masternode Payment Schedule
 
-To encourage the use of zSSS and increase the SSS zerocoin anonymity set, the SSS payment schedule has been changed to the following:
+To encourage the use of zFLS and increase the FLS zerocoin anonymity set, the FLS payment schedule has been changed to the following:
 
-If a user staking zSSS wins the reward for their block, the following zSSS reward will be: 
-- 3 zSSS (3 x 1 denominations) rewarded to the staker, 2 SSS rewarded to the masternode owner and 1 SSS available for the budget. This is a total block reward of 6 SSS, up from 5.
+If a user staking zFLS wins the reward for their block, the following zFLS reward will be: 
+- 3 zFLS (3 x 1 denominations) rewarded to the staker, 2 FLS rewarded to the masternode owner and 1 FLS available for the budget. This is a total block reward of 6 FLS, up from 5.
 
-If a user staking SSS wins the reward, the following amounts will be rewarded: 
-- 2 SSS to the SSS staker, 3 SSS to the Masternode owner and 1 SSS available for the budget. This is a total block reward of 6 SSS, up from 5.
+If a user staking FLS wins the reward, the following amounts will be rewarded: 
+- 2 FLS to the FLS staker, 3 FLS to the Masternode owner and 1 FLS available for the budget. This is a total block reward of 6 FLS, up from 5.
 
 
-### Return change to sender when minting zSSS
+### Return change to sender when minting zFLS
 
-Previously, zSSS minting would send any change to a newly generated "change address". This has caused confusion among some users, and in some cases insufficient backups of the wallet. The wallet will now find the contributing address which contained the most SSS and return the change from a zSSS mint to that address.
+Previously, zFLS minting would send any change to a newly generated "change address". This has caused confusion among some users, and in some cases insufficient backups of the wallet. The wallet will now find the contributing address which contained the most FLS and return the change from a zFLS mint to that address.
 
 
 User Experience
@@ -89,7 +89,7 @@ User Experience
 
 ### Graphical User Interface
 
-The visual layout of the SSS Qt wallet has undergone a near-complete overhaul.
+The visual layout of the FLS Qt wallet has undergone a near-complete overhaul.
 A new 'vertical tab' layout is now being used instead of the prior 'horizontal tab' layout, as well as a completely new icon set.
 The overview tab has been simplified greatly to display only balances that are active or relevant, zero-balance line items are hidden by default to avoid clutter.
 
@@ -97,9 +97,9 @@ The overview tab has been simplified greatly to display only balances that are a
 ### Wallet Options
 
 There have been a number of changes to the tasks that you are able to perform from the wallet options. Users will now have the ability to do the following: 
--	Enable and disable the auto zSSS minting feature. This is enabled by default and the enablezeromint=0 setting in the sssconf file will overwrite the GUI option.
--	The percentage of autominted zSSS can now be set from 1 to 100, changed from 10 – 100.
--	The stake split threshold can now be set VIA the wallet options. This setting is an advanced feature for those wishing to remain staking regular SSS.
+-	Enable and disable the auto zFLS minting feature. This is enabled by default and the enablezeromint=0 setting in the FLSconf file will overwrite the GUI option.
+-	The percentage of autominted zFLS can now be set from 1 to 100, changed from 10 – 100.
+-	The stake split threshold can now be set VIA the wallet options. This setting is an advanced feature for those wishing to remain staking regular FLS.
 -	“Unlock for staking and anonymization only” is now selected by default when unlocking the wallet from the User Interface
 
 
@@ -113,9 +113,9 @@ Backup to external devices / locations
 
 ### Summary
 
- The SSS wallet can now have user selected directories for automatic backups of the wallet data file (wallet.dat). This can be set by adding the following lines to the sssconf file, found in the SSS data directory.
+ The FLS wallet can now have user selected directories for automatic backups of the wallet data file (wallet.dat). This can be set by adding the following lines to the FLSconf file, found in the FLS data directory.
 - backuppath = <directory / full path>
-- zsssbackuppath = <directory / full path>
+- zFLSbackuppath = <directory / full path>
 - custombackupthreshold = <backup limit>
 Note: System write permissions must be appropriate for the location the wallet is being saved to.
 
@@ -127,7 +127,7 @@ Note: System write permissions must be appropriate for the location the wallet i
 ### Details:
 
 * If path is set to directory, the backup will be named `wallet.dat-<year>-<month>-<day>-<hour>-<minute>-<second>`
-* If zSSS backup, auto generated name is `wallet-autozsssbackup.dat-<year>-<month>-<day>-<hour>-<minute>-<second>`
+* If zFLS backup, auto generated name is `wallet-autozFLSbackup.dat-<year>-<month>-<day>-<hour>-<minute>-<second>`
 * If path set to file, backup will be named `<filename>.dat`
 * walletbackupthreshold enables the user to select the maximum count of backup files to be written before overwriting existing backups.
 
@@ -164,19 +164,19 @@ Backing up 4 times will result as shown below
             
 
 
-SSS Daemon & Client (RPC Changes)
+FLS Daemon & Client (RPC Changes)
 --------------
 
 ### RPC Ban Management
 
-The SSS client peer bans now have additional RPC commands to manage peers. Peers can be banned and unbanned at will without the need to restart the wallet client. No changes have been made to the conditions resulting in automatic peer bans. New RPC commands: `setban`, `listbanned`, `clearbanned`, and `disconnectnode`
+The FLS client peer bans now have additional RPC commands to manage peers. Peers can be banned and unbanned at will without the need to restart the wallet client. No changes have been made to the conditions resulting in automatic peer bans. New RPC commands: `setban`, `listbanned`, `clearbanned`, and `disconnectnode`
 
 
 ### Random-cookie RPC authentication
 
 When no `-rpcpassword` is specified, the daemon now uses a special 'cookie' file for authentication. This file is generated with random content when the daemon starts, and deleted when it exits. Its contents are used as authentication token. Read access to this file controls who can access through RPC. By default it is stored in the data directory but its location can be overridden with the option `-rpccookiefile`.
 This is similar to Tor's CookieAuthentication: see https://www.torproject.org/docs/tor-manual.html.en 
-This allows running sss without having to do any manual configuration.
+This allows running FLS without having to do any manual configuration.
 
 
 ### New RPC command
@@ -188,7 +188,7 @@ This allows for a user (such as a third party integration) to query the blockcha
 ### New RPC command 
 `findserial`
 
-Search the zerocoin database for a zerocoinspend transaction that contains the given serial. This will be a helpful tool for the SSS support group, which often times sees users say "I didn't spend that zSSS". This RPC call allows for support to grab the serial, and then find the spend tx on the chain.
+Search the zerocoin database for a zerocoinspend transaction that contains the given serial. This will be a helpful tool for the FLS support group, which often times sees users say "I didn't spend that zFLS". This RPC call allows for support to grab the serial, and then find the spend tx on the chain.
 
 
 ### New RPC commands 
@@ -206,11 +206,11 @@ Network Layer 2 Changes (Proposals / Budgets / SwiftX)
 
 ### Monthly Budget Increase
 
-As voted on by the SSS masternodes, the monthly budget available to be utilised has been increased to 42,000 SSS / month. This SSS only has the opportunity to be raised once per month (paid to winning proposals) with any unused SSS not created by the blockchain.
+As voted on by the FLS masternodes, the monthly budget available to be utilised has been increased to 42,000 FLS / month. This FLS only has the opportunity to be raised once per month (paid to winning proposals) with any unused FLS not created by the blockchain.
 
 ### Budget Finalization Fee
 
-The SSS finalization fee for successful proposals has now been reduced, this fee is now 5 SSS down from 50 SSS. The total fee outlay for a successful proposal is now a total of 55 SSS.
+The FLS finalization fee for successful proposals has now been reduced, this fee is now 5 FLS down from 50 FLS. The total fee outlay for a successful proposal is now a total of 55 FLS.
 
 
 ### SwiftX Raw Transactions
@@ -248,11 +248,11 @@ When inputting wrong data into the GUI for a SOCKS5 proxy, the wallet would cras
 Minor Enhancements
 --------------
 
--	Enforced v1 zSSS spends to require a security level of 100
--	Updates to zSSS spends to avoid segfaults
+-	Enforced v1 zFLS spends to require a security level of 100
+-	Updates to zFLS spends to avoid segfaults
 -	Updates to configuration will now reflect on the privacy tab
--	Fixed a  bug that would not start masternodes from the sssolutions-qt masternodes tab
--	Updated sssolutions-qt tooltips
+-	Fixed a  bug that would not start masternodes from the flits-qt masternodes tab
+-	Updated flits-qt tooltips
 -	Icon added to the wallet GUI to reflect the status of autominting (active / inactive)
 -	Updated errors causing the blockchain to corrupt when experiencing unexpected wallet shutdowns
 -	Updated RPC help outputs & removed the deprecated obfuscation. 
@@ -263,29 +263,29 @@ Minor Enhancements
 Further Reading: Version 2 Zerocoins
 ==============
 
-Several critical security flaws in the zerocoin protocol and SSS's zerocoin implementation have been patched. Enough has changed that new zerocoins are distinct from old zerocoins, and have been labelled as *version 2*. When using the zSSS Control dialog in the QT wallet, a user is able to see zSSS marked as version 1 or 2.
+Several critical security flaws in the zerocoin protocol and FLS's zerocoin implementation have been patched. Enough has changed that new zerocoins are distinct from old zerocoins, and have been labelled as *version 2*. When using the zFLS Control dialog in the QT wallet, a user is able to see zFLS marked as version 1 or 2.
 
-zPoS (zSSS staking)
+zPoS (zFLS staking)
 --------------
 
-Once a zSSS has over 200 confirmations it becomes available to stake. Staking zSSS will consume the exact zerocoin that is staked and replace it with a freshly minted zerocoin of the same denomination as well as a reward of three 1 denomination zSSS. So for example if a 1,000 zSSS denomination is staked, the protocol replaces that with a fresh 1,000 denomination and three1 denomination zSSSs.
+Once a zFLS has over 200 confirmations it becomes available to stake. Staking zFLS will consume the exact zerocoin that is staked and replace it with a freshly minted zerocoin of the same denomination as well as a reward of three 1 denomination zFLS. So for example if a 1,000 zFLS denomination is staked, the protocol replaces that with a fresh 1,000 denomination and three1 denomination zFLSs.
 
 Secure Spending
 --------------
 
-Version 1 zerocoins, as implemented by [Miers et. al](http://zerocoin.org/media/pdf/ZerocoinOakland.pdf), allow for something we describe as *serial trolling*. Spending zerocoins requires that the spender reveal their serial number associated with the zerocoin, and in turn that serial number is used to check for double spending. There is a fringe situation (which is very unlikely to happen within SSS's zerocoin implementation due to delayed coin accumulation) where the spender sends the spending transaction, but the transaction does not immediately make it into the blockchain and remains in the mempool for a long enough duration that a *troll* has enough time to see the spender's serial number, mint a new zerocoin with the same serial number, and spend the new zerocoin before the original spender's transaction becomes confirmed. If the timing of this fringe situation worked, then the original spender's coin would be seen as invalid because the troll was able to have the serial recorded into the blockchain first, thus making the original spender's serial appear as a double spend.
+Version 1 zerocoins, as implemented by [Miers et. al](http://zerocoin.org/media/pdf/ZerocoinOakland.pdf), allow for something we describe as *serial trolling*. Spending zerocoins requires that the spender reveal their serial number associated with the zerocoin, and in turn that serial number is used to check for double spending. There is a fringe situation (which is very unlikely to happen within FLS's zerocoin implementation due to delayed coin accumulation) where the spender sends the spending transaction, but the transaction does not immediately make it into the blockchain and remains in the mempool for a long enough duration that a *troll* has enough time to see the spender's serial number, mint a new zerocoin with the same serial number, and spend the new zerocoin before the original spender's transaction becomes confirmed. If the timing of this fringe situation worked, then the original spender's coin would be seen as invalid because the troll was able to have the serial recorded into the blockchain first, thus making the original spender's serial appear as a double spend.
 
 The serial troll situation is mitigated in version 2 by requiring that the serial number be a hash of a public key. The spend requires an additional signature signed by the private key associated with the public key hash matching the serial number. This work around was conceived by Tim Ruffing, a cryptographer that has studied the zerocoin protocol and done consulting work for the ZCoin project.
 
 Deterministic Zerocoin Generation
 --------------
 
-Zerocoins, or zSSS, are now deterministically generated using a unique 256 bit seed. Each wallet will generate a new seed on its first run. The deterministic seed is used to generate a string of zSSS that can be recalculated at any time using the seed. Deterministic zSSS allows for users to backup all of their future zSSS by simply recording their seed and keeping it in a safe place (similar to backing up a private key for SSS). The zSSS seed needs to remain in the wallet in order to spend the zSSS after it is generated, if the seed is changed then the coins will not be spendable because the wallet will not have the ability to regenerate all of the private zSSS data from the seed. It is important that users record & backup their seed after their first run of the wallet. If the wallet is locked during the first run, then the seed will be generated the first time the wallet is unlocked.
+Zerocoins, or zFLS, are now deterministically generated using a unique 256 bit seed. Each wallet will generate a new seed on its first run. The deterministic seed is used to generate a string of zFLS that can be recalculated at any time using the seed. Deterministic zFLS allows for users to backup all of their future zFLS by simply recording their seed and keeping it in a safe place (similar to backing up a private key for FLS). The zFLS seed needs to remain in the wallet in order to spend the zFLS after it is generated, if the seed is changed then the coins will not be spendable because the wallet will not have the ability to regenerate all of the private zFLS data from the seed. It is important that users record & backup their seed after their first run of the wallet. If the wallet is locked during the first run, then the seed will be generated the first time the wallet is unlocked.
 
 Zerocoin Modulus
 --------------
 
-SSS's zerocoin implementation used the same code from the ZCoin project to import the modulus use for the zerocoin protocol. The chosen modulus is the 2048 bit RSA number created for the RSA factoring challenge. The ZCoin project's implementation (which SSS used) improperly imported the modulus into the code. This flaw was discovered by user GOAT from the [Civitas Project](https://github.com/eastcoastcrypto/Civitas/), and reported to SSS using the bug bounty program. The modulus is now correctly imported and SSS's accumulators have been changed to use the new proper modulus.
+FLS's zerocoin implementation used the same code from the ZCoin project to import the modulus use for the zerocoin protocol. The chosen modulus is the 2048 bit RSA number created for the RSA factoring challenge. The ZCoin project's implementation (which FLS used) improperly imported the modulus into the code. This flaw was discovered by user GOAT from the [Civitas Project](https://github.com/eastcoastcrypto/Civitas/), and reported to FLS using the bug bounty program. The modulus is now correctly imported and FLS's accumulators have been changed to use the new proper modulus.
 
 
 *3.1.0* Change log
@@ -294,7 +294,7 @@ SSS's zerocoin implementation used the same code from the ZCoin project to impor
 Detailed release notes follow. This overview includes changes that affect behavior, not code moves, refactors and string updates. For convenience in locating the code changes and accompanying discussion, both the pull request and git merge commit are mentioned.
 
 ### Core Features
- - #582 `cb1632520` [Core] zSSS v2: zPoS dzSSS ezSSS external backup and budget fixes (too many to list)
+ - #582 `cb1632520` [Core] zFLS v2: zPoS dzFLS ezFLS external backup and budget fixes (too many to list)
  - #558 `c7e6f0f7f` [Core] Remove Gitan-OSX warning for High Sierra builds (Mrs-X)
  - #523 `926c073ea` [Core] Give high priority to zerocoinspends to make it into the next block. (presstab)
  - #535 `5e8875feb` [Core] Minor refacturing + unused variable removed (Mrs-X)
@@ -318,7 +318,7 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #542 `61156def7` [Network] Remove vfReachable and modify IsReachable to only use vfLimited. (Patrick Strateman)
 
 ### GUI
- - #572 `d9b23fe60` [Qt] Refresh zSSS balance after resetting mints or spends (warrows)
+ - #572 `d9b23fe60` [Qt] Refresh zFLS balance after resetting mints or spends (warrows)
  - #571 `1c8e7cb7b` [Qt] Update privacy tab info about zeromint on config change (warrows)
  - #568 `f226de09e` [Qt] Connect automint icon to the UI automint setting change (warrows)
  - #566 `84f43857c` [Qt] Add automint status bar icon (Fuzzbawls)
@@ -329,7 +329,7 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #521 `fbb105a00` [Qt] Make "For anonymization and staking only" checked by default (Mrs-X)
  - #508 `2cf3be6bb` [Qt] Fix crash when inputting wrong port for network proxy (warrows)
  - #500 `4c01ba65d` [Qt] Remove duplicate code for updating address book labels. (blondfrogs)
- - #506 `ae72bf4e2` [Qt] Autoscroll to end of zSSS status output (Mrs-X)
+ - #506 `ae72bf4e2` [Qt] Autoscroll to end of zFLS status output (Mrs-X)
  - #499 `6305264f2` [Qt] Send popup simplified + SwiftTX -> SwiftX (Mrs-X)
  - #490 `ba777e4ef` [Qt] Update MultiSend GUI to allow address labels (blondfrogs)
  - #483 `5b1070365` [Qt] Fixed Dynamic Screen Elements Issue for Multisig (blondfrogs)
@@ -338,7 +338,7 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #473 `9e2ed8f0f` [Qt] Make toolbar icons bigger (Mrs-X)
  - #462 `c62eabe7b` [Qt] Consistent trx colors for Overview + Transaction tabs (Mrs-X)
  - #472 `b7929bdcf` [Qt] Minor changes and fixes (Mrs-X)
- - #467 `7099831bd` [Qt] Clear PrivacyDialog "zSSS Selected" labels after sending. (presstab)
+ - #467 `7099831bd` [Qt] Clear PrivacyDialog "zFLS Selected" labels after sending. (presstab)
  - #465 `d8e21774d` [Qt] Added controls to the options dialog for enable or disable auto-minting and set required level (lex-dev3)
  - #464 `59fd7d378` [Qt] setstakesplitthreshold value set in Qt GUI (lex-dev3)
  - #452 `219b68dc9` [Qt] Complete re-design of Qt-wallet (Mrs-X)
@@ -348,7 +348,7 @@ Detailed release notes follow. This overview includes changes that affect behavi
 ### RPC/REST
  - #562 `772160b1b` [Wallet/RPC] Add argument to mint zerocoin from specific UTXO (warrows)
  - #539 `b6a02e9d6` [RPC] Allow watchonly coins to be shown for listunspent (blondfrogs)
- - #543 `e4522ff07` [RPC] Segfault sssolutions-cli getinfo while loading block index (Mrs-X)
+ - #543 `e4522ff07` [RPC] Segfault flits-cli getinfo while loading block index (Mrs-X)
  - #524 `2541b5001` [RPC] Add blocksizenotify command (Mrs-X)
  - #495 `4946224c1` [RPC] Show script verification errors in signrawtransaction result (Fuzzbawls)
  - #468 `00b8b8e72` [RPC/REST] Migrate to libevent based httpd server (Fuzzbawls)
@@ -361,15 +361,15 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #170 `027f16c64` [RPC] Convert source tree from json_spirit to UniValue (Fuzzbawls)
 
 ### Wallet
- - #570 `8c8350b59` [Wallet] Add a check on zSSS spend to avoid a segfault (warrows)
+ - #570 `8c8350b59` [Wallet] Add a check on zFLS spend to avoid a segfault (warrows)
  - #565 `80b803201` [Wallet] Increase valid range for automint percentage (Fuzzbawls)
  - #518 `9f6449a70` [Wallet] Combine fees when possible and fix autocombine insufficient funds (warrows)
  - #497 `f21e4456b` [Wallet] Call AutocombineDust less often (warrows)
  - #498 `bfad2a1df` [Wallet] Change the way transaction list is handled (warrows)
  - #477 `93c5f9ff5` [Wallet] Remove potential memory leak (blondfrogs)
  - #488 `d09cf916a` [Wallet] Fixes an autocombinerewards bug with above max size TXs (warrows)
- - #448 `222ef6e6b` [Wallet] Return change to sender when minting zSSS. (presstab)
- - #445 `fc570fc1e` [Wallet] Only require 1 mint to be added before spending zSSS. (presstab)
+ - #448 `222ef6e6b` [Wallet] Return change to sender when minting zFLS. (presstab)
+ - #445 `fc570fc1e` [Wallet] Only require 1 mint to be added before spending zFLS. (presstab)
  
 ### Miscellaneous
  - #559 `d2b017217` [Bug] Segfault with -enableswifttx=0 / -enableswifttx=false (Mrs-X)
@@ -405,4 +405,4 @@ Thanks to everyone who directly contributed to this release:
 - PeterL73
 - Anthony Posselli
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/sss-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/FLS-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.

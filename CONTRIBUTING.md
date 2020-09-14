@@ -59,12 +59,12 @@ the pull request affects. Valid areas as:
 
   - *Consensus* for changes to consensus critical code
   - *Docs* for changes to the documentation
-  - *Qt* for changes to sssolutions-qt
+  - *Qt* for changes to flits-qt
   - *Minting* for changes to the minting code
   - *Net* or *P2P* for changes to the peer-to-peer network code
   - *RPC/REST* for changes to the RPC or REST APIs
   - *Scripts and tools* for changes to the scripts and tools
-  - *Tests* for changes to the sss unit tests or QA tests
+  - *Tests* for changes to the FLS unit tests or QA tests
   - *Trivial* should **only** be used for PRs that do not change generated
     executable code. Notably, refactors (change of function arguments and code
     reorganization) and changes in behavior should **not** be marked as trivial.
@@ -204,7 +204,7 @@ workload on reviewing.
 -------------------------
 
 The following applies to code changes to the Flits-Core project, and is not to be
-confused with overall SSS Network Protocol consensus changes.
+confused with overall FLS Network Protocol consensus changes.
 
 Whether a pull request is merged into Flits-Core rests with the project merge
 maintainers and ultimately the project lead.
@@ -220,7 +220,7 @@ In general, all pull requests must:
   - Be well peer reviewed;
   - follow code style guidelines;
 
-Patches that change SSS consensus rules are considerably more involved than
+Patches that change FLS consensus rules are considerably more involved than
 normal because they affect the entire ecosystem and so must be preceded by
 extensive discussions and clear detailing. While each case will be different,
 one should be prepared to expend more time and effort than for other kinds of
@@ -263,7 +263,7 @@ higher in terms of discussion and peer review requirements, keeping in mind that
 mistakes could be very costly to the wider community. This includes refactoring
 of consensus critical code.
 
-Where a patchset proposes to change the SSS consensus, it must have been
+Where a patchset proposes to change the FLS consensus, it must have been
 discussed extensively on the forums and Discord, be accompanied by a widely
 discussed Proposal and have a generally widely perceived technical consensus of being
 a worthwhile change based on the judgement of the maintainers.

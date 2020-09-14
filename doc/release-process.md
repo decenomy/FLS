@@ -50,11 +50,11 @@ Check out the source code in the following directory hierarchy.
 
     cd /path/to/your/toplevel/build
     git clone https://github.com/Simple-Software-Solutions/gitian.sigs.git
-    git clone https://github.com/Simple-Software-Solutions/sss-detached-sigs.git
+    git clone https://github.com/Simple-Software-Solutions/FLS-detached-sigs.git
     git clone https://github.com/devrandom/gitian-builder.git
     git clone https://github.com/Simple-Software-Solutions/Flits-Core.git
 
-### SSS maintainers/release engineers, suggestion for writing release notes
+### FLS maintainers/release engineers, suggestion for writing release notes
 
 Write release notes. git shortlog helps a lot, for example:
 
@@ -75,7 +75,7 @@ If you're using the automated script (found in [contrib/gitian-build.py](/contri
 
 Setup Gitian descriptors:
 
-    pushd ./sss
+    pushd ./FLS
     export SIGNER=(your Gitian key, ie bluematt, sipa, etc)
     export VERSION=(new version, e.g. 0.8.0)
     git fetch
@@ -108,10 +108,10 @@ Create the macOS SDK tarball, see the [macOS build instructions](build-osx.md#de
 
 NOTE: Gitian is sometimes unable to download files. If you have errors, try the step below.
 
-By default, Gitian will fetch source files as needed. To cache them ahead of time, make sure you have checked out the tag you want to build in sss, then:
+By default, Gitian will fetch source files as needed. To cache them ahead of time, make sure you have checked out the tag you want to build in FLS, then:
 
     pushd ./gitian-builder
-    make -C ../sss/depends download SOURCES_PATH=`pwd`/cache/common
+    make -C ../FLS/depends download SOURCES_PATH=`pwd`/cache/common
     popd
 
 Only missing files will be fetched, so this is safe to re-run for each build.
@@ -119,7 +119,7 @@ Only missing files will be fetched, so this is safe to re-run for each build.
 NOTE: Offline builds must use the --url flag to ensure Gitian fetches only from local URLs. For example:
 
     pushd ./gitian-builder
-    ./bin/gbuild --url sss=/path/to/sss,signature=/path/to/sigs {rest of arguments}
+    ./bin/gbuild --url FLS=/path/to/FLS,signature=/path/to/sigs {rest of arguments}
     popd
 
 The gbuild invocations below <b>DO NOT DO THIS</b> by default.
@@ -127,42 +127,42 @@ The gbuild invocations below <b>DO NOT DO THIS</b> by default.
 ### Build and sign Flits-Core for Linux, Windows, and macOS:
 
     pushd ./gitian-builder
-    ./bin/gbuild --num-make 2 --memory 3000 --commit sss=v${VERSION} ../sss/contrib/gitian-descriptors/gitian-linux.yml
-    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-linux --destination ../gitian.sigs/ ../sss/contrib/gitian-descriptors/gitian-linux.yml
-    mv build/out/sss-*.tar.gz build/out/src/sss-*.tar.gz ../
+    ./bin/gbuild --num-make 2 --memory 3000 --commit FLS=v${VERSION} ../FLS/contrib/gitian-descriptors/gitian-linux.yml
+    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-linux --destination ../gitian.sigs/ ../FLS/contrib/gitian-descriptors/gitian-linux.yml
+    mv build/out/FLS-*.tar.gz build/out/src/FLS-*.tar.gz ../
 
-    ./bin/gbuild --num-make 2 --memory 3000 --commit sss=v${VERSION} ../sss/contrib/gitian-descriptors/gitian-win.yml
-    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-win-unsigned --destination ../gitian.sigs/ ../sss/contrib/gitian-descriptors/gitian-win.yml
-    mv build/out/sss-*-win-unsigned.tar.gz inputs/sss-win-unsigned.tar.gz
-    mv build/out/sss-*.zip build/out/sss-*.exe ../
+    ./bin/gbuild --num-make 2 --memory 3000 --commit FLS=v${VERSION} ../FLS/contrib/gitian-descriptors/gitian-win.yml
+    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-win-unsigned --destination ../gitian.sigs/ ../FLS/contrib/gitian-descriptors/gitian-win.yml
+    mv build/out/FLS-*-win-unsigned.tar.gz inputs/FLS-win-unsigned.tar.gz
+    mv build/out/FLS-*.zip build/out/FLS-*.exe ../
 
-    ./bin/gbuild --num-make 2 --memory 3000 --commit sss=v${VERSION} ../sss/contrib/gitian-descriptors/gitian-osx.yml
-    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../sss/contrib/gitian-descriptors/gitian-osx.yml
-    mv build/out/sss-*-osx-unsigned.tar.gz inputs/sss-osx-unsigned.tar.gz
-    mv build/out/sss-*.tar.gz build/out/sss-*.dmg ../
+    ./bin/gbuild --num-make 2 --memory 3000 --commit FLS=v${VERSION} ../FLS/contrib/gitian-descriptors/gitian-osx.yml
+    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../FLS/contrib/gitian-descriptors/gitian-osx.yml
+    mv build/out/FLS-*-osx-unsigned.tar.gz inputs/FLS-osx-unsigned.tar.gz
+    mv build/out/FLS-*.tar.gz build/out/FLS-*.dmg ../
     popd
 
 Build output expected:
 
-  1. source tarball (`sss-${VERSION}.tar.gz`)
-  2. linux 32-bit and 64-bit dist tarballs (`sss-${VERSION}-linux[32|64].tar.gz`)
-  3. windows 32-bit and 64-bit unsigned installers and dist zips (`sss-${VERSION}-win[32|64]-setup-unsigned.exe`, `sss-${VERSION}-win[32|64].zip`)
-  4. macOS unsigned installer and dist tarball (`sss-${VERSION}-osx-unsigned.dmg`, `sss-${VERSION}-osx64.tar.gz`)
+  1. source tarball (`FLS-${VERSION}.tar.gz`)
+  2. linux 32-bit and 64-bit dist tarballs (`FLS-${VERSION}-linux[32|64].tar.gz`)
+  3. windows 32-bit and 64-bit unsigned installers and dist zips (`FLS-${VERSION}-win[32|64]-setup-unsigned.exe`, `FLS-${VERSION}-win[32|64].zip`)
+  4. macOS unsigned installer and dist tarball (`FLS-${VERSION}-osx-unsigned.dmg`, `FLS-${VERSION}-osx64.tar.gz`)
   5. Gitian signatures (in `gitian.sigs/${VERSION}-<linux|{win,osx}-unsigned>/(your Gitian key)/`)
 
 ### Verify other gitian builders signatures to your own. (Optional)
 
 Add other gitian builders keys to your gpg keyring, and/or refresh keys.
 
-    gpg --import sss/contrib/gitian-keys/*.pgp
+    gpg --import FLS/contrib/gitian-keys/*.pgp
     gpg --refresh-keys
 
 Verify the signatures
 
     pushd ./gitian-builder
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-linux ../sss/contrib/gitian-descriptors/gitian-linux.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-unsigned ../sss/contrib/gitian-descriptors/gitian-win.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-unsigned ../sss/contrib/gitian-descriptors/gitian-osx.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-linux ../FLS/contrib/gitian-descriptors/gitian-linux.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-unsigned ../FLS/contrib/gitian-descriptors/gitian-win.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-unsigned ../FLS/contrib/gitian-descriptors/gitian-osx.yml
     popd
 
 ### Next steps:
@@ -183,22 +183,22 @@ Codesigner only: Create Windows/macOS detached signatures:
 
 Codesigner only: Sign the macOS binary:
 
-    transfer sss-osx-unsigned.tar.gz to macOS for signing
-    tar xf sss-osx-unsigned.tar.gz
+    transfer FLS-osx-unsigned.tar.gz to macOS for signing
+    tar xf FLS-osx-unsigned.tar.gz
     ./detached-sig-create.sh -s "Key ID"
     Enter the keychain password and authorize the signature
     Move signature-osx.tar.gz back to the gitian host
 
 Codesigner only: Sign the windows binaries:
 
-    tar xf sss-win-unsigned.tar.gz
+    tar xf FLS-win-unsigned.tar.gz
     ./detached-sig-create.sh -key /path/to/codesign.key
     Enter the passphrase for the key when prompted
     signature-win.tar.gz will be created
 
 Codesigner only: Commit the detached codesign payloads:
 
-    cd ~/sss-detached-sigs
+    cd ~/FLS-detached-sigs
     checkout the appropriate branch for this release series
     rm -rf *
     tar xf signature-osx.tar.gz
@@ -211,24 +211,24 @@ Codesigner only: Commit the detached codesign payloads:
 Non-codesigners: wait for Windows/macOS detached signatures:
 
 - Once the Windows/macOS builds each have 3 matching signatures, they will be signed with their respective release keys.
-- Detached signatures will then be committed to the [sss-detached-sigs](https://github.com/Simple-Software-Solutions/sss-detached-sigs) repository, which can be combined with the unsigned apps to create signed binaries.
+- Detached signatures will then be committed to the [FLS-detached-sigs](https://github.com/Simple-Software-Solutions/FLS-detached-sigs) repository, which can be combined with the unsigned apps to create signed binaries.
 
 Create (and optionally verify) the signed macOS binary:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../sss/contrib/gitian-descriptors/gitian-osx-signer.yml
-    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../sss/contrib/gitian-descriptors/gitian-osx-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../sss/contrib/gitian-descriptors/gitian-osx-signer.yml
-    mv build/out/sss-osx-signed.dmg ../sss-${VERSION}-osx.dmg
+    ./bin/gbuild -i --commit signature=v${VERSION} ../FLS/contrib/gitian-descriptors/gitian-osx-signer.yml
+    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-osx-signed --destination ../gitian.sigs/ ../FLS/contrib/gitian-descriptors/gitian-osx-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-osx-signed ../FLS/contrib/gitian-descriptors/gitian-osx-signer.yml
+    mv build/out/FLS-osx-signed.dmg ../FLS-${VERSION}-osx.dmg
     popd
 
 Create (and optionally verify) the signed Windows binaries:
 
     pushd ./gitian-builder
-    ./bin/gbuild -i --commit signature=v${VERSION} ../sss/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../sss/contrib/gitian-descriptors/gitian-win-signer.yml
-    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-signed ../sss/contrib/gitian-descriptors/gitian-win-signer.yml
-    mv build/out/sss-*win64-setup.exe ../sss-${VERSION}-win64-setup.exe
+    ./bin/gbuild -i --commit signature=v${VERSION} ../FLS/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gsign --signer "$SIGNER" --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../FLS/contrib/gitian-descriptors/gitian-win-signer.yml
+    ./bin/gverify -v -d ../gitian.sigs/ -r ${VERSION}-win-signed ../FLS/contrib/gitian-descriptors/gitian-win-signer.yml
+    mv build/out/FLS-*win64-setup.exe ../FLS-${VERSION}-win64-setup.exe
     popd
 
 Commit your signature for the signed macOS/Windows binaries:
@@ -250,16 +250,16 @@ sha256sum * > SHA256SUMS
 
 The list of files should be:
 ```
-sss-${VERSION}-aarch64-linux-gnu.tar.gz
-sss-${VERSION}-arm-linux-gnueabihf.tar.gz
-sss-${VERSION}-i686-pc-linux-gnu.tar.gz
-sss-${VERSION}-riscv64-linux-gnu.tar.gz
-sss-${VERSION}-x86_64-linux-gnu.tar.gz
-sss-${VERSION}-osx64.tar.gz
-sss-${VERSION}-osx.dmg
-sss-${VERSION}.tar.gz
-sss-${VERSION}-win64-setup.exe
-sss-${VERSION}-win64.zip
+FLS-${VERSION}-aarch64-linux-gnu.tar.gz
+FLS-${VERSION}-arm-linux-gnueabihf.tar.gz
+FLS-${VERSION}-i686-pc-linux-gnu.tar.gz
+FLS-${VERSION}-riscv64-linux-gnu.tar.gz
+FLS-${VERSION}-x86_64-linux-gnu.tar.gz
+FLS-${VERSION}-osx64.tar.gz
+FLS-${VERSION}-osx.dmg
+FLS-${VERSION}.tar.gz
+FLS-${VERSION}-win64-setup.exe
+FLS-${VERSION}-win64.zip
 ```
 The `*-debug*` files generated by the gitian build contain debug symbols
 for troubleshooting by developers. It is assumed that anyone that is interested
@@ -281,7 +281,7 @@ Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spur
 
   - bitcointalk announcement thread
 
-  - Optionally twitter, reddit /r/sss, ... but this will usually sort out itself
+  - Optionally twitter, reddit /r/FLS, ... but this will usually sort out itself
 
   - Archive release notes for the new version to `doc/release-notes/` (branch `master` and branch of the release)
 

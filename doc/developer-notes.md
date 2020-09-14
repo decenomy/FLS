@@ -215,7 +215,7 @@ to see it.
 
 ### Testnet and Regtest modes
 
-Run with the `-testnet` option to run with "play SSSs (tSSS)" on the test network, if you
+Run with the `-testnet` option to run with "play FLSs (tFLS)" on the test network, if you
 are testing multi-machine code that needs to operate across the internet.
 
 If you are testing something that can run on one machine, run with the `-regtest` option.
@@ -239,10 +239,10 @@ which includes known Valgrind warnings in our dependencies that cannot be fixed
 in-tree. Example use:
 
 ```shell
-$ valgrind --suppressions=contrib/valgrind.supp src/test/test_sss
+$ valgrind --suppressions=contrib/valgrind.supp src/test/test_FLS
 $ valgrind --suppressions=contrib/valgrind.supp --leak-check=full \
-      --show-leak-kinds=all src/test/test_sss --log_level=test_suite
-$ valgrind -v --leak-check=full src/sssolutionsd -printtoconsole
+      --show-leak-kinds=all src/test/test_FLS --log_level=test_suite
+$ valgrind -v --leak-check=full src/flitsd -printtoconsole
 ```
 
 ### Compiling for test coverage
@@ -258,7 +258,7 @@ To enable LCOV report generation during test runs:
 make
 make cov
 
-# A coverage report will now be accessible at `./test_sss.coverage/index.html`.
+# A coverage report will now be accessible at `./test_FLS.coverage/index.html`.
 ```
 
 Locking/mutex usage notes
@@ -287,7 +287,7 @@ Threads
 
 - StartNode : Starts other threads.
 
-- ThreadDNSAddressSeed : Loads addresses of peers from the DNS.
+- ThreadDNSAddreFLSeed : Loads addresses of peers from the DNS.
 
 - ThreadMapPort : Universal plug-and-play startup/shutdown
 
@@ -305,7 +305,7 @@ Threads
 
 - ThreadRPCServer : Remote procedure call handler, listens on port 8332 for connections and services them.
 
-- BitcoinMiner : Generates SSSs (if wallet is enabled).
+- BitcoinMiner : Generates FLSs (if wallet is enabled).
 
 - Shutdown : Does an orderly shutdown of everything.
 
@@ -689,7 +689,7 @@ you must be aware of.
 
 In most configurations we use the default LevelDB value for `max_open_files`,
 which is 1000 at the time of this writing. If LevelDB actually uses this many
-file descriptors it will cause problems with SSS's `select()` loop, because
+file descriptors it will cause problems with FLS's `select()` loop, because
 it may cause new sockets to be created where the fd value is >= 1024. For this
 reason, on 64-bit Unix systems we rely on an internal LevelDB optimization that
 uses `mmap()` + `close()` to open table files without actually retaining
@@ -700,7 +700,7 @@ In addition to reviewing the upstream changes in `env_posix.cc`, you can use `ls
 check this. For example, on Linux this command will show open `.ldb` file counts:
 
 ```bash
-$ lsof -p $(pidof sssolutionsd) |\
+$ lsof -p $(pidof flitsd) |\
     awk 'BEGIN { fd=0; mem=0; } /ldb$/ { if ($4 == "mem") mem++; else fd++ } END { printf "mem = %s, fd = %s\n", mem, fd}'
 mem = 119, fd = 0
 ```
@@ -797,7 +797,7 @@ Git and GitHub tips
 
         [remote "upstream-pull"]
                 fetch = +refs/pull/*:refs/remotes/upstream-pull/*
-                url = git@github.com:Flits-Core/SSS.git
+                url = git@github.com:Flits-Core/FLS.git
 
   This will add an `upstream-pull` remote to your git repository, which can be fetched using `git fetch --all`
   or `git fetch upstream-pull`. Afterwards, you can use `upstream-pull/NUMBER/head` in arguments to `git show`,
@@ -858,7 +858,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
 - Try not to overload methods on argument type. E.g. don't make `getblock(true)` and `getblock("hash")`
   do different things.
 
-  - *Rationale*: This is impossible to use with `sssolutions-cli`, and can be surprising to users.
+  - *Rationale*: This is impossible to use with `flits-cli`, and can be surprising to users.
 
   - *Exception*: Some RPC calls can take both an `int` and `bool`, most notably when a bool was switched
     to a multi-value, or due to other historical reasons. **Always** have false map to 0 and
@@ -877,7 +877,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
 
 - Add every non-string RPC argument `(method, idx, name)` to the table `vRPCConvertParams` in `rpc/client.cpp`.
 
-  - *Rationale*: `sssolutions-cli` and the GUI debug console use this table to determine how to
+  - *Rationale*: `flits-cli` and the GUI debug console use this table to determine how to
     convert a plaintext command line to JSON. If the types don't match, the method can be unusable
     from there.
 

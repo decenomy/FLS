@@ -365,8 +365,8 @@ void CzFLSWallet::SeedToZFLS(const uint512& seedZerocoin, CBigNum& bnValue, CBig
     }
 
     //hash randomness seed with Bottom 256 bits of seedZerocoin & attempts256 which is initially 0
-    uint256 randomnessSeed = uint512(seedZerocoin >> 256).trim256();
-    uint256 hashRandomness = Hash(randomnessSeed.begin(), randomnessSeed.end());
+    uint256 randomneFLSeed = uint512(seedZerocoin >> 256).trim256();
+    uint256 hashRandomness = Hash(randomneFLSeed.begin(), randomneFLSeed.end());
     bnRandomness.setuint256(hashRandomness);
     bnRandomness = bnRandomness % params->coinCommitmentGroup.groupOrder;
 
@@ -391,7 +391,7 @@ void CzFLSWallet::SeedToZFLS(const uint512& seedZerocoin, CBigNum& bnValue, CBig
         //Did not create a valid commitment value.
         //Change randomness to something new and random and try again
         attempts256++;
-        hashRandomness = Hash(randomnessSeed.begin(), randomnessSeed.end(),
+        hashRandomness = Hash(randomneFLSeed.begin(), randomneFLSeed.end(),
                               attempts256.begin(), attempts256.end());
         random.setuint256(hashRandomness);
         bnRandomness = (bnRandomness + random) % params->coinCommitmentGroup.groupOrder;

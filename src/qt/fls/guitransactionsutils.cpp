@@ -8,7 +8,7 @@
 
 namespace GuiTransactionsUtils {
 
-    QString ProcessSendCoinsReturn(PWidget::Translator *parent, const WalletModel::SendCoinsReturn &sendCoinsReturn,
+    QString ProceFLSendCoinsReturn(PWidget::Translator *parent, const WalletModel::SendCoinsReturn &sendCoinsReturn,
                                 WalletModel *walletModel, CClientUIInterface::MessageBoxFlags& informType, const QString &msgArg,
                                 bool fPrepare)
     {
@@ -71,10 +71,10 @@ namespace GuiTransactionsUtils {
         return retStr;
     }
 
-    void ProcessSendCoinsReturnAndInform(PWidget* parent, const WalletModel::SendCoinsReturn& sendCoinsReturn, WalletModel* walletModel, const QString& msgArg, bool fPrepare)
+    void ProceFLSendCoinsReturnAndInform(PWidget* parent, const WalletModel::SendCoinsReturn& sendCoinsReturn, WalletModel* walletModel, const QString& msgArg, bool fPrepare)
     {
         CClientUIInterface::MessageBoxFlags informType;
-        QString informMsg = ProcessSendCoinsReturn(parent, sendCoinsReturn, walletModel, informType, msgArg, fPrepare);
+        QString informMsg = ProceFLSendCoinsReturn(parent, sendCoinsReturn, walletModel, informType, msgArg, fPrepare);
         if (!informMsg.isEmpty()) parent->emitMessage(parent->translate("Send Coins"), informMsg, informType, 0);
     }
 

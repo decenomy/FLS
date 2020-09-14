@@ -405,7 +405,7 @@ bool SendWidget::send(QList<SendCoinsRecipient> recipients)
     prepareStatus = walletModel->prepareTransaction(currentTransaction, CoinControlDialog::coinControl, fDelegationsChecked);
 
     // process prepareStatus and on error generate message shown to user
-    GuiTransactionsUtils::ProcessSendCoinsReturnAndInform(
+    GuiTransactionsUtils::ProceFLSendCoinsReturnAndInform(
             this,
             prepareStatus,
             walletModel,
@@ -435,7 +435,7 @@ bool SendWidget::send(QList<SendCoinsRecipient> recipients)
         // now send the prepared transaction
         WalletModel::SendCoinsReturn sendStatus = dialog->getStatus();
         // process sendStatus and on error generate message shown to user
-        GuiTransactionsUtils::ProcessSendCoinsReturnAndInform(
+        GuiTransactionsUtils::ProceFLSendCoinsReturnAndInform(
                 this,
                 sendStatus,
                 walletModel

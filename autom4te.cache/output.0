@@ -590,7 +590,7 @@ MAKEFLAGS=
 
 # Identity of this package.
 PACKAGE_NAME='Flits-Core'
-PACKAGE_TARNAME='sss'
+PACKAGE_TARNAME='FLS'
 PACKAGE_VERSION='1.1.9rc1'
 PACKAGE_STRING='Flits-Core 1.1.9rc1'
 PACKAGE_BUGREPORT='https://github.com/Simple-Software-Solutions/Flits-Core/issues'
@@ -1715,7 +1715,7 @@ Fine tuning of the installation directories:
   --infodir=DIR           info documentation [DATAROOTDIR/info]
   --localedir=DIR         locale-dependent data [DATAROOTDIR/locale]
   --mandir=DIR            man documentation [DATAROOTDIR/man]
-  --docdir=DIR            documentation root @<:@DATAROOTDIR/doc/sss@:>@
+  --docdir=DIR            documentation root @<:@DATAROOTDIR/doc/FLS@:>@
   --htmldir=DIR           html documentation [DOCDIR]
   --dvidir=DIR            dvi documentation [DOCDIR]
   --pdfdir=DIR            pdf documentation [DOCDIR]
@@ -1815,12 +1815,12 @@ Optional Packages:
                           specify protoc bin path
   --with-sanitizers       comma separated list of extra sanitizers to build
                           with (default is none enabled)
-  --with-utils            build sssolutions-cli sssolutions-tx (default=yes)
+  --with-utils            build flits-cli flits-tx (default=yes)
   --with-libs             build libraries (default=no)
-  --with-daemon           build sssolutionsd daemon (default=yes)
+  --with-daemon           build flitsd daemon (default=yes)
   --with-incompatible-bdb allow using a bdb version other than 4.8
   --with-gui@<:@=no|qt5|auto@:>@ 
-                          build sssolutions-qt GUI (default=auto)
+                          build flits-qt GUI (default=auto)
   --with-qt-incdir=INC_DIR 
                           specify Qt include path (overridden by pkgconfig)
   --with-qt-libdir=LIB_DIR 
@@ -3176,7 +3176,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-ac_config_headers="$ac_config_headers src/config/sss-config.h"
+ac_config_headers="$ac_config_headers src/config/FLS-config.h"
 
 ac_aux_dir=
 for ac_dir in build-aux "$srcdir"/build-aux; do
@@ -3209,10 +3209,10 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
-BITCOIN_DAEMON_NAME=sssolutionsd
-BITCOIN_GUI_NAME=sssolutions-qt
-BITCOIN_CLI_NAME=sssolutions-cli
-BITCOIN_TX_NAME=sssolutions-tx
+BITCOIN_DAEMON_NAME=flitsd
+BITCOIN_GUI_NAME=flits-qt
+BITCOIN_CLI_NAME=flits-cli
+BITCOIN_TX_NAME=flits-tx
 
 
 if test "x${ARFLAGS+set}" != "xset"; then
@@ -3782,7 +3782,7 @@ fi
 
 
 # Define the identity of the package.
- PACKAGE='sss'
+ PACKAGE='FLS'
  VERSION='1.1.9rc1'
 
 
@@ -22776,7 +22776,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 
-# The following macro will add the necessary defines to sss-config.h, but
+# The following macro will add the necessary defines to FLS-config.h, but
 # they also need to be passed down to any subprojects. Pull the results out of
 # the cache and add them to CPPFLAGS.
 @%:@ Check whether --enable-largefile was given.
@@ -25141,8 +25141,8 @@ fi
         
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt dependencies not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Qt dependencies not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt dependencies not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Qt dependencies not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -25612,8 +25612,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtCore headers missing; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: QtCore headers missing; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtCore headers missing; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: QtCore headers missing; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -25639,8 +25639,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtGui headers missing; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: QtGui headers missing; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtGui headers missing; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: QtGui headers missing; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -25666,8 +25666,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtNetwork headers missing; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: QtNetwork headers missing; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtNetwork headers missing; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: QtNetwork headers missing; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -25693,8 +25693,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtConcurrent headers missing; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: QtConcurrent headers missing; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: QtConcurrent headers missing; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: QtConcurrent headers missing; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -25848,8 +25848,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libimm32 not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libimm32 not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libimm32 not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libimm32 not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26370,8 +26370,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Core not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Core not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Core not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Core not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26432,8 +26432,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Gui not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Gui not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Gui not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Gui not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26494,8 +26494,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Network not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Network not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Network not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Network not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26556,8 +26556,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Widgets not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Widgets not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Widgets not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Widgets not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26618,8 +26618,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Concurrent not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Concurrent not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Concurrent not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Concurrent not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26688,8 +26688,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Svg not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Svg not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Svg not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Svg not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26706,8 +26706,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Svg not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Svg not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib${QT_LIB_PREFIX}Svg not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib${QT_LIB_PREFIX}Svg not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -26859,8 +26859,8 @@ fi
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt version not supported; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Qt version not supported; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Qt version not supported; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Qt version not supported; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28115,8 +28115,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXPlatformSupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXPlatformSupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXPlatformSupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXPlatformSupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28178,8 +28178,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXFontDatabaseSupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXFontDatabaseSupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXFontDatabaseSupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXFontDatabaseSupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28240,8 +28240,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXEventDispatcherSupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXEventDispatcherSupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXEventDispatcherSupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXEventDispatcherSupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28302,8 +28302,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXThemeSupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXThemeSupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXThemeSupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXThemeSupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28364,8 +28364,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXFbSupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXFbSupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXFbSupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXFbSupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28426,8 +28426,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXDeviceDiscoverySupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXDeviceDiscoverySupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXDeviceDiscoverySupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXDeviceDiscoverySupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28488,8 +28488,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXAccessibilitySupport not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXAccessibilitySupport not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: lib$QT_LIB_PREFIXAccessibilitySupport not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: lib$QT_LIB_PREFIXAccessibilitySupport not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28541,8 +28541,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqminimal; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqminimal; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqminimal; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqminimal; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28585,8 +28585,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqsvg; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqsvg; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqsvg; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqsvg; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28626,8 +28626,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqgif; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqgif; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqgif; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqgif; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28667,8 +28667,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqsvgicon; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqsvgicon; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqsvgicon; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqsvgicon; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28709,8 +28709,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqwindows; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqwindows; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqwindows; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqwindows; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28754,8 +28754,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqxcb -lxcb-static; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqxcb -lxcb-static; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqxcb -lxcb-static; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqxcb -lxcb-static; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -28835,8 +28835,8 @@ else
 $as_echo "no" >&6; }; 
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqcocoa; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: Could not resolve: -lqcocoa; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not resolve: -lqcocoa; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: Could not resolve: -lqcocoa; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -29064,8 +29064,8 @@ done
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MOC not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: MOC not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MOC not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: MOC not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -29183,8 +29183,8 @@ done
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: UIC not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: UIC not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: UIC not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: UIC not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -29302,8 +29302,8 @@ done
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: RCC not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: RCC not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: RCC not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: RCC not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -29421,8 +29421,8 @@ done
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LRELEASE not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: LRELEASE not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LRELEASE not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: LRELEASE not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -29540,8 +29540,8 @@ done
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LUPDATE not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: LUPDATE not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LUPDATE not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: LUPDATE not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -31877,8 +31877,8 @@ fi
 	
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libprotobuf not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libprotobuf not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libprotobuf not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libprotobuf not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -31892,8 +31892,8 @@ $as_echo "no" >&6; }
 	
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libprotobuf not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libprotobuf not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libprotobuf not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libprotobuf not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -31978,8 +31978,8 @@ fi
 	
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libqrencode not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -31993,8 +31993,8 @@ $as_echo "no" >&6; }
 	
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libqrencode not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -32632,8 +32632,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libprotobuf not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libprotobuf not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libprotobuf not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libprotobuf not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -32688,8 +32688,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libqrencode not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -32714,8 +32714,8 @@ else
   
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: libqrencode not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: libqrencode not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: libqrencode not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -33061,8 +33061,8 @@ done
       
   if test "x$bitcoin_qt_want_version" = xauto && test "x$bitcoin_qt_force" != xyes; then
     if test "x$bitcoin_enable_qt" != xno; then
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: PROTOC not found; sssolutions-qt frontend will not be built" >&5
-$as_echo "$as_me: WARNING: PROTOC not found; sssolutions-qt frontend will not be built" >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: PROTOC not found; flits-qt frontend will not be built" >&5
+$as_echo "$as_me: WARNING: PROTOC not found; flits-qt frontend will not be built" >&2;}
     fi
     bitcoin_enable_qt=no
     bitcoin_enable_qt_test=no
@@ -33079,8 +33079,8 @@ $as_echo "$as_me: WARNING: PROTOC not found; sssolutions-qt frontend will not be
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build sssolutionsd" >&5
-$as_echo_n "checking whether to build sssolutionsd... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build flitsd" >&5
+$as_echo_n "checking whether to build flitsd... " >&6; }
  if test x$build_bitcoind = xyes; then
   BUILD_BITCOIND_TRUE=
   BUILD_BITCOIND_FALSE='#'
@@ -33092,8 +33092,8 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $build_bitcoind" >&5
 $as_echo "$build_bitcoind" >&6; }
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build utils (sssolutions-cli sssolutions-tx)" >&5
-$as_echo_n "checking whether to build utils (sssolutions-cli sssolutions-tx)... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build utils (flits-cli flits-tx)" >&5
+$as_echo_n "checking whether to build utils (flits-cli flits-tx)... " >&6; }
  if test x$build_bitcoin_utils = xyes; then
   BUILD_BITCOIN_UTILS_TRUE=
   BUILD_BITCOIN_UTILS_FALSE='#'
@@ -33417,8 +33417,8 @@ $as_echo "no" >&6; }
 $as_echo "$as_me: WARNING: \"xgettext is required to update qt translations\"" >&2;}
   fi
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build test_sssolutions-qt" >&5
-$as_echo_n "checking whether to build test_sssolutions-qt... " >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build test_flits-qt" >&5
+$as_echo_n "checking whether to build test_flits-qt... " >&6; }
   if test x$use_gui_tests$bitcoin_enable_qt_test = xyesyes; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
@@ -33472,8 +33472,8 @@ else
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build test_sss" >&5
-$as_echo_n "checking whether to build test_sss... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build test_FLS" >&5
+$as_echo_n "checking whether to build test_FLS... " >&6; }
 if test x$use_tests = xyes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
@@ -34987,7 +34987,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "src/config/sss-config.h") CONFIG_HEADERS="$CONFIG_HEADERS src/config/sss-config.h" ;;
+    "src/config/FLS-config.h") CONFIG_HEADERS="$CONFIG_HEADERS src/config/FLS-config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "libbitcoinconsensus.pc") CONFIG_FILES="$CONFIG_FILES libbitcoinconsensus.pc:libbitcoinconsensus.pc.in" ;;

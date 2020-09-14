@@ -3,7 +3,7 @@ Flits-Core
 
 Setup
 ---------------------
-[Flits-Core](http://sss.org/wallet) is the original SSS client and it builds the backbone of the network. However, it downloads and stores the entire history of SSS transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
+[Flits-Core](http://FLS.org/wallet) is the original FLS client and it builds the backbone of the network. However, it downloads and stores the entire history of FLS transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
 
 Running
 ---------------------
@@ -13,23 +13,23 @@ The following are some helpful notes on how to run Flits-Core on your native pla
 
 Unpack the files into a directory and run:
 
-- `bin/sssolutions-qt` (GUI) or
-- `bin/sssolutionsd` (headless)
+- `bin/flits-qt` (GUI) or
+- `bin/flitsd` (headless)
 
 ### Windows
 
-Unpack the files into a directory, and then run sssolutions-qt.exe.
+Unpack the files into a directory, and then run flits-qt.exe.
 
 ### macOS
 
-Drag sssolutions-qt to your applications folder, and then run sssolutions-qt.
+Drag flits-qt to your applications folder, and then run flits-qt.
 
 ### Need Help?
 
-* See the documentation at the [SSS Wiki](https://github.com/Simple-Software-Solutions/Flits-Core/wiki)
+* See the documentation at the [FLS Wiki](https://github.com/Simple-Software-Solutions/Flits-Core/wiki)
 for help and more information.
-* Ask for help on [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or on the [SSS Forum](http://forum.sss.org/).
-* Join our Discord server [Discord Server](https://discord.sss.org)
+* Ask for help on [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or on the [FLS Forum](http://forum.FLS.org/).
+* Join our Discord server [Discord Server](https://discord.FLS.org)
 
 Building
 ---------------------
@@ -43,21 +43,21 @@ The following are developer notes on how to build Flits-Core on your native plat
 
 Development
 ---------------------
-The SSS repo's [root README](/README.md) contains relevant information on the development process and automated testing.
+The FLS repo's [root README](/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Multiwallet Qt Development](multiwallet-qt.md)
 - [Release Notes](release-notes.md)
 - [Release Process](release-process.md)
-- [Source Code Documentation (External Link)](https://www.fuzzbawls.pw/sss/doxygen/)
+- [Source Code Documentation (External Link)](https://www.fuzzbawls.pw/FLS/doxygen/)
 - [Translation Process](translation_process.md)
 - [Unit Tests](unit-tests.md)
 - [Unauthenticated REST Interface](REST-interface.md)
 - [Dnsseed Policy](dnsseed-policy.md)
 
 ### Resources
-* Discuss on the [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or the [SSS](http://forum.sss.org/) forum.
-* Join the [SSS Discord](https://discord.sss.org).
+* Discuss on the [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or the [FLS](http://forum.FLS.org/) forum.
+* Join the [FLS Discord](https://discord.FLS.org).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)

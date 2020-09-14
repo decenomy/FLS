@@ -22,7 +22,7 @@ make
 make install # optional
 ```
 
-This will build sssolutions-qt as well, if the dependencies are met.
+This will build flits-qt as well, if the dependencies are met.
 
 Dependencies
 ---------------------
@@ -76,11 +76,11 @@ Now, you can either build from self-compiled [depends](/depends/README.md) or in
 
 BerkeleyDB is required for the wallet.
 
- **For Ubuntu only:** db4.8 packages are available [here](https://launchpad.net/~sss/+archive/sss).
+ **For Ubuntu only:** db4.8 packages are available [here](https://launchpad.net/~FLS/+archive/FLS).
  You can add the repository using the following command:
 
     sudo apt-get install software-properties-common
-    sudo add-apt-repository ppa:sss/sss
+    sudo add-apt-repository ppa:FLS/FLS
     sudo apt-get update
     sudo apt-get install libdb4.8-dev libdb4.8++-dev
 
@@ -104,7 +104,7 @@ ZMQ dependencies (provides ZMQ API):
 
 GUI dependencies:
 
-If you want to build sssolutions-qt, make sure that the required packages for Qt development
+If you want to build flits-qt, make sure that the required packages for Qt development
 are installed. Qt 5 is necessary to build the GUI.
 To build without GUI pass `--without-gui`.
 
@@ -114,7 +114,7 @@ To build with Qt 5 you need the following:
 
 **Note:** Ubuntu versions prior to Bionic (18.04), and Debian version prior to Buster, do not have the `libqt5charts5-dev` package. If you are compiling on one of these older versions, you will need to omit `libqt5charts5-dev` from the above command.
 
-Once these are installed, they will be found by configure and a sssolutions-qt executable will be
+Once these are installed, they will be found by configure and a flits-qt executable will be
 built by default.
 
 
@@ -136,7 +136,7 @@ To build with Qt 5 you need the following:
 
 Notes
 -----
-The release is built with GCC and then "strip sssolutionsd" to strip the debug
+The release is built with GCC and then "strip flitsd" to strip the debug
 symbols, which reduces the executable size by about 90%.
 
 
@@ -207,7 +207,7 @@ Hardening enables the following features:
 
     To test that you have built PIE executable, install scanelf, part of paxutils, and use:
 
-    	scanelf -e ./sssolutionsd
+    	scanelf -e ./flitsd
 
     The output should contain:
 
@@ -221,7 +221,7 @@ Hardening enables the following features:
     executable without the non-executable stack protection.
 
     To verify that the stack is non-executable after compiling use:
-    `scanelf -e ./sssolutionsd`
+    `scanelf -e ./flitsd`
 
     The output should contain:
 	STK/REL/PTL

@@ -845,7 +845,7 @@ void CoinControlDialog::updateView()
             // address
             const bool fDelegated = (bool)(mine & ISMINE_SPENDABLE_DELEGATED);
             CTxDestination outputAddress;
-            CTxDestination outputAddressStaker;
+            CTxDestination outputAddreFLStaker;
             QString sAddress = "";
             bool haveDest = false;
             if (fDelegated) {
@@ -853,7 +853,7 @@ void CoinControlDialog::updateView()
                 haveDest = (ExtractDestinations(out.tx->vout[out.i].scriptPubKey, type, addresses, nRequired)
                             && addresses.size() == 2);
                 if (haveDest) {
-                    outputAddressStaker = addresses[0];
+                    outputAddreFLStaker = addresses[0];
                     outputAddress = addresses[1];
                 }
             } else {
@@ -917,7 +917,7 @@ void CoinControlDialog::updateView()
                 itemOutput->setData(COLUMN_CHECKBOX, Qt::UserRole, QString("Delegated"));
                 itemOutput->setIcon(COLUMN_CHECKBOX, QIcon("://ic-check-cold-staking-off"));
                 if (haveDest) {
-                    sAddress = QString::fromStdString(CBitcoinAddress(outputAddressStaker, CChainParams::STAKING_ADDRESS).ToString());
+                    sAddress = QString::fromStdString(CBitcoinAddress(outputAddreFLStaker, CChainParams::STAKING_ADDRESS).ToString());
                     itemOutput->setToolTip(COLUMN_CHECKBOX, tr("delegated to %1 for cold staking").arg(sAddress));
                 }
             }

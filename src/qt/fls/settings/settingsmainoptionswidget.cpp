@@ -50,9 +50,9 @@ SettingsMainOptionsWidget::SettingsMainOptionsWidget(FLSGUI* _window, QWidget *p
     ui->labelSubtitle1->setText("Customize the main application options");
 
     setCssTitleScreen(ui->labelTitle);
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
     setCssTitleScreen(ui->labelTitleDown);
-    setCssSubtitleScreen(ui->labelSubtitleDown);
+    setCFLSubtitleScreen(ui->labelSubtitleDown);
 
     ui->labelTitleSizeDb->setText(tr("Size of database cache"));
     ui->labelTitleSizeDb->setProperty("cssClass", "text-main-settings");

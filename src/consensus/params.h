@@ -51,7 +51,7 @@ struct Params {
     int height_last_ZC_WrappedSerials;
     int height_start_BIP65;                         // Blocks v5 start
     int height_start_InvalidUTXOsCheck;
-    int height_start_MessSignaturesV2;
+    int height_start_MeFLSignaturesV2;
     int height_start_StakeModifierNewSelection;
     int height_start_StakeModifierV2;               // Blocks v6 start
     int height_start_TimeProtoV2;                   // Blocks v7 start
@@ -70,7 +70,7 @@ struct Params {
     int64_t TargetTimespan(const bool fV2 = true) const { return fV2 ? nTargetTimespanV2 : nTargetTimespan; }
     uint256 ProofOfStakeLimit(const bool fV2) const { return fV2 ? posLimitV2 : posLimitV1; }
     bool MoneyRange(const CAmount& nValue) const { return (nValue >= 0 && nValue <= nMaxMoneyOut); }
-    bool IsMessSigV2(const int nHeight) const { return nHeight >= height_start_MessSignaturesV2; }
+    bool IsMeFLSigV2(const int nHeight) const { return nHeight >= height_start_MeFLSignaturesV2; }
     bool IsTimeProtocolV2(const int nHeight) const { return nHeight >= height_start_TimeProtoV2; }
 
     int FutureBlockTimeDrift(const int nHeight) const

@@ -32,21 +32,21 @@ you've confirmed the extraction succeeded.
 #### Ubuntu/Debian
 ```bash
 sudo apt-get install p7zip-full sleuthkit
-sss/contrib/macdeploy/extract-osx-sdk.sh
+FLS/contrib/macdeploy/extract-osx-sdk.sh
 rm -rf 5.hfs MacOSX10.11.sdk
 ```
 
 #### Fedora
 ```bash
 sudo dnf install p7zip p7zip-plugins sleuthkit
-sss/contrib/macdeploy/extract-osx-sdk.sh
+FLS/contrib/macdeploy/extract-osx-sdk.sh
 rm -rf 5.hfs MacOSX10.11.sdk
 ```
 
 #### CentOS
 ```bash
 sudo yum install p7zip p7zip-plugins sleuthkit
-sss/contrib/macdeploy/extract-osx-sdk.sh
+FLS/contrib/macdeploy/extract-osx-sdk.sh
 rm -rf 5.hfs MacOSX10.11.sdk
 ```
 

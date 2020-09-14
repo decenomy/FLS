@@ -1,4 +1,4 @@
-We have found that a runtime error that has caused the SSS wallet on certain operating systems to get stuck at block 908000. This build of the wallet fixes the runtime error.
+We have found that a runtime error that has caused the FLS wallet on certain operating systems to get stuck at block 908000. This build of the wallet fixes the runtime error.
 
 If you are stuck on block 908000:
 - Download the 3.0.5.1 wallet (the file names do not display the "build" version and cutoff the 1)
@@ -6,7 +6,7 @@ If you are stuck on block 908000:
 
 If you are stuck on a block before 908000:
 - Download the 3.0.5.1 wallet (the file names do not display the "build" version and cutoff the 1)
-- Start the wallet with `reindexaccumulators=1` in your `sssconf` file (you can figure out the location of your `ssssonf` [here](https://ssssseshdesk.com/support/solutions/articles/30000004664-where-are-my-wallet-dat-blockchain-and-configuration-conf-files-located-) )
-- After starting the wallet, remove `reindexaccumulators=1` from your `sssconf` or else it will perform this operation each time you start your wallet.
+- Start the wallet with `reindexaccumulators=1` in your `FLSconf` file (you can figure out the location of your `FLSsonf` [here](https://FLSsseshdesk.com/support/solutions/articles/30000004664-where-are-my-wallet-dat-blockchain-and-configuration-conf-files-located-) )
+- After starting the wallet, remove `reindexaccumulators=1` from your `FLSconf` or else it will perform this operation each time you start your wallet.
 
-If both of those solutions failed you can use the [blockchain snapshot](http://178.254.23.111/~pub/SSS/Daily-Snapshots-Html/SSS-Daily-Snapshots.html). If using the snapshot, please carefully follow the instructions on the snapshot page.
+If both of those solutions failed you can use the [blockchain snapshot](http://178.254.23.111/~pub/FLS/Daily-Snapshots-Html/FLS-Daily-Snapshots.html). If using the snapshot, please carefully follow the instructions on the snapshot page.

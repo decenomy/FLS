@@ -31,7 +31,7 @@ SettingsDisplayOptionsWidget::SettingsDisplayOptionsWidget(FLSGUI* _window, QWid
 
     // Subtitle
     ui->labelSubtitle1->setText(tr("Customize the display view options"));
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     ui->labelTitleLanguage->setText(tr("Language"));
     ui->labelTitleLanguage->setProperty("cssClass", "text-main-settings");

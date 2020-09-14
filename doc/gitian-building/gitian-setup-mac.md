@@ -49,10 +49,10 @@ git config --global user.email "MY_NAME@example.com"
 Fetching the Build Script
 --------------------------
 
-The build script we'll be using is contained in the SSS github repository ([contrib/gitian-build.py](https://github.com/Simple-Software-Solutions/Flits-Core/blob/master/contrib/gitian-build.py)). Since this is a completely fresh environment, we haven't yet cloned the SSS repository and will need to fetch this script with the following commands:
+The build script we'll be using is contained in the FLS github repository ([contrib/gitian-build.py](https://github.com/Simple-Software-Solutions/Flits-Core/blob/master/contrib/gitian-build.py)). Since this is a completely fresh environment, we haven't yet cloned the FLS repository and will need to fetch this script with the following commands:
 
 ```bash
-curl -L -O https://raw.githubusercontent.com/Flits-Core/SSS/master/contrib/gitian-build.py
+curl -L -O https://raw.githubusercontent.com/Flits-Core/FLS/master/contrib/gitian-build.py
 chmod +x gitian-build.py
 ```
 
@@ -66,7 +66,7 @@ Initial Gitian Setup
 Now that the script has been downloaded to your home directory, its time to run it in setup mode. This will perform the following actions:
 
 - Install the necessary system packages for gitian (namely the Docker cli tools).
-- Clone the gitian-builder, gitian.sigs, sss-detached-sigs, and sss GitHub repos.
+- Clone the gitian-builder, gitian.sigs, FLS-detached-sigs, and FLS GitHub repos.
 - Configure proper user/group permissions for running gitian with Docker
 - Create a base Docker image.
 

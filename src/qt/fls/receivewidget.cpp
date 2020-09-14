@@ -44,16 +44,16 @@ ReceiveWidget::ReceiveWidget(FLSGUI* parent) :
     ui->labelTitle->setText(tr("Receive"));
     ui->labelSubtitle1->setText(tr("Scan the QR code or copy the address to receive FLS."));
     setCssTitleScreen(ui->labelTitle);
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     // Address
     ui->labelAddress->setText(tr("No address "));
     setCssProperty(ui->labelAddress, "label-address-box");
 
     ui->labelDate->setText("Dec. 19, 2018");
-    setCssSubtitleScreen(ui->labelDate);
+    setCFLSubtitleScreen(ui->labelDate);
     ui->labelLabel->setText("");
-    setCssSubtitleScreen(ui->labelLabel);
+    setCFLSubtitleScreen(ui->labelLabel);
 
     // Options
     ui->btnMyAddresses->setTitleClassAndText("btn-title-grey", "My Addresses");
@@ -98,7 +98,7 @@ ReceiveWidget::ReceiveWidget(FLSGUI* parent) :
     SortEdit* lineEditOrder = new SortEdit(ui->comboBoxSortOrder);
     connect(lineEditOrder, &SortEdit::Mouse_Pressed, [this](){ui->comboBoxSortOrder->showPopup();});
     connect(ui->comboBoxSortOrder, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ReceiveWidget::onSortOrderChanged);
-    fillAddressSortControls(lineEdit, lineEditOrder, ui->comboBoxSort, ui->comboBoxSortOrder);
+    fillAddreFLSortControls(lineEdit, lineEditOrder, ui->comboBoxSort, ui->comboBoxSortOrder);
     ui->sortWidget->setVisible(false);
 
     // Connect

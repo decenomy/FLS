@@ -59,7 +59,7 @@ bool isLightTheme();
 void setTheme(bool isLight);
 
 void initComboBox(QComboBox* combo, QLineEdit* lineEdit = nullptr, QString cssClass = "btn-combo");
-void fillAddressSortControls(SortEdit* seType, SortEdit* seOrder, QComboBox* boxType, QComboBox* boxOrder);
+void fillAddreFLSortControls(SortEdit* seType, SortEdit* seOrder, QComboBox* boxType, QComboBox* boxOrder);
 void initCssEditLine(QLineEdit* edit, bool isDialog = false);
 void setCssEditLine(QLineEdit* edit, bool isValid, bool forceUpdate = false);
 void setCssEditLineDialog(QLineEdit* edit, bool isValid, bool forceUpdate = false);
@@ -68,7 +68,7 @@ void setShadow(QWidget* edit);
 void setCssBtnPrimary(QPushButton* btn, bool forceUpdate = false);
 void setCssBtnSecondary(QPushButton* btn, bool forceUpdate = false);
 void setCssTitleScreen(QLabel* label);
-void setCssSubtitleScreen(QWidget* wid);
+void setCFLSubtitleScreen(QWidget* wid);
 void setCssTextBodyDialog(std::initializer_list<QWidget*> args);
 void setCssTextBodyDialog(QWidget* widget);
 void setCssProperty(std::initializer_list<QWidget*> args, QString value);

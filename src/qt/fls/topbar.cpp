@@ -68,36 +68,36 @@ TopBar::TopBar(FLSGUI* _mainWindow, QWidget *parent) :
     progressBar->raise();
     progressBar->move(0, 34);
 
-    ui->pushButtonFAQ->setButtonClassStyle("cssClass", "btn-check-faq");
+    ui->pushButtonFAQ->setButtonClaFLStyle("cssClass", "btn-check-faq");
     ui->pushButtonFAQ->setButtonText("FAQ");
 
-    ui->pushButtonHDUpgrade->setButtonClassStyle("cssClass", "btn-check-hd-upgrade");
+    ui->pushButtonHDUpgrade->setButtonClaFLStyle("cssClass", "btn-check-hd-upgrade");
     ui->pushButtonHDUpgrade->setButtonText("Upgrade to HD Wallet");
     ui->pushButtonHDUpgrade->setNoIconText("HD");
 
-    ui->pushButtonConnection->setButtonClassStyle("cssClass", "btn-check-connect-inactive");
+    ui->pushButtonConnection->setButtonClaFLStyle("cssClass", "btn-check-connect-inactive");
     ui->pushButtonConnection->setButtonText("No Connection");
 
-    ui->pushButtonTor->setButtonClassStyle("cssClass", "btn-check-tor-inactive");
+    ui->pushButtonTor->setButtonClaFLStyle("cssClass", "btn-check-tor-inactive");
     ui->pushButtonTor->setButtonText("Tor Disabled");
     ui->pushButtonTor->setChecked(false);
 
-    ui->pushButtonStack->setButtonClassStyle("cssClass", "btn-check-stack-inactive");
+    ui->pushButtonStack->setButtonClaFLStyle("cssClass", "btn-check-stack-inactive");
     ui->pushButtonStack->setButtonText("Staking Disabled");
 
-    ui->pushButtonColdStaking->setButtonClassStyle("cssClass", "btn-check-cold-staking-inactive");
+    ui->pushButtonColdStaking->setButtonClaFLStyle("cssClass", "btn-check-cold-staking-inactive");
     ui->pushButtonColdStaking->setButtonText("Cold Staking Disabled");
 
-    ui->pushButtonSync->setButtonClassStyle("cssClass", "btn-check-sync");
+    ui->pushButtonSync->setButtonClaFLStyle("cssClass", "btn-check-sync");
     ui->pushButtonSync->setButtonText(" %54 Synchronizing..");
 
-    ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-lock");
+    ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-lock");
 
     if (isLightTheme()) {
-        ui->pushButtonTheme->setButtonClassStyle("cssClass", "btn-check-theme-light");
+        ui->pushButtonTheme->setButtonClaFLStyle("cssClass", "btn-check-theme-light");
         ui->pushButtonTheme->setButtonText("Light Theme");
     } else {
-        ui->pushButtonTheme->setButtonClassStyle("cssClass", "btn-check-theme-dark");
+        ui->pushButtonTheme->setButtonClaFLStyle("cssClass", "btn-check-theme-dark");
         ui->pushButtonTheme->setButtonText("Dark Theme");
     }
 
@@ -114,7 +114,7 @@ TopBar::TopBar(FLSGUI* _mainWindow, QWidget *parent) :
                 );
 
     ui->pushButtonLock->setButtonText("Wallet Locked  ");
-    ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-lock");
+    ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-lock");
 
 
     connect(ui->pushButtonQR, &QPushButton::clicked, this, &TopBar::onBtnReceiveClicked);
@@ -135,10 +135,10 @@ void TopBar::onThemeClicked()
     setTheme(lightTheme);
 
     if (lightTheme) {
-        ui->pushButtonTheme->setButtonClassStyle("cssClass", "btn-check-theme-light",  true);
+        ui->pushButtonTheme->setButtonClaFLStyle("cssClass", "btn-check-theme-light",  true);
         ui->pushButtonTheme->setButtonText("Light Theme");
     } else {
-        ui->pushButtonTheme->setButtonClassStyle("cssClass", "btn-check-theme-dark", true);
+        ui->pushButtonTheme->setButtonClaFLStyle("cssClass", "btn-check-theme-dark", true);
         ui->pushButtonTheme->setButtonText("Dark Theme");
     }
     updateStyle(ui->pushButtonTheme);
@@ -231,7 +231,7 @@ void TopBar::lockDropdownClicked(const StateClicked& state)
                     break;
                 walletModel->setWalletLocked(true);
                 ui->pushButtonLock->setButtonText("Wallet Locked");
-                ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-lock", true);
+                ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-lock", true);
                 // Directly update the staking status icon when the wallet is manually locked here
                 // so the feedback is instant (no need to wait for the polling timeout)
                 setStakingStatusActive(false);
@@ -247,7 +247,7 @@ void TopBar::lockDropdownClicked(const StateClicked& state)
                 openDialogWithOpaqueBackgroundY(dlg, window);
                 if (walletModel->getEncryptionStatus() == WalletModel::Unlocked) {
                     ui->pushButtonLock->setButtonText("Wallet Unlocked");
-                    ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-unlock", true);
+                    ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-unlock", true);
                 }
                 dlg->deleteLater();
                 break;
@@ -270,7 +270,7 @@ void TopBar::lockDropdownClicked(const StateClicked& state)
                 }
                 if (walletModel->getEncryptionStatus() == WalletModel::UnlockedForStaking) {
                     ui->pushButtonLock->setButtonText(tr("Wallet Unlocked for staking"));
-                    ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-staking", true);
+                    ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-staking", true);
                 }
                 break;
             }
@@ -297,14 +297,14 @@ void TopBar::lockDropdownMouseLeave()
 void TopBar::onBtnReceiveClicked()
 {
     if (walletModel) {
-        QString addressStr = walletModel->getAddressTableModel()->getAddressToShow();
-        if (addressStr.isNull()) {
+        QString addreFLStr = walletModel->getAddressTableModel()->getAddressToShow();
+        if (addreFLStr.isNull()) {
             inform(tr("Error generating address"));
             return;
         }
         showHideOp(true);
         ReceiveDialog *receiveDialog = new ReceiveDialog(window);
-        receiveDialog->updateQr(addressStr);
+        receiveDialog->updateQr(addreFLStr);
         if (openDialogWithOpaqueBackground(receiveDialog, window)) {
             inform(tr("Address Copied"));
         }
@@ -350,7 +350,7 @@ void TopBar::onColdStakingClicked()
         text = "Cold Staking Disabled";
     }
 
-    ui->pushButtonColdStaking->setButtonClassStyle("cssClass", className, true);
+    ui->pushButtonColdStaking->setButtonClaFLStyle("cssClass", className, true);
     ui->pushButtonColdStaking->setButtonText(text);
     updateStyle(ui->pushButtonColdStaking);
 
@@ -387,7 +387,7 @@ void TopBar::setStakingStatusActive(bool fActive)
     if (ui->pushButtonStack->isChecked() != fActive) {
         ui->pushButtonStack->setButtonText(fActive ? tr("Staking active") : tr("Staking not active"));
         ui->pushButtonStack->setChecked(fActive);
-        ui->pushButtonStack->setButtonClassStyle("cssClass", (fActive ?
+        ui->pushButtonStack->setButtonClaFLStyle("cssClass", (fActive ?
                                                                 "btn-check-stack" :
                                                                 "btn-check-stack-inactive"), true);
     }
@@ -407,12 +407,12 @@ void TopBar::setNumConnections(int count)
     if (count > 0) {
         if (!ui->pushButtonConnection->isChecked()) {
             ui->pushButtonConnection->setChecked(true);
-            ui->pushButtonConnection->setButtonClassStyle("cssClass", "btn-check-connect", true);
+            ui->pushButtonConnection->setButtonClaFLStyle("cssClass", "btn-check-connect", true);
         }
     } else {
         if (ui->pushButtonConnection->isChecked()) {
             ui->pushButtonConnection->setChecked(false);
-            ui->pushButtonConnection->setButtonClassStyle("cssClass", "btn-check-connect-inactive", true);
+            ui->pushButtonConnection->setButtonClaFLStyle("cssClass", "btn-check-connect-inactive", true);
         }
     }
 
@@ -566,14 +566,14 @@ void TopBar::updateTorIcon()
     if (torEnabled) {
         if (!ui->pushButtonTor->isChecked()) {
             ui->pushButtonTor->setChecked(true);
-            ui->pushButtonTor->setButtonClassStyle("cssClass", "btn-check-tor", true);
+            ui->pushButtonTor->setButtonClaFLStyle("cssClass", "btn-check-tor", true);
         }
         QString ip_port_q = QString::fromStdString(ip_port);
         ui->pushButtonTor->setButtonText(tr("Tor Active: %1").arg(ip_port_q));
     } else {
         if (ui->pushButtonTor->isChecked()) {
             ui->pushButtonTor->setChecked(false);
-            ui->pushButtonTor->setButtonClassStyle("cssClass", "btn-check-tor-inactive", true);
+            ui->pushButtonTor->setButtonClaFLStyle("cssClass", "btn-check-tor-inactive", true);
             ui->pushButtonTor->setButtonText(tr("Tor Disabled"));
         }
     }
@@ -590,19 +590,19 @@ void TopBar::refreshStatus()
     switch (encStatus) {
         case WalletModel::EncryptionStatus::Unencrypted:
             ui->pushButtonLock->setButtonText("Wallet Unencrypted");
-            ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-unlock", true);
+            ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-unlock", true);
             break;
         case WalletModel::EncryptionStatus::Locked:
             ui->pushButtonLock->setButtonText("Wallet Locked");
-            ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-lock", true);
+            ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-lock", true);
             break;
         case WalletModel::EncryptionStatus::UnlockedForStaking:
             ui->pushButtonLock->setButtonText("Wallet Unlocked for staking");
-            ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-staking", true);
+            ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-staking", true);
             break;
         case WalletModel::EncryptionStatus::Unlocked:
             ui->pushButtonLock->setButtonText("Wallet Unlocked");
-            ui->pushButtonLock->setButtonClassStyle("cssClass", "btn-check-status-unlock", true);
+            ui->pushButtonLock->setButtonClaFLStyle("cssClass", "btn-check-status-unlock", true);
             break;
     }
     updateStyle(ui->pushButtonLock);

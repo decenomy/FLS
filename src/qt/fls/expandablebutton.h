@@ -25,7 +25,7 @@ public:
     explicit ExpandableButton(QWidget *parent = nullptr);
     ~ExpandableButton();
 
-    void setButtonClassStyle(const char *name, const QVariant &value, bool forceUpdate = false);
+    void setButtonClaFLStyle(const char *name, const QVariant &value, bool forceUpdate = false);
     void setButtonText(const QString& _text);
     void setNoIconText(const QString& _text);
     void setIcon(QString path);

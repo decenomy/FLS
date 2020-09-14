@@ -1,11 +1,11 @@
-Flits-Core version *3.1.0.2* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
+Flits-Core version *3.1.0.2* is now available from:  <https://github.com/Simple-Software-Solutions/FLS-Core/releases>
 
 This is a new mandatory bugfix release, specifically addressing a bug with windows OS masternode control wallets as well as a missed commit from our private repository affecting the budget amount. 
 
-### Users upgrading to this version are encouraged to also read the detailed release notes for the previous [3.1.0](https://github.com/Simple-Software-Solutions/SSS-Core/releases/tag/v3.1.0) release as information will not be duplicated here.
+### Users upgrading to this version are encouraged to also read the detailed release notes for the previous [3.1.0](https://github.com/Simple-Software-Solutions/FLS-Core/releases/tag/v3.1.0) release as information will not be duplicated here.
 
 
-Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/SSS-Core/issues>
+Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/FLS-Core/issues>
 
 Mandatory Update
 ==============
@@ -17,7 +17,7 @@ Users updating from a previous version after Tuesday, May 8, 2018 12:00:00 AM GM
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sssolutionsd/sssolutions-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/flits-qt (on Mac) or flitsd/flits-qt (on Linux).
 
 
 Compatibility
@@ -75,4 +75,4 @@ Thanks to everyone who directly contributed to this release:
 - Mrs-X
 - presstab
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/sss-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/FLS-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.

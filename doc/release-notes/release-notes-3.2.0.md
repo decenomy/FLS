@@ -1,8 +1,8 @@
-Flits-Core version *3.2.0* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
+Flits-Core version *3.2.0* is now available from:  <https://github.com/Simple-Software-Solutions/FLS-Core/releases>
 
 This is a new major version release, including various bug fixes and performance improvements, as well as updated translations.
 
-Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/SSS-Core/issues>
+Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/FLS-Core/issues>
 
 
 Mandatory Update
@@ -15,7 +15,7 @@ Masternodes will need to be restarted once both the masternode daemon and the co
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sssolutionsd/sssolutions-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/flits-qt (on Mac) or flitsd/flits-qt (on Linux).
 
 Wallets for existing users upgrading from an earlier version will undergo a supply recalculation the first time v3.2.0 is started. An initial light weight (partial) recalculation will be attempted first, but if that fails then the wallet will do a full recalculation the next time it is started. This recalculation is a one-time event.
 
@@ -46,15 +46,15 @@ Attacks, Exploits, and Mitigations
 
 On Janurary 22 2019, Decentralized Systems Lab out of the University of Illinois published a study entitled “[‘Fake Stake’ attacks on chain-based Proof-of-Stake cryptocurrencies](https://medium.com/@dsl_uiuc/fake-stake-attacks-on-chain-based-proof-of-stake-cryptocurrencies-b8b05723f806)”, which outlined a type of Denial of Service attack that could take place on a number of Proof of Stake based networks by exhausting a client's RAM or Disk resources.
 
-A full report provided by SSS developers is available on the [SSS Website](https://flitswallet.app/fake-stake-official-sss-report/), which includes additional findings, mitigation details, and resources for testing. This type of attack has no risk to users' privacy and does not affect their holdings.
+A full report provided by FLS developers is available on the [FLS Website](https://flitswallet.app/fake-stake-official-FLS-report/), which includes additional findings, mitigation details, and resources for testing. This type of attack has no risk to users' privacy and does not affect their holdings.
 
 ### Wrapped Serials
 
-On March 6th 2019, an attack was detected on the SSS network zerocoin protocol, or zSSS. The vulnerability allows an attacker to fake serials accepted by the network and thus to spend zerocoins that have never been minted. As severe as it is, it does not harm users’ privacy and does not affect their holdings directly.
+On March 6th 2019, an attack was detected on the FLS network zerocoin protocol, or zFLS. The vulnerability allows an attacker to fake serials accepted by the network and thus to spend zerocoins that have never been minted. As severe as it is, it does not harm users’ privacy and does not affect their holdings directly.
 
-As a result of this, all zSSS functionality was disabled via one of our sporks shortly after verification of this exploit. A full report, detailing how this attack was performed, as well as investigation results and mitigation methods is available [On Medium](https://medium.com/@dev.sss/report-wrapped-serials-attack-5f4bf7b51701).
+As a result of this, all zFLS functionality was disabled via one of our sporks shortly after verification of this exploit. A full report, detailing how this attack was performed, as well as investigation results and mitigation methods is available [On Medium](https://medium.com/@dev.FLS/report-wrapped-serials-attack-5f4bf7b51701).
 
-zSSS functions will be restored after v3.2.0 is pushed out and the majority of the network has upgraded.
+zFLS functions will be restored after v3.2.0 is pushed out and the majority of the network has upgraded.
 
 Major New Features
 ------
@@ -65,9 +65,9 @@ Flits-Core v3.2.0 introduces new consensus rules for scripting pathways to suppo
 
 ### Automint Addresses
 
-A new "Automint Addresses" feature has been added to the wallet that allows for the creation of new addresses who's purpose is to automatically convert any SSS funds received by such addresses to zSSS. The feature as a whole can be enabled/disabled either at runtime using the `-enableautoconvertaddress` option, via RPC/Console with the `enableautomintaddress` command, or via the GUI's options dialog, with the default being enabled.
+A new "Automint Addresses" feature has been added to the wallet that allows for the creation of new addresses who's purpose is to automatically convert any FLS funds received by such addresses to zFLS. The feature as a whole can be enabled/disabled either at runtime using the `-enableautoconvertaddress` option, via RPC/Console with the `enableautomintaddress` command, or via the GUI's options dialog, with the default being enabled.
 
-Creation of these automint addresses is currently only available via the RPC/Console `createautomintaddress` command, which takes no additional arguments. The command returns a new SSS address each time, but addresses created by this command can be re-used if desired.
+Creation of these automint addresses is currently only available via the RPC/Console `createautomintaddress` command, which takes no additional arguments. The command returns a new FLS address each time, but addresses created by this command can be re-used if desired.
 
 ### In-wallet Proposal Voting
 
@@ -81,9 +81,9 @@ A full technical writeup of the protocol can be found [Here](https://flitswallet
 
 ### Precomputed Zerocoin Proofs
 
-This introduces the ability to do most of the heavy computation required for zSSS spends **before** actually initiating the spend. A new thread, `ThreadPrecomputeSpends`, is added which constantly runs in the background.
+This introduces the ability to do most of the heavy computation required for zFLS spends **before** actually initiating the spend. A new thread, `ThreadPrecomputeSpends`, is added which constantly runs in the background.
 
-`ThreadPrecomputeSpends`' purpose is to monitor the wallet's zSSS mints and perform partial witness accumulations up to `nHeight - 20` blocks from the chain's tip (to ensure that it only ever computes data that is at least 2 accumulator checkpoints deep), retaining the results in memory.
+`ThreadPrecomputeSpends`' purpose is to monitor the wallet's zFLS mints and perform partial witness accumulations up to `nHeight - 20` blocks from the chain's tip (to ensure that it only ever computes data that is at least 2 accumulator checkpoints deep), retaining the results in memory.
 
 Additionally, a file based cache is introduced, `precomputes.dat`, which serves as a place to store any precomputed data between sessions, or when the in-memory cache size is exhausted. Swapping data between memory and disk file is done as needed, and periodic cache flushes to the disk are routine.
 
@@ -94,11 +94,11 @@ This also introduces 2 new runtime configuration options:
 
 A new RPC command, `clearspendcache`, has been added that allows for the clearing/resetting of the precompute cache (both memory and disk). This command takes no additional arguments.
 
-Finally, the "security level" option for spending zSSS has been completely removed, and all zSSS spends now spend at what was formerly "security level" `100`. This change has been reflected in any RPC command that previously took a security level argument, as well as in the GUI's Privacy section for spending zSSS.
+Finally, the "security level" option for spending zFLS has been completely removed, and all zFLS spends now spend at what was formerly "security level" `100`. This change has been reflected in any RPC command that previously took a security level argument, as well as in the GUI's Privacy section for spending zFLS.
 
 ### Regression Test Suite
 
-The RegTest network mode has been re-worked to once again allow for the generation of on-demand PoW and PoS blocks. Additionally, many of the existing functional test scripts have been adapted for use with SSS, and we now have a solid testing base for highly customizable tests to be written.
+The RegTest network mode has been re-worked to once again allow for the generation of on-demand PoW and PoS blocks. Additionally, many of the existing functional test scripts have been adapted for use with FLS, and we now have a solid testing base for highly customizable tests to be written.
 
 With this, the old `setgenerate` RPC command no longer functions in regtest mode, instead a new `generate` command has been introduced that is more suited for use in regtest mode.
 
@@ -234,16 +234,16 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #781 `10e1a8a306` [Qt] Don't show staking/automint status icons without a wallet (Fuzzbawls)
  - #776 `3fcdc932d9` [Qt] Add a security warning to the debug console's default output. (Fuzzbawls)
  - #747 `feb87c10fa` [GUI] Hide orphans - contextMenu action (random-zebra)
- - #741 `ea2637838c` [GUI] Sort by 'data' in zSSS and coin control dialogs (random-zebra)
+ - #741 `ea2637838c` [GUI] Sort by 'data' in zFLS and coin control dialogs (random-zebra)
  - #733 `9a792d73e9` [GUI] Hide orphans (random-zebra)
  - #735 `44840c5069` [Qt] Stop using dummy strings in clientversion.cpp (Fuzzbawls)
- - #725 `793db15baf` [UI] Sort numbers correctly in zSSS and coin control dialogs (random-zebra)
+ - #725 `793db15baf` [UI] Sort numbers correctly in zFLS and coin control dialogs (random-zebra)
  - #714 `bf2ad88066` [UI] Add address field in receive tab (warrows)
  - #683 `ec1180b52c` [Qt] receivecoinsdialog - address control + clean UI (random-zebra)
  - #677 `29fab5982f` [Qt] change colors for tx labels in history/overview (random-zebra)
  - #693 `022b58257c` [UI] Add address to the payment request history (warrows)
  - #698 `3f35bc81d8` [Qt] Remove Qt4 build support & code fallbacks (Wladimir J. van der Laan)
- - #655 `de0c4e0888` [Qt] Fix SSS balances on overview page (Fuzzbawls)
+ - #655 `de0c4e0888` [Qt] Fix FLS balances on overview page (Fuzzbawls)
  - #680 `71ac5285e5` [Qt] Privacy dialog: hide/show denominations (random-zebra)
  - #675 `8a26ba0b07` [Qt] SwiftX - intuitiveness (random-zebra)
  - #668 `4a68c9ed43` [Qt] Clean up Multisend Dialog UI (Fuzzbawls)
@@ -268,11 +268,11 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #688 `64071d142d` [Zerocoin]  RPC import/export zerocoins private key standardized + Cleanup in AccPoK and SoK to avoid redundant calculations. (furszy)
 
 ### Wallet
- - #842 `c6c84fe85f` [Wallet] [zSSS] Precomputed Zerocoin Proofs (Fuzzbawls)
+ - #842 `c6c84fe85f` [Wallet] [zFLS] Precomputed Zerocoin Proofs (Fuzzbawls)
  - #817 `37a06eaa93` [Wallet] Fix segfault with runtime -disablewallet (Fuzzbawls)
  - #763 `d4762f7e7a` [Wallet] Add automint address (Fuzzbawls)
- - #759 `19fd0877cd` [Wallet] Avoid failed zSSS spend because of changed seed (warrows)
- - #755 `65be6b611b` [Wallet] Fix zSSS spend when too much mints are selected (warrows)
+ - #759 `19fd0877cd` [Wallet] Avoid failed zFLS spend because of changed seed (warrows)
+ - #755 `65be6b611b` [Wallet] Fix zFLS spend when too much mints are selected (warrows)
  - #734 `5df105fed2` [Staking] Ensure nCredit is correctly initialized in CreateCoinStake (warrows)
  - #730 `394d48b2c9` [Wallet] fix bug with fWalletUnlockAnonymizeOnly flag setting (random-zebra)
  - #715 `30048cce62` [Refactor] Remove GetCoinAge (Fuzzbawls)
@@ -292,7 +292,7 @@ Detailed release notes follow. This overview includes changes that affect behavi
  - #667 `49f9a0fa9e` [Zerocoin] Clean zerocoin bignum file (warrows)
  - #669 `dd6909fd30` [Utils] Fix syntax error in gitian-build.sh (Aitor González)
  - #632 `0d91550ff6` [MoveOnly] Move non-wallet RPC files to subdir (Fuzzbawls)
- - #731 `f7f49cfa7c` [zSSS] Fix bignum overloads when using OpenSSL (Fuzzbawls)
+ - #731 `f7f49cfa7c` [zFLS] Fix bignum overloads when using OpenSSL (Fuzzbawls)
  - #692 `1fde9b2b7a` [Zerocoin] Remove explicit copy assignement operator from Accumulator (warrows)
  - #761 `88a93bd35a` [Refactoring] Abstract out and switch openssl cleanse (Adam Langley)
  - #743 `af0c340fe0` [Refactor] remove CPubKey::GetHex (random-zebra)
@@ -339,4 +339,4 @@ Thanks to everyone who directly contributed to this release:
 - veilgets
 - warrows
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/sss-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/FLS-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.

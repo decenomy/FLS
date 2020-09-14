@@ -24,7 +24,7 @@ ExpandableButton::ExpandableButton(QWidget *parent) :
     connect(ui->pushButton, &QPushButton::clicked, this, &ExpandableButton::mousePressEvent);
 }
 
-void ExpandableButton::setButtonClassStyle(const char *name, const QVariant &value, bool forceUpdate)
+void ExpandableButton::setButtonClaFLStyle(const char *name, const QVariant &value, bool forceUpdate)
 {
     ui->pushButton->setProperty(name, value);
     if(forceUpdate){

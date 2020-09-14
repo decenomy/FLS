@@ -1,25 +1,25 @@
 Flits-Core version 3.0.2 is now available from:
 
-  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
+  <https://github.com/Simple-Software-Solutions/FLS-Core/releases>
 
 This is a new minor-revision version release, including various bug fixes and
 performance improvements, as well as updated translations.
 
 Please report bugs using the issue tracker at github:
 
-  <https://github.com/Simple-Software-Solutions/SSS-Core/issues>
+  <https://github.com/Simple-Software-Solutions/FLS-Core/issues>
 
 Recommended Update
 ==============
 
-Flits-Core v3.0.2 is a recommended, semi-mandatory update for all users. This release contains transaction creation bug fixes for zSSS spends, automint calculation adjustments, and other various updates/fixes.
+Flits-Core v3.0.2 is a recommended, semi-mandatory update for all users. This release contains transaction creation bug fixes for zFLS spends, automint calculation adjustments, and other various updates/fixes.
 
-zSSS spending requires this update.
+zFLS spending requires this update.
 
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sssolutionsd/sssolutions-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/flits-qt (on Mac) or flitsd/flits-qt (on Linux).
 
 Compatibility
 ==============
@@ -45,21 +45,21 @@ Notable Changes
 
 Auto Wallet Backup
 ---------------------
-In addition to the automatic wallet backup that is done at each start of the client, a new automatic backup function has been added that will, by default, create a backup of the wallet file during each zSSS mint operation (zSSS spends which re-mint their change are also included in this). This functionality is controlled by the `-backupzsss` command-line option, which defaults to `1` (enabled, auto-backup).
+In addition to the automatic wallet backup that is done at each start of the client, a new automatic backup function has been added that will, by default, create a backup of the wallet file during each zFLS mint operation (zFLS spends which re-mint their change are also included in this). This functionality is controlled by the `-backupzFLS` command-line option, which defaults to `1` (enabled, auto-backup).
 
-Users that wish to prevent this behavior (not recommended) can pass `-backupzsss=0` at the command-line when starting the client, or add `backupzsss=0` to their `sss.conf` file.
+Users that wish to prevent this behavior (not recommended) can pass `-backupzFLS=0` at the command-line when starting the client, or add `backupzFLS=0` to their `FLS.conf` file.
 
-zSSS Automint Calculations
+zFLS Automint Calculations
 ---------------------
-A bug in the automint calculations was made apparent on mainnet when block times exceeded expectations, resulting in zSSS mint transactions that were in an unconfirmed state to still be treated as if they had never been minted. This caused automint to effectively mint more than what was intended.
+A bug in the automint calculations was made apparent on mainnet when block times exceeded expectations, resulting in zFLS mint transactions that were in an unconfirmed state to still be treated as if they had never been minted. This caused automint to effectively mint more than what was intended.
 
-zSSS Spending Fix
+zFLS Spending Fix
 ---------------------
-The size of zSSS spend transactions is knowingly larger than normal transactions, and while this was expected, a much stricter check against the scriptsig size is used for mainnet, causing the transactions to be rejected by the mempool, and thus not being packaged into any blocks.
+The size of zFLS spend transactions is knowingly larger than normal transactions, and while this was expected, a much stricter check against the scriptsig size is used for mainnet, causing the transactions to be rejected by the mempool, and thus not being packaged into any blocks.
 
-zSSS Transaction Recovery
+zFLS Transaction Recovery
 ---------------------
-Due to the aforementioned issue with zSSS spending, users may find that their attempted spends are now conflicted and zSSS balances are not represented as expected. "Recovery" of these transactions can be done using the following methods:
+Due to the aforementioned issue with zFLS spending, users may find that their attempted spends are now conflicted and zFLS balances are not represented as expected. "Recovery" of these transactions can be done using the following methods:
 
 1. GUI:
 
@@ -71,7 +71,7 @@ Due to the aforementioned issue with zSSS spending, users may find that their at
 
 RPC Changes
 ---------------------
-The `bip38decrypt` command has had it's parameter order changed to be more consistent with it's counterpart. The command now expects the SSS address as it's first parameter and the passphrase as it's second parameter.
+The `bip38decrypt` command has had it's parameter order changed to be more consistent with it's counterpart. The command now expects the FLS address as it's first parameter and the passphrase as it's second parameter.
 
 Bip38 Compatibility With 3rd Party Tools
 ---------------------
@@ -90,13 +90,13 @@ git merge commit are mentioned.
 
 ### P2P Protocol and Network Code
 - #286 `85c0f53` [Main] Change sporkDB from smart ptr to ptr. (presstab)
-- #292 `feadab4` Additional checks for double spending of zSSS serials. (presstab)
+- #292 `feadab4` Additional checks for double spending of zFLS serials. (presstab)
 
 ### Wallet
 - #271 `5e9a086` [Wallet] Remove unused member wallet in UnlockContext inner class (Jon Spock)
-- #279 `e734010` Add -backupzsss startup flag. (presstab)
-- #280 `fdc182d` [Wallet] Fix zSSS spending errors. (presstab)
-- #282 `310f216` [Wallet] Count pending zSSS balance for automint. (presstab)
+- #279 `e734010` Add -backupzFLS startup flag. (presstab)
+- #280 `fdc182d` [Wallet] Fix zFLS spending errors. (presstab)
+- #282 `310f216` [Wallet] Count pending zFLS balance for automint. (presstab)
 - #290 `004d7b6` Include both pending and mature zerocoins for automint calculations (presstab)
 
 ### GUI
@@ -105,7 +105,7 @@ git merge commit are mentioned.
 - #270 `bd2328e` [Qt] Make lock icon clickable to toggle wallet lock state (Fuzzbawls)
 - #273 `f31136e` [Qt] Fix UI tab order and shortcuts (Mrs-X)
 - #287 `74a1c3c` [Qt] Don't allow the Esc key to close the privacy tab (Fuzzbawls)
-- #291 `cb314e6` [Qt] zSSS control quantity/amount fixes (rejectedpromise)
+- #291 `cb314e6` [Qt] zFLS control quantity/amount fixes (rejectedpromise)
 
 ### Miscellaneous
 - #266 `2d97b54` [Scripts] Fix location for aarch64 outputs in gitian-build.sh (Fuzzbawls)
@@ -125,4 +125,4 @@ Thanks to everyone who directly contributed to this release:
 - rejectedpromise
 - Warrows
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/sss-core-translations/).
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/FLS-core-translations/).

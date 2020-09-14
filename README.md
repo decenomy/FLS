@@ -1,7 +1,7 @@
 FLS Core integration/staging repository
 =====================================
 
-[![Build Status](https://travis-ci.org/Flits-Core/FLS.svg?branch=master)](https://travis-ci.org/Flits-Core/SSS) [![GitHub version](https://badge.fury.io/gh/Flits-Core%2FSSS.svg)](https://badge.fury.io/gh/Flits-Core%2FSSS)
+[![Build Status](https://travis-ci.org/Flits-Core/FLS.svg?branch=master)](https://travis-ci.org/Flits-Core/FLS) [![GitHub version](https://badge.fury.io/gh/Flits-Core%2FFLS.svg)](https://badge.fury.io/gh/Flits-Core%2FFLS)
 
 The goal of FLS is to achieve a decentralized sustainable crypto currency with near instant transactions, fair governance and community intelligence and to be the power of the Flits app ecosystem.
 - Decentralized blockchain voting utilizing Masternode technology to form a DAO. The blockchain will distribute monthly treasury funds based on successful proposals submitted by the community and voted on by the DAO.

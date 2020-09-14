@@ -1,8 +1,8 @@
-Flits-Core version *3.4.0* is now available from:  <https://github.com/Simple-Software-Solutions/SSS-Core/releases>
+Flits-Core version *3.4.0* is now available from:  <https://github.com/Simple-Software-Solutions/FLS-Core/releases>
 
 This is a new major version release, including various bug fixes and performance improvements.
 
-Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/SSS-Core/issues>
+Please report bugs using the issue tracker at github: <https://github.com/Simple-Software-Solutions/FLS-Core/issues>
 
 
 Mandatory Update
@@ -20,7 +20,7 @@ Masternodes will need to be restarted once both the masternode daemon and the co
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sssolutionsd/sssolutions-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/flits-qt (on Mac) or flitsd/flits-qt (on Linux).
 
 
 Compatibility
@@ -121,7 +121,7 @@ Detailed release notes follow. This overview includes changes that affect behavi
 
 ### Wallet
  - #939 `37ad934ad8` [Wallet] Remove (explicitely) unused tx comparator (warrows)
- - #971 `bbeabc4d63` [Wallet][zSSS] zc public spend parse crash in wallet startup. (furszy)
+ - #971 `bbeabc4d63` [Wallet][zFLS] zc public spend parse crash in wallet startup. (furszy)
  - #980 `8b81d8f6f9` [Wallet] Remove Bitcoin Core 0.8 block hardlinking (JSKitty)
  - #982 `a0a1af9f78` [Miner] Don't create new keys when generating PoS blocks (random-zebra)
 
@@ -154,4 +154,4 @@ Thanks to everyone who directly contributed to this release:
 - furszy
 - random-zebra
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/sss-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/FLS-core-translations/), the QA team during Testing and the Node hosts supporting our Testnet.

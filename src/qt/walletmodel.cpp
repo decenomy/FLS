@@ -989,19 +989,19 @@ PairResult WalletModel::getNewStakingAddress(CBitcoinAddress& ret,std::string la
     return wallet->getNewStakingAddress(ret, label);
 }
 
-bool WalletModel::whitelistAddressFromColdStaking(const QString &addressStr)
+bool WalletModel::whitelistAddressFromColdStaking(const QString &addreFLStr)
 {
-    return updateAddressBookPurpose(addressStr, AddressBook::AddressBookPurpose::DELEGATOR);
+    return updateAddressBookPurpose(addreFLStr, AddressBook::AddressBookPurpose::DELEGATOR);
 }
 
-bool WalletModel::blacklistAddressFromColdStaking(const QString &addressStr)
+bool WalletModel::blacklistAddressFromColdStaking(const QString &addreFLStr)
 {
-    return updateAddressBookPurpose(addressStr, AddressBook::AddressBookPurpose::DELEGABLE);
+    return updateAddressBookPurpose(addreFLStr, AddressBook::AddressBookPurpose::DELEGABLE);
 }
 
-bool WalletModel::updateAddressBookPurpose(const QString &addressStr, const std::string& purpose)
+bool WalletModel::updateAddressBookPurpose(const QString &addreFLStr, const std::string& purpose)
 {
-    CBitcoinAddress address(addressStr.toStdString());
+    CBitcoinAddress address(addreFLStr.toStdString());
     if (address.IsStakingAddress())
         return error("Invalid FLS address, cold staking address");
     CKeyID keyID;
@@ -1151,9 +1151,9 @@ bool WalletModel::isMine(CBitcoinAddress address)
     return IsMine(*wallet, address.Get());
 }
 
-bool WalletModel::isMine(const QString& addressStr)
+bool WalletModel::isMine(const QString& addreFLStr)
 {
-    CBitcoinAddress address(addressStr.toStdString());
+    CBitcoinAddress address(addreFLStr.toStdString());
     return IsMine(*wallet, address.Get());
 }
 

@@ -75,10 +75,10 @@ In Qt code, use tr's third argument for optional plurality. For example:
 This adds `<numerusform>`s to the respective `.ts` file, which can be translated separately depending on the language. In English, this is simply:
 
     <message numerus="yes">
-        <source>%n active connection(s) to SSS network</source>
+        <source>%n active connection(s) to FLS network</source>
         <translation>
-            <numerusform>%n active connection to SSS network</numerusform>
-            <numerusform>%n active connections to SSS network</numerusform>
+            <numerusform>%n active connection to FLS network</numerusform>
+            <numerusform>%n active connections to FLS network</numerusform>
         </translation>
     </message>
 
@@ -96,4 +96,4 @@ The second example reduces the number of pluralized words that translators have 
 
 During a string freeze (often before a major release), no translation strings are to be added, modified or removed.
 
-This can be checked by executing `make translate` in the `src` directory, then verifying that `sss_en.ts` remains unchanged.
+This can be checked by executing `make translate` in the `src` directory, then verifying that `FLS_en.ts` remains unchanged.

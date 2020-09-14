@@ -108,7 +108,7 @@ public:
     void Clear();
     void LoadSporksFromDB();
 
-    void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
+    void ProceFLSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
     int64_t GetSporkValue(SporkId nSporkID);
     void ExecuteSpork(SporkId nSporkID, int nValue);
     bool UpdateSpork(SporkId nSporkID, int64_t nValue);

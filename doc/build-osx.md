@@ -43,8 +43,8 @@ Build Flits-Core
 
 1. Clone the Flits-Core source code:
 
-        git clone https://github.com/SimpleSoftwareSolutions/sss
-        cd sss
+        git clone https://github.com/SimpleSoftwareSolutions/FLS
+        cd FLS
 
 2.  Make the Homebrew OpenSSL headers visible to the configure script  (do ```brew info openssl``` to find out why this is necessary, or if you use Homebrew with installation folders different from the default).
 
@@ -79,28 +79,28 @@ In this case there is no dependency on Berkeley DB 4.8.
 Running
 -------
 
-Flits-Core is now available at `./src/sssolutionsd`
+Flits-Core is now available at `./src/flitsd`
 
 Before running, you may create an empty configuration file:
 
-    mkdir -p "/Users/${USER}/Library/Application Support/SSS"
+    mkdir -p "/Users/${USER}/Library/Application Support/FLS"
 
-    touch "/Users/${USER}/Library/Application Support/SSS/sss.conf"
+    touch "/Users/${USER}/Library/Application Support/FLS/FLS.conf"
 
-    chmod 600 "/Users/${USER}/Library/Application Support/SSS/sss.conf"
+    chmod 600 "/Users/${USER}/Library/Application Support/FLS/FLS.conf"
 
-The first time you run sssolutionsd, it will start downloading the blockchain. This process could take many hours, or even days on slower than average systems.
+The first time you run flitsd, it will start downloading the blockchain. This process could take many hours, or even days on slower than average systems.
 
 You can monitor the download process by looking at the debug.log file:
 
-    tail -f $HOME/Library/Application\ Support/SSS/debug.log
+    tail -f $HOME/Library/Application\ Support/FLS/debug.log
 
 Other commands:
 -------
 
-    ./src/sssolutionsd -daemon # Starts the sss daemon.
-    ./src/sssolutions-cli --help # Outputs a list of command-line options.
-    ./src/sssolutions-cli help # Outputs a list of RPC commands when the daemon is running.
+    ./src/flitsd -daemon # Starts the FLS daemon.
+    ./src/flits-cli --help # Outputs a list of command-line options.
+    ./src/flits-cli help # Outputs a list of RPC commands when the daemon is running.
 
 Notes
 -----

@@ -275,13 +275,13 @@ void SettingsSignMessageWidgets::onVerifyMessage()
 
 void SettingsSignMessageWidgets::onAddressesClicked()
 {
-    int addressSize = walletModel->getAddressTableModel()->sizeRecv();
-    if (addressSize == 0) {
+    int addreFLSize = walletModel->getAddressTableModel()->sizeRecv();
+    if (addreFLSize == 0) {
         inform(tr("No addresses available, you can go to the receive screen and add some there!"));
         return;
     }
 
-    int height = (addressSize <= 2) ? ui->addressIn_SM->height() * ( 2 * (addressSize + 1 )) : ui->addressIn_SM->height() * 4;
+    int height = (addreFLSize <= 2) ? ui->addressIn_SM->height() * ( 2 * (addreFLSize + 1 )) : ui->addressIn_SM->height() * 4;
     int width = ui->containerAddress->width();
 
     if (!menuContacts) {

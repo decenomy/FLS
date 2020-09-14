@@ -162,7 +162,7 @@ SettingsMultisendWidget::SettingsMultisendWidget(PWidget *parent) :
     setCssTitleScreen(ui->labelTitle);
 
     ui->labelSubtitle1->setText(tr("MultiSend allows you to automatically send up to 100% of your stake or masternode reward to a list of other FLS addresses after it matures."));
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     //Button Group
     ui->pushLeft->setText(tr("Active"));

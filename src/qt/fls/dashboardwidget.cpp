@@ -50,11 +50,11 @@ DashboardWidget::DashboardWidget(FLSGUI* parent) :
 
     /* Subtitle */
     ui->labelSubtitle->setText(tr("You can view your account's history"));
-    setCssSubtitleScreen(ui->labelSubtitle);
+    setCFLSubtitleScreen(ui->labelSubtitle);
 
     // Staking Information
     ui->labelMessage->setText(tr("Amount of FLS staked."));
-    setCssSubtitleScreen(ui->labelMessage);
+    setCFLSubtitleScreen(ui->labelMessage);
     setCssProperty(ui->labelSquareFLS, "square-chart-FLS");
     ui->labelSquarezFLS->setVisible(false);
     setCssProperty(ui->labelSquarezFLS, "square-chart-zfls");
@@ -142,7 +142,7 @@ DashboardWidget::DashboardWidget(FLSGUI* parent) :
 
     setCssProperty(ui->labelEmptyChart, "text-empty");
     ui->labelMessageEmpty->setText(tr("You can verify the staking activity in the status bar at the top right of the wallet.\nIt will start automatically as soon as the wallet has enough confirmations on any unspent balances, and the wallet has synced."));
-    setCssSubtitleScreen(ui->labelMessageEmpty);
+    setCFLSubtitleScreen(ui->labelMessageEmpty);
 
     // Chart State
     ui->layoutChart->setVisible(false);

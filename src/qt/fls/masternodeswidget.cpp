@@ -97,7 +97,7 @@ MasterNodesWidget::MasterNodesWidget(FLSGUI *parent) :
     ui->labelTitle->setFont(fontLight);
 
     ui->labelSubtitle1->setText(tr("Full nodes that incentivize node operators to perform the core consensus functions\nand vote on the treasury system receiving a periodic reward."));
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     /* Buttons */
     ui->pushButtonSave->setText(tr("Create Masternode Controller"));

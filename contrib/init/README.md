@@ -1,11 +1,11 @@
 Sample configuration files for:
 ```
-SystemD: sssolutionsd.service
-Upstart: sssolutionsd.conf
-OpenRC:  sssolutionsd.openrc
-         sssolutionsd.openrcconf
-CentOS:  sssolutionsd.init
-macOS:    org.sss.sssolutionsd.plist
+SystemD: flitsd.service
+Upstart: flitsd.conf
+OpenRC:  flitsd.openrc
+         flitsd.openrcconf
+CentOS:  flitsd.init
+macOS:    org.FLS.flitsd.plist
 ```
 have been made available to assist packagers in creating node packages here.
 

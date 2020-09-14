@@ -243,7 +243,7 @@ void initComboBox(QComboBox* combo, QLineEdit* lineEdit, QString cssClass)
     combo->setView(new QListView());
 }
 
-void fillAddressSortControls(SortEdit* seType, SortEdit* seOrder, QComboBox* boxType, QComboBox* boxOrder)
+void fillAddreFLSortControls(SortEdit* seType, SortEdit* seOrder, QComboBox* boxType, QComboBox* boxOrder)
 {
     // Sort Type
     initComboBox(boxType, seType, "btn-combo-small");
@@ -315,7 +315,7 @@ void setCssTitleScreen(QLabel* label)
     setCssProperty(label, "text-title-screen", false);
 }
 
-void setCssSubtitleScreen(QWidget* wid)
+void setCFLSubtitleScreen(QWidget* wid)
 {
     setCssProperty(wid, "text-subtitle", false);
 }

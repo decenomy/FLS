@@ -280,14 +280,14 @@ public:
      */
     PairResult getNewStakingAddress(CBitcoinAddress& ret, std::string label = "") const;
 
-    bool whitelistAddressFromColdStaking(const QString &addressStr);
+    bool whitelistAddressFromColdStaking(const QString &addreFLStr);
     bool blacklistAddressFromColdStaking(const QString &address);
-    bool updateAddressBookPurpose(const QString &addressStr, const std::string& purpose);
+    bool updateAddressBookPurpose(const QString &addreFLStr, const std::string& purpose);
     std::string getLabelForAddress(const CBitcoinAddress& address);
     bool getKeyId(const CBitcoinAddress& address, CKeyID& keyID);
 
     bool isMine(CBitcoinAddress address);
-    bool isMine(const QString& addressStr);
+    bool isMine(const QString& addreFLStr);
     bool isUsed(CBitcoinAddress address);
     void getOutputs(const std::vector<COutPoint>& vOutpoints, std::vector<COutput>& vOutputs);
     bool isSpent(const COutPoint& outpoint) const;

@@ -44,7 +44,7 @@ SettingsBitToolWidget::SettingsBitToolWidget(FLSGUI* _window, QWidget *parent) :
 
     // Subtitle
     ui->labelSubtitle1->setText("Encrypt your FLS addresses (key pair actually) using BIP38 encryption.\nUsing this mechanism you can share your keys without middle-man risk, only need to store your passphrase safely.");
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     // Key
     ui->labelSubtitleKey->setText(tr("Encrypted key"));
@@ -215,13 +215,13 @@ void SettingsBitToolWidget::onClearAll()
 
 void SettingsBitToolWidget::onAddressesClicked()
 {
-    int addressSize = walletModel->getAddressTableModel()->sizeRecv();
-    if (addressSize == 0) {
+    int addreFLSize = walletModel->getAddressTableModel()->sizeRecv();
+    if (addreFLSize == 0) {
         inform(tr("No addresses available, you can go to the receive screen and add some there!"));
         return;
     }
 
-    int height = (addressSize <= 2) ? ui->addressIn_ENC->height() * ( 2 * (addressSize + 1 )) : ui->addressIn_ENC->height() * 4;
+    int height = (addreFLSize <= 2) ? ui->addressIn_ENC->height() * ( 2 * (addreFLSize + 1 )) : ui->addressIn_ENC->height() * 4;
     int width = ui->containerAddressEnc->width();
 
     if (!menuContacts) {

@@ -45,10 +45,10 @@ PrivacyWidget::PrivacyWidget(FLSGUI* parent) :
 
     /* Subtitle */
     ui->labelSubtitle1->setText(tr("Minting zFLS anonymizes your FLS by removing any\ntransaction history, making transactions untraceable "));
-    setCssSubtitleScreen(ui->labelSubtitle1);
+    setCFLSubtitleScreen(ui->labelSubtitle1);
 
     ui->labelSubtitle2->setText(tr("Mint new zFLS or convert back to FLS"));
-    setCssSubtitleScreen(ui->labelSubtitle2);
+    setCFLSubtitleScreen(ui->labelSubtitle2);
     ui->labelSubtitle2->setContentsMargins(0,2,0,0);
     setCssProperty(ui->labelSubtitleAmount, "text-title");
 

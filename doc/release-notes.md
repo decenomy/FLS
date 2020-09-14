@@ -14,7 +14,7 @@ Mandatory Update
 How to Upgrade
 ==============
 
-If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/sssolutions-qt (on Mac) or sssolutionsd/sssolutions-qt (on Linux).
+If you are running an older version, shut it down. Wait until it has completely shut down (which might take a few minutes for older versions), then run the installer (on Windows) or just copy over /Applications/flits-qt (on Mac) or flitsd/flits-qt (on Linux).
 
 
 Compatibility
@@ -38,7 +38,7 @@ Notable Changes
 
 Wallets under a tree derivation structure in which keypairs are generated deterministically from a single seed, which can be shared partially or entirely with different systems, each with or without the ability to spend coins, [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki).
 
-Enabling major improvements over the keystore management, the SSS wallet doesn't require regular backups as before, keys are following a deterministic creation path that can be verified at any time (before HD Wallet, every keypair was randomly created and added to the keypool, forcing the user to backup the wallet every certain amount of time or could end up loosing coins forever if the latest `wallet.dat` was not being used).
+Enabling major improvements over the keystore management, the FLS wallet doesn't require regular backups as before, keys are following a deterministic creation path that can be verified at any time (before HD Wallet, every keypair was randomly created and added to the keypool, forcing the user to backup the wallet every certain amount of time or could end up loosing coins forever if the latest `wallet.dat` was not being used).
 As well as new possibilities like the account extended public key that enables deterministic public keys creation without the private keys requisite inside the wallet (A good use case could be online stores generating fresh addresses).
 
 This work includes a customization/extension to the [BIP44](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki) standard. We have included an unique staking keys derivation path which introduced the deterministic generation/recovery of staking addresses.
@@ -65,14 +65,14 @@ An extended description of this large work can be found in the PR [here](https:/
 
 ### Functional Changes
 
-Automatic zSSS backup has been disabled. Thus, the following configuration options have been removed  (either as entries in the sss.conf file or as startup flags):
-- `autozsssbackup`
-- `backupzsss`
-- `zsssbackuppath`
+Automatic zFLS backup has been disabled. Thus, the following configuration options have been removed  (either as entries in the FLS.conf file or as startup flags):
+- `autozFLSbackup`
+- `backupzFLS`
+- `zFLSbackuppath`
 
 ### Stake-Split threshold
 The stake split threshold is no longer required to be integer. It can be a fractional amount. A threshold value of 0 disables the stake-split functionality.
-The default value for the stake-split threshold has been lowered from 2000 SSS, down  to 500 SSS.
+The default value for the stake-split threshold has been lowered from 2000 FLS, down  to 500 FLS.
 
 
 Dependencies
@@ -90,7 +90,7 @@ RPC Changes
 - "obfcompat" JSON field in `getmasternodecount` output is removed as it is/was redundant with the `enabled` field.
 
 
-- "moneysupply" and "zsssSupply" attributes in `getblock` output are removed.
+- "moneysupply" and "zFLSSupply" attributes in `getblock` output are removed.
 
 
 - "isPublicSpend" boolean (optional) input parameter is removed from the following commands:
@@ -117,13 +117,13 @@ RPC Changes
   ```
   {
      "staking_status": true|false,       (boolean) whether the wallet is staking or not
-     "staking_enabled": true|false,      (boolean) whether staking is enabled/disabled in sss.conf
-     "coldstaking_enabled": true|false,  (boolean) whether cold-staking is enabled/disabled in sss.conf
+     "staking_enabled": true|false,      (boolean) whether staking is enabled/disabled in FLS.conf
+     "coldstaking_enabled": true|false,  (boolean) whether cold-staking is enabled/disabled in FLS.conf
      "haveconnections": true|false,      (boolean) whether network connections are present
      "mnsync": true|false,               (boolean) whether masternode data is synced
      "walletunlocked": true|false,       (boolean) whether the wallet is unlocked
      "stakeablecoins": n,                (numeric) number of stakeable UTXOs
-     "stakingbalance": d,                (numeric) SSS value of the stakeable coins (minus reserve balance, if any)
+     "stakingbalance": d,                (numeric) FLS value of the stakeable coins (minus reserve balance, if any)
      "stakesplitthreshold": d,           (numeric) value of the current threshold for stake split
      "lastattempt_age": n,               (numeric) seconds since last stake attempt
      "lastattempt_depth": n,             (numeric) depth of the block on top of which the last stake attempt was made

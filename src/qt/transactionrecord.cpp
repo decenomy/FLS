@@ -381,14 +381,14 @@ void TransactionRecord::loadHotOrColdStakeOrContract(
     ExtractAddress(p2csUtxo.scriptPubKey, false, record.address);
 }
 
-bool TransactionRecord::ExtractAddress(const CScript& scriptPubKey, bool fColdStake, std::string& addressStr) {
+bool TransactionRecord::ExtractAddress(const CScript& scriptPubKey, bool fColdStake, std::string& addreFLStr) {
     CTxDestination address;
     if (!ExtractDestination(scriptPubKey, address, fColdStake)) {
         // this shouldn't happen..
-        addressStr = "No available address";
+        addreFLStr = "No available address";
         return false;
     } else {
-        addressStr = CBitcoinAddress(
+        addreFLStr = CBitcoinAddress(
                 address,
                 (fColdStake ? CChainParams::STAKING_ADDRESS : CChainParams::PUBKEY_ADDRESS)
         ).ToString();
