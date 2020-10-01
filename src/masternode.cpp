@@ -76,7 +76,6 @@ CMasternode::CMasternode() :
     cacheInputAgeBlock = 0;
     unitTest = false;
     allowFreeTx = true;
-    nActiveState = MASTERNODE_ENABLED,
     protocolVersion = PROTOCOL_VERSION;
     nLastDsq = 0;
     nScanningErrorCount = 0;
@@ -99,7 +98,6 @@ CMasternode::CMasternode(const CMasternode& other) :
     cacheInputAgeBlock = other.cacheInputAgeBlock;
     unitTest = other.unitTest;
     allowFreeTx = other.allowFreeTx;
-    nActiveState = MASTERNODE_ENABLED,
     protocolVersion = other.protocolVersion;
     nLastDsq = other.nLastDsq;
     nScanningErrorCount = other.nScanningErrorCount;
@@ -221,16 +219,19 @@ void CMasternode::Check(bool forceCheck)
     }
 
     if (!unitTest) {
+        CValidationState state;
+        CMutableTransaction tx = CMutableTransaction();
+        CScript dummyScript;
+        dummyScript << ToByteVector(pubKeyCollateralAddress) << OP_CHECKSIG;
+        CTxOut vout = CTxOut(9999.99 * COIN, dummyScript);
+        tx.vin.push_back(vin);
+        tx.vout.push_back(vout);
         {
             TRY_LOCK(cs_main, lockMain);
             if (!lockMain) return;
 
-            CCoins coins;
-            if (!pcoinsTip->GetCoins(vin.prevout.hash, coins) ||
-               (unsigned int)vin.prevout.n>=coins.vout.size() ||
-               coins.vout[vin.prevout.n].IsNull()) {
-                nActiveState = MASTERNODE_OUTPOINT_SPENT;
-                LogPrint(BCLog::MASTERNODE, "CMasternode::Check -- Failed to find Masternode UTXO, masternode=%s\n", vin.prevout.ToStringShort());
+            if (!AcceptableInputs(mempool, state, CTransaction(tx), false, NULL)) {
+                activeState = MASTERNODE_VIN_SPENT;
                 return;
             }
         }
@@ -303,30 +304,6 @@ int64_t CMasternode::GetLastPaid()
     }
 
     return 0;
-}
-
-std::string CMasternode::GetStatus()
-{
-    switch (nActiveState) {
-    case CMasternode::MASTERNODE_PRE_ENABLED:
-        return "PRE_ENABLED";
-    case CMasternode::MASTERNODE_ENABLED:
-        return "ENABLED";
-    case CMasternode::MASTERNODE_EXPIRED:
-        return "EXPIRED";
-    case CMasternode::MASTERNODE_OUTPOINT_SPENT:
-        return "OUTPOINT_SPENT";
-    case CMasternode::MASTERNODE_REMOVE:
-        return "REMOVE";
-    case CMasternode::MASTERNODE_WATCHDOG_EXPIRED:
-        return "WATCHDOG_EXPIRED";
-    case CMasternode::MASTERNODE_POSE_BAN:
-        return "POSE_BAN";
-    case CMasternode::MASTERNODE_MISSING:
-        return "MISSING";
-    default:
-        return "UNKNOWN";
-    }
 }
 
 bool CMasternode::IsValidNetAddr()
@@ -622,6 +599,13 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
             mnodeman.Remove(pmn->vin);
     }
 
+    CValidationState state;
+    CMutableTransaction tx = CMutableTransaction();
+    CScript dummyScript;
+    dummyScript << ToByteVector(pubKeyCollateralAddress) << OP_CHECKSIG;
+    CTxOut vout = CTxOut(9999.99 * COIN, dummyScript);
+    tx.vin.push_back(vin);
+    tx.vout.push_back(vout);
     {
         TRY_LOCK(cs_main, lockMain);
         if (!lockMain) {
@@ -631,11 +615,9 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
             return false;
         }
 
-        CCoins coins;
-        if (!pcoinsTip->GetCoins(vin.prevout.hash, coins) ||
-           (unsigned int)vin.prevout.n>=coins.vout.size() ||
-           coins.vout[vin.prevout.n].IsNull()) {
-            LogPrint(BCLog::MASTERNODE, "CMasternodeBroadcast::CheckInputsAndAdd -- Failed to find Masternode UTXO, masternode=%s\n", vin.prevout.ToStringShort());
+        if (!AcceptableInputs(mempool, state, CTransaction(tx), false, NULL)) {
+            //Set nDos
+            state.IsInvalid(nDoS);
             return false;
         }
     }
@@ -771,24 +753,22 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fChec
                 nDos = 33;
                 return false;
             }
-
+            // Check if the ping block hash exists in disk
             BlockMap::iterator mi = mapBlockIndex.find(blockHash);
-            if (mi != mapBlockIndex.end() && (*mi).second) {
-                if ((*mi).second->nHeight < chainActive.Height() - 24) {
-                    LogPrint(BCLog::MASTERNODE,"CMasternodePing::CheckAndUpdate - Masternode %s block hash %s is too old\n", vin.prevout.hash.ToString(), blockHash.ToString());
+            if (mi == mapBlockIndex.end() || !(*mi).second) {
+                LogPrint(BCLog::MASTERNODE,"CMasternodePing::CheckAndUpdate - ping block not in disk. Masternode %s block hash %s\n", vin.prevout.hash.ToString(), blockHash.ToString());
+                return false;
+            }
+            // Verify ping block hash in main chain and in the [ tip > x > tip - 24 ] range.
+            {
+                LOCK(cs_main);
+                if (!chainActive.Contains((*mi).second) || (chainActive.Height() - (*mi).second->nHeight > 24)) {
+                    LogPrint(BCLog::MASTERNODE,"CMasternodePing::CheckAndUpdate - Masternode %s block hash %s is too old or has an invalid block hash\n", vin.prevout.hash.ToString(), blockHash.ToString());
                     // Do nothing here (no Masternode update, no mnping relay)
                     // Let this node to be visible but fail to accept mnping
 
                     return false;
                 }
-            } else {
-                LogPrint(BCLog::MASTERNODE,"CMasternodePing::CheckAndUpdate - Masternode %s block hash %s is unknown\n", vin.prevout.hash.ToString(), blockHash.ToString());
-                // maybe we stuck so we shouldn't ban this node, just fail to accept it
-                // TODO: or should we also request this block?
-
-                return false;
-            }
-
             pmn->lastPing = *this;
 
             //mnodeman.mapSeenMasternodeBroadcast.lastPing is probably outdated, so we'll update it
