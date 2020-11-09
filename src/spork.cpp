@@ -101,12 +101,10 @@ void CSporkManager::ProceFLSpork(CNode* pfrom, std::string& strCommand, CDataStr
             return;
         }
 
-        // reject old signatures 600 blocks after hard-fork
+        // reject old signatures
         if (spork.nMessVersion != MessageVersion::MESS_VER_HASH) {
-            if (Params().GetConsensus().IsMeFLSigV2(nChainHeight - 600)) {
-                LogPrintf("%s : nMessVersion=%d not accepted anymore at block %d\n", __func__, spork.nMessVersion, nChainHeight);
-                return;
-            }
+            LogPrintf("%s : nMessVersion=%d not accepted anymore\n", __func__, spork.nMessVersion);
+            return;
         }
 
 
@@ -174,16 +172,9 @@ void CSporkManager::ProceFLSpork(CNode* pfrom, std::string& strCommand, CDataStr
 
 bool CSporkManager::UpdateSpork(SporkId nSporkID, int64_t nValue)
 {
-    bool fNewSigs = false;
-    {
-        LOCK(cs_main);
-        fNewSigs = chainActive.NewSigsActive();
-    }
-
-
     CSporkMessage spork = CSporkMessage(nSporkID, nValue, GetTime());
 
-    if(spork.Sign(strMasterPrivKey, fNewSigs)){
+    if(spork.Sign(strMasterPrivKey)){
         spork.Relay();
         LOCK(cs);
         mapSporks[spork.GetHash()] = spork;
@@ -244,7 +235,7 @@ bool CSporkManager::SetPrivKey(std::string strPrivKey)
 {
     CSporkMessage spork;
 
-    spork.Sign(strPrivKey, true);
+    spork.Sign(strPrivKey);
 
     const bool fRequireNew = GetTime() >= Params().GetConsensus().nTime_EnforceNewSporkKey;
     bool fValidSig = spork.CheckSignature();
