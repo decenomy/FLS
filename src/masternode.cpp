@@ -688,11 +688,24 @@ CMasternodePing::CMasternodePing(CTxIn& newVin) :
 
 uint256 CMasternodePing::GetHash() const
 {
-    CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-    ss << vin;
-    if (nMessVersion == MessageVersion::MESS_VER_HASH) ss << blockHash;
-    ss << sigTime;
-    return ss.GetHash();
+    int nHeight = chainActive.Height();
+
+    if (Params().GetConsensus().IsFLSSoftForkReady(nHeight)) {
+        CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
+        ss << vin;
+        if (nMessVersion == MessageVersion::MESS_VER_HASH) ss << blockHash;
+        ss << sigTime;
+
+        return ss.GetHash();
+    } else {
+        static const int PROTOCOL_TEMP = 80003;
+        CHashWriter ss(SER_GETHASH, PROTOCOL_TEMP);
+        ss << vin;
+        if (nMessVersion == MessageVersion::MESS_VER_HASH) ss << blockHash;
+        ss << sigTime;
+        
+        return ss.GetHash();
+    }
 }
 
 std::string CMasternodePing::GetStrMessage() const
