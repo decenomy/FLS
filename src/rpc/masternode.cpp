@@ -285,6 +285,32 @@ void SerializeMNB(UniValue& statusObjRet, const CMasternodeBroadcast& mnb, const
     return SerializeMNB(statusObjRet, mnb, fSuccess, successful, failed);
 }
 
+UniValue reloadmasternodeconfig (const UniValue& params, bool fHelp)
+{
+    if (fHelp)
+        throw std::runtime_error("Hot-reloads the masternode.conf file, adding and/or removing masternodes from the wallet at runtime.");
+
+    UniValue retObj(UniValue::VOBJ);
+
+    // Remember the previous MN count (for comparison)
+    int prevCount = masternodeConfig.getCount();
+    // Clear the loaded config
+    masternodeConfig.clear();
+    // Load from disk
+    std::string error;
+    if (!masternodeConfig.read(error)) {
+        // Failed
+        retObj.push_back(Pair("success", false));
+        retObj.push_back(Pair("message", "Error reloading masternode.conf, " + error));
+    } else {
+        // Success
+        retObj.push_back(Pair("success", true));
+        retObj.push_back(Pair("message", "Successfully reloaded from the masternode.conf file (Prev nodes: " + std::to_string(prevCount) + ", New nodes: " + std::to_string(masternodeConfig.getCount()) + ")"));
+    }
+
+    return retObj;
+}
+
 UniValue startmasternode (const UniValue& params, bool fHelp)
 {
     std::string strCommand;
