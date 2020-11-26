@@ -296,13 +296,8 @@ void ProposalFrame::SendVote(std::string strHash, int nVote)
             continue;
         }
 
-        bool fNewSigs = false;
-        {
-            LOCK(cs_main);
-            fNewSigs = chainActive.NewSigsActive();
-        }
         CBudgetVote vote(pmn->vin, hash, nVote);
-        if (!vote.Sign(keyMasternode, pubKeyMasternode, fNewSigs)) {
+        if (!vote.Sign(keyMasternode, pubKeyMasternode)) {
             mnresult += mne.getAlias() + ": " + "Failure to sign" + "<br />";
             failed++;
             continue;

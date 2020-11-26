@@ -119,22 +119,12 @@ uint256 CMasternode::GetSignatureHash() const
 
 std::string CMasternode::GetStrMessage() const
 {
-    if(chainActive.NewSigsActive()){	
         return (addr.ToString() +	
             std::to_string(sigTime) +	
             pubKeyCollateralAddress.GetID().ToString() +	
             pubKeyMasternode.GetID().ToString() +	
             std::to_string(protocolVersion)	
     );	
-    }	
-    else {
-        return (addr.ToString() +
-            std::to_string(sigTime) +
-            pubKeyCollateralAddress.GetID().ToString() +
-            pubKeyMasternode.GetID().ToString() +
-            std::to_string(protocolVersion)
-    );
-    }
 }
 
 //
