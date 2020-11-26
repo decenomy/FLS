@@ -188,7 +188,7 @@ public:
         consensus.height_start_ZC_SerialRangeCheck = 1;
         consensus.height_start_ZC_SerialsV2 = 220;
         consensus.height_ZC_RecalcAccumulators = INT_MAX;
-        consensus.nFLSSoftFork = 670000;
+        consensus.nFLSSoftFork = 677600;
 
         // validation by-pass
         consensus.nFLSBadBlockTime = 1554556853;    // Skip nBit validation of Block 259201 per PR #915
