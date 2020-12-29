@@ -468,28 +468,18 @@ bool CNode::DisconnectOldProtocol(int nVersionRequired, std::string strLastComma
 void CNode::PushVersion()
 {
     int nBestHeight = g_signals.GetHeight().get_value_or(0);
-    static const int PROTOCOL_TEMP = 80003;
 
     /// when NTP implemented, change to just nTime = GetAdjustedTime()
     int64_t nTime = (fInbound ? GetAdjustedTime() : GetTime());
     CAddress addrYou = (addr.IsRoutable() && !IsProxy(addr) ? addr : CAddress(CService("0.0.0.0", 0)));
     CAddress addrMe = GetLocalAddress(&addr);
     GetRandBytes((unsigned char*)&nLocalHostNonce, sizeof(nLocalHostNonce));
-    if (!Params().GetConsensus().IsFLSSoftForkReady(nBestHeight)){
-        if (fLogIPs)
-            LogPrint(BCLog::NET, "send version message: version %d, blocks=%d, us=%s, them=%s, peer=%d\n", PROTOCOL_TEMP, nBestHeight, addrMe.ToString(), addrYou.ToString(), id);
-        else
-            LogPrint(BCLog::NET, "send version message: version %d, blocks=%d, us=%s, peer=%d\n", PROTOCOL_TEMP, nBestHeight, addrMe.ToString(), id);
-        PushMessage("version", PROTOCOL_TEMP, nLocalServices, nTime, addrYou, addrMe,
-            nLocalHostNonce, strSubVersion, nBestHeight, true);
-    } else {
-        if (fLogIPs)
-            LogPrint(BCLog::NET, "send version message: version %d, blocks=%d, us=%s, them=%s, peer=%d\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString(), addrYou.ToString(), id);
-        else
-            LogPrint(BCLog::NET, "send version message: version %d, blocks=%d, us=%s, peer=%d\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString(), id);
-        PushMessage("version", PROTOCOL_VERSION, nLocalServices, nTime, addrYou, addrMe,
-            nLocalHostNonce, strSubVersion, nBestHeight, true);
-    }
+    if (fLogIPs)
+        LogPrint(BCLog::NET, "send version message: version %d, blocks=%d, us=%s, them=%s, peer=%d\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString(), addrYou.ToString(), id);
+    else
+        LogPrint(BCLog::NET, "send version message: version %d, blocks=%d, us=%s, peer=%d\n", PROTOCOL_VERSION, nBestHeight, addrMe.ToString(), id);
+    PushMessage("version", PROTOCOL_VERSION, nLocalServices, nTime, addrYou, addrMe,
+        nLocalHostNonce, strSubVersion, nBestHeight, true);
 }
 
 
