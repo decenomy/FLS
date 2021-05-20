@@ -7,7 +7,7 @@ The goal of FLS is to achieve a decentralized sustainable crypto currency with n
 - Decentralized blockchain voting utilizing Masternode technology to form a DAO. The blockchain will distribute monthly treasury funds based on successful proposals submitted by the community and voted on by the DAO.
 - Power behind the non-custodial Flits Wallet app for passive income solutions.
 
-More information at [flitswallet.app](http://fitswallet.app)
+More information at [flitswallet.app](http://flitswallet.app)
 
 ### Coin Specs
 <table>
