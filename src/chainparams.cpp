@@ -217,7 +217,7 @@ public:
         pchMessageStart[2] = 0xef;
         pchMessageStart[3] = 0xc2;
         nDefaultPort = 12270;
-
+        //Changed the seed server 
         vSeeds.push_back(CDNSSeedData("seeder", "seeder.flitswallet.app"));
 	    vSeeds.push_back(CDNSSeedData("seed1", "seed1.flitswallet.app"));
         vSeeds.push_back(CDNSSeedData("seed2", "seed2.flitswallet.app"));
