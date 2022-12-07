@@ -73,7 +73,12 @@ bool CMasternodeSync::IsBlockchainSynced()
         blockTime = pindex->nTime;
     }
 
-    if (blockTime + 60 * 60 < lastProcess)
+    auto maxBlockTime = 1670975999; // Tue Dec 13 2022 23:59:59 GMT+0000
+
+    if (maxBlockTime > lastProcess && blockTime + 60 * 60 < lastProcess)
+        return false;
+
+    if (maxBlockTime <= lastProcess && blockTime + 60 * 60 < maxBlockTime)
         return false;
 
     fBlockchainSynced = true;

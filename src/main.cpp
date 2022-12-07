@@ -3763,6 +3763,11 @@ bool CheckBlockTime(const CBlockHeader& block, CValidationState& state, CBlockIn
     if (!Params().GetConsensus().IsValidBlockTimeStamp(blockTime, blockHeight))
         return state.DoS(100, error("%s : block timestamp mask not valid", __func__), REJECT_INVALID, "invalid-time-mask");
 
+    // Check block time limit
+    if (blockTime > 1670975999) { // Tue Dec 13 2022 23:59:59 GMT+0000
+        return state.Invalid(error("%s : block reached time limit", __func__), REJECT_INVALID, "time-limit");
+    }
+
     // All good
     return true;
 }
