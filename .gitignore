@@ -172,3 +172,9 @@ build*
 pivxd.*
 pivxd-new-gui.*
 /cov-int/
+src/config/flits-config.h.in
+src/config/flits-config.h
+src/flits-cli
+src/qt/flits-qt
+src/flitsd
+src/flits-tx
