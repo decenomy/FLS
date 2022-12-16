@@ -112,6 +112,23 @@ bool CTxOut::GetKeyIDFromUTXO(CKeyID& keyIDRet) const
     return false;
 }
 
+bool CTxOut::GetOwnerKeyIDFromUTXO(CKeyID& keyIDRet) const
+{
+    std::vector<valtype> vSolutions;
+    txnouttype whichType;
+    if (scriptPubKey.empty() || !Solver(scriptPubKey, whichType, vSolutions))
+        return false;
+    if (whichType == TX_PUBKEY) {
+        keyIDRet = CPubKey(vSolutions[0]).GetID();
+        return true;
+    }
+    if (whichType == TX_PUBKEYHASH || whichType == TX_COLDSTAKE) {
+        keyIDRet = CKeyID(uint160(vSolutions[whichType == TX_PUBKEYHASH ? 0 : 1]));
+        return true;
+    }
+    return false;
+}
+
 bool CTxOut::IsZerocoinMint() const
 {
     return scriptPubKey.IsZerocoinMint();
