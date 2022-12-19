@@ -10,7 +10,6 @@
 
 #include "base58.h"
 #include "chainparamsseeds.h"
-#include "chainparamsswapemission.h"
 #include "consensus/merkle.h"
 #include "script/standard.h"
 #include "util.h"
@@ -73,7 +72,8 @@ static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits
  */
 static Checkpoints::MapCheckpoints mapCheckpoints =
     boost::assign::map_list_of
-    (0, uint256S("0x0"))
+    (0, uint256S("0x000001120699c31c261884ac30ac6036e00c4689057a129ff60ae332fa72208c"))
+    (15, uint256S("0x0000053f72011c20aae5f6fceb132e6a6e3a801e0a7a57dc277a7d48d379909e"))
 ; 
 
 static const Checkpoints::CCheckpointData data = {
@@ -195,15 +195,6 @@ public:
         // swap emission
         int batchBlock = 0;
         int batchCounter = 0;
-        for(const auto& pav : mMainSwapEmission) {
-            if(batchCounter == 3000) batchCounter = 0;
-            if(batchCounter == 0) {
-                batchBlock++;
-                consensus.mSwapEmission[batchBlock] = std::map<std::string, CAmount>();
-            }
-            consensus.mSwapEmission[batchBlock][pav.first] = pav.second;
-            batchCounter++;
-        }
 
         // Network upgrades
         consensus.vUpgrades[Consensus::BASE_NETWORK].nActivationHeight                   = Consensus::NetworkUpgrade::ALWAYS_ACTIVE;

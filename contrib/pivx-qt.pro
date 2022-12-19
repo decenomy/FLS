@@ -69,7 +69,6 @@ HEADERS += src/activemasternode.h \
            src/chainparams.h \
            src/chainparamsbase.h \
            src/chainparamsseeds.h \
-           src/chainparamsswapemission.h \
            src/checkpoints.h \
            src/checkqueue.h \
            src/clientversion.h \

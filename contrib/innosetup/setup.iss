@@ -50,7 +50,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
 Name: app;  Description: "{#MyAppName} {#MyAppVersion}";  Types: full compact custom; Flags: fixed
-Name: bootstrap; Description: "Bootstrap blockchain files";  Types: full; ExtraDiskSpaceRequired: 7368332846;
+Name: bootstrap; Description: "Bootstrap blockchain files";  Types: full; ExtraDiskSpaceRequired: 104857600;
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

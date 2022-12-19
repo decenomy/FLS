@@ -117,23 +117,6 @@ bool CreateCoinbaseTx(CBlock* pblock, const CScript& scriptPubKeyIn, CBlockIndex
         txNew.vout[0].nValue = CMasternode::GetBlockValue(pindexPrev->nHeight + 1);
     }
 
-    int nHeight = pindexPrev->nHeight + 1;
-    const auto& consensus = Params().GetConsensus();
-
-    if (consensus.mSwapEmission.find(nHeight) != consensus.mSwapEmission.end()) 
-    {
-        const auto& se = consensus.mSwapEmission.at(nHeight);
-
-        for(const auto& av : se) {
-            unsigned int i = txNew.vout.size();
-            txNew.vout.resize(i + 1);
-
-            txNew.vout[i].scriptPubKey = GetScriptForDestination(DecodeDestination(av.first));
-            txNew.vout[i].nValue = av.second;
-            txNew.vout[0].nValue -= av.second;
-        }
-    }
-
     pblock->vtx.emplace_back(txNew);
     return true;
 }

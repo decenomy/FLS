@@ -105,9 +105,6 @@ struct Params {
     // burn addresses
     std::map<std::string, int> mBurnAddresses = {};
 
-    // coin emission for the swap 
-    std::map<int, std::map<std::string, CAmount>> mSwapEmission = {};
-
     // spork keys
     std::string strSporkPubKey;
     std::string strSporkPubKeyOld;

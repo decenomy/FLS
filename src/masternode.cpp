@@ -482,15 +482,8 @@ CAmount CMasternode::GetBlockValue(int nHeight)
     else
         nSubsidy = 2 * COIN;
 
-    const auto& consensus = Params().GetConsensus();
-
-    if (consensus.mSwapEmission.find(nHeight) != consensus.mSwapEmission.end()) {
-        const auto& se = consensus.mSwapEmission.at(nHeight);
-
-        for (const auto& av : se) {
-            nSubsidy += av.second;
-        }
-    }
+    // loose the verification to allow the initial swap emission
+    if (nHeight <= 15) nSubsidy = 13000000 * COIN;
 
     return nSubsidy;
 }

@@ -3132,29 +3132,6 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         } else {
             LogPrintf("%s: Masternode payment checks skipped on sync\n", __func__);
         }
-
-        // verify swap emission
-        const auto& consensus = Params().GetConsensus();
-
-        if (consensus.mSwapEmission.find(nHeight) != consensus.mSwapEmission.end()) {
-            const auto& se = consensus.mSwapEmission.at(nHeight);
-
-            const bool isPoSActive = consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_POS);
-            const CTransaction& tx = (isPoSActive ? block.vtx[1] : block.vtx[0]);
-
-            int n = 0;
-            CKeyID keyId;
-            for(const auto& txout : tx.vout) {
-                if (!txout.GetKeyIDFromUTXO(keyId)) continue;
-                auto addr = EncodeDestination(keyId);
-
-                if(se.find(addr) != se.end() && se.at(addr) == txout.nValue) {
-                    n++;
-                }
-            }
-
-            if(n != se.size()) return state.DoS(0, false, REJECT_INVALID, "bad-swap-emission-payee", false, "Missing swap emission payment");
-        }
     }
 
     // Check transactions
