@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Flits
+Comment= FLS P2P Cryptocurrency
+Comment[fr]= FLS, monnaie virtuelle cryptographique pair à pair
+Comment[tr]= FLS, eşten eşe kriptografik sanal para birimi
+Exec=flits-qt %u
+Terminal=false
+Type=Application
+Icon=pivx128
+MimeType=x-scheme-handler/pivx;
+Categories=Office;Finance;
+StartupWMClass=Flits-qt

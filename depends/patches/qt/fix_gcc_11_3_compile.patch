@@ -1,0 +1,22 @@
+diff -Naur old/qtbase/src/corelib/global/qfloat16.cpp new/qtbase/src/corelib/global/qfloat16.cpp
+--- old/qtbase/src/corelib/global/qfloat16.cpp	2019-12-03 13:50:08.000000000 +0100
++++ new/qtbase/src/corelib/global/qfloat16.cpp	2022-10-07 13:58:12.198990251 +0200
+@@ -37,6 +37,7 @@
+ **
+ ****************************************************************************/
+ 
++#include <limits>
+ #include "qfloat16_p.h"
+ 
+ QT_BEGIN_NAMESPACE
+diff -Naur old/qtbase/src/corelib/tools/qbytearraymatcher.h new/qtbase/src/corelib/tools/qbytearraymatcher.h
+--- old/qtbase/src/corelib/tools/qbytearraymatcher.h	2019-12-03 13:50:08.000000000 +0100
++++ new/qtbase/src/corelib/tools/qbytearraymatcher.h	2022-10-07 11:45:51.333307586 +0200
+@@ -40,6 +40,7 @@
+ #ifndef QBYTEARRAYMATCHER_H
+ #define QBYTEARRAYMATCHER_H
+ 
++#include <limits>
+ #include <QtCore/qbytearray.h>
+ 
+ QT_BEGIN_NAMESPACE

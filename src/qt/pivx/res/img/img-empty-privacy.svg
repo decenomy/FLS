@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   id="ic_empty_zpiv"
+   x="0px"
+   y="0px"
+   viewBox="0 0 100 100"
+   style="enable-background:new 0 0 100 100;"
+   xml:space="preserve"><metadata
+   id="metadata33"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs31" />
+<style
+   type="text/css"
+   id="style2">
+	.st0{fill:#587eff;}
+	.st1{fill:#666666;}
+	.st2{fill:#EFEFEF;}
+</style>
+
+<g
+   id="Group_9086">
+	<path
+   id="Path_19031"
+   class="st0"
+   d="M50,26c-13.3,0-24,10.7-24,24s10.7,24,24,24s24-10.7,24-24S63.3,26,50,26z M50,68   c-9.9,0-18-8.1-18-18s8.1-18,18-18s18,8.1,18,18S59.9,68,50,68z" />
+	<g
+   id="Group_9085">
+		<g
+   id="Group_9083">
+			<path
+   id="Rectangle_4749"
+   class="st1"
+   d="M83,56h2v4h-2V56z" />
+			<path
+   id="Rectangle_4750"
+   class="st1"
+   d="M83,44h2v8h-2V44z" />
+			<path
+   id="Rectangle_4751"
+   class="st1"
+   d="M15,48h2v8h-2V48z" />
+			<path
+   id="Rectangle_4752"
+   class="st1"
+   d="M15,40h2v4h-2V40z" />
+			<path
+   id="Path_19033"
+   class="st1"
+   d="M95.2,71H85v-7h-2v9h7.8L76,90.5L61.2,73H68v-2h-4.5c11.6-7.5,15-22.9,7.5-34.5     c-6.4-9.9-18.9-14-29.9-9.8L24,6.5L4.8,29H15v7h2v-9H9.2L24,9.5L38.8,27H32v2h4.5c-11.6,7.5-15,22.9-7.5,34.5     c6.4,9.9,18.9,14,29.9,9.8L76,93.5L95.2,71z M27,50c0-12.7,10.3-23,23-23s23,10.3,23,23S62.7,73,50,73S27,62.7,27,50z" />
+		</g>
+	</g>
+</g>
+<ellipse
+   class="st0"
+   cx="50"
+   cy="50"
+   id="circle14"
+   rx="20.186443"
+   ry="20.747959"
+   style="stroke-width:1.14973" />
+<g
+   id="g28">
+	<path
+   class="st2"
+   d="M43.7,43.9l-2.3,0l-5.8,5.9l13.2,11.8c0,0,0,0,0,0l-9-11.7"
+   id="path16" />
+	<path
+   class="st2"
+   d="M56.9,44.6l2.3,0.1l5.3,5.8l-13.8,9.7c0,0,0,0,0,0l9.7-9.9"
+   id="path18" />
+	<path
+   class="st2"
+   d="M43.3,51l-1.7-1.8l-0.2-8.7l16.8,2.4c0,0,0,0,0,0l-13.9,0.8"
+   id="path20" />
+	<g
+   id="g26">
+		<path
+   class="st2"
+   d="M50.9,46.8h-2.7L48,48.3l2.5,0c1.2,0,1.6,0.5,1.6,1.4c0,0.5-0.2,1.2-0.2,1.5c-0.2,0.7-0.6,1.4-2,1.4l-2.4,0    l-0.2,1.6h2.7c1,0,1.4-0.1,1.8-0.4c1-0.5,1.5-1.7,1.8-3.2C53.7,48.4,53.3,46.8,50.9,46.8"
+   id="path22" />
+		<path
+   class="st2"
+   d="M47.1,49.9c-0.7,0-0.8,0.6-0.9,0.9c-0.1,0.5-0.1,0.6-0.1,0.6h2.8c0.7,0,0.8-0.6,0.9-0.9    c0.1-0.5,0.1-0.6,0.1-0.6H47.1z"
+   id="path24" />
+	</g>
+</g>
+</svg>

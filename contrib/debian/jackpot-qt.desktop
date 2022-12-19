@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Flits 
+Comment=Flits P2P Cryptocurrency
+Comment[fr]=Flits, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Flits, eşten eşe kriptografik sanal para birimi
+Exec=flits-qt %u
+Terminal=false
+Type=Application
+Icon=pivx128
+MimeType=x-scheme-handler/flits;
+Categories=Office;Finance;
+StartupWMClass=flits-qt
