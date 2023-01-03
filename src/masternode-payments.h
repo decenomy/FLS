@@ -10,6 +10,7 @@
 #include "key.h"
 #include "main.h"
 #include "masternode.h"
+#include "masternodeman.h"
 
 
 extern RecursiveMutex cs_vecPayments;

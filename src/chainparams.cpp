@@ -192,10 +192,6 @@ public:
             { "FrCzb47ToX5hPwvNrssN3KH4g1rcd7RoYQ", 0 }
         };
 
-        // swap emission
-        int batchBlock = 0;
-        int batchCounter = 0;
-
         // Network upgrades
         consensus.vUpgrades[Consensus::BASE_NETWORK].nActivationHeight                   = Consensus::NetworkUpgrade::ALWAYS_ACTIVE;
         consensus.vUpgrades[Consensus::UPGRADE_TESTDUMMY].nActivationHeight              = Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
@@ -220,14 +216,14 @@ public:
         nDefaultPort = 32972;
 
         vSeeds.push_back(CDNSSeedData("seeder", "seeder.flitswallet.app"));
-	    vSeeds.push_back(CDNSSeedData("seed1",  " seed1.flitswallet.app"));
-        vSeeds.push_back(CDNSSeedData("seed2",  " seed2.flitswallet.app"));
-        vSeeds.push_back(CDNSSeedData("seed3",  " seed3.flitswallet.app"));
-        vSeeds.push_back(CDNSSeedData("seed4",  " seed4.flitswallet.app"));
-	    vSeeds.push_back(CDNSSeedData("seed5",  " seed5.flitswallet.app"));
-	    vSeeds.push_back(CDNSSeedData("seed6",  " seed6.flitswallet.app"));
-	    vSeeds.push_back(CDNSSeedData("seed7",  " seed7.flitswallet.app"));
-	    vSeeds.push_back(CDNSSeedData("seed8",  " seed8.flitswallet.app"));
+	    vSeeds.push_back(CDNSSeedData("seed1",   "seed1.flitswallet.app"));
+        vSeeds.push_back(CDNSSeedData("seed2",   "seed2.flitswallet.app"));
+        vSeeds.push_back(CDNSSeedData("seed3",   "seed3.flitswallet.app"));
+        vSeeds.push_back(CDNSSeedData("seed4",   "seed4.flitswallet.app"));
+	    vSeeds.push_back(CDNSSeedData("seed5",   "seed5.flitswallet.app"));
+	    vSeeds.push_back(CDNSSeedData("seed6",   "seed6.flitswallet.app"));
+	    vSeeds.push_back(CDNSSeedData("seed7",   "seed7.flitswallet.app"));
+	    vSeeds.push_back(CDNSSeedData("seed8",   "seed8.flitswallet.app"));
 
         base58Prefixes[PUBKEY_ADDRESS]  = std::vector<unsigned char>(1, 36);
         base58Prefixes[SCRIPT_ADDRESS]  = std::vector<unsigned char>(1, 48);

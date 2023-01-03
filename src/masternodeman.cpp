@@ -863,20 +863,21 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
         int nInvCount = 0;
 
         {
-            LOCK(cs);
+            if(vin == CTxIn()) { // send all
+                LOCK(cs);
 
-            for (auto mn : vMasternodes) {
-                if (mn->addr.IsRFC1918()) continue; //local network
+                for (auto mn : vMasternodes) {
+                    if (mn->addr.IsRFC1918()) continue; // local network
 
-                if (mn->IsEnabled()) {
-                    LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn->vin.prevout.ToStringShort());
-                    if (vin == CTxIn() || vin == mn->vin) {
+                    if (mn->IsEnabled()) {
+                        LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn->vin.prevout.ToStringShort());
+                        
                         CMasternodeBroadcast mnb = CMasternodeBroadcast(*mn);
                         uint256 hash = mnb.GetHash();
                         pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
                         nInvCount++;
 
-                    if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.insert(std::make_pair(hash, mnb));
+                        if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.insert(std::make_pair(hash, mnb));
 
                         if (vin == mn->vin) {
                             LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
@@ -884,10 +885,27 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
                         }
                     }
                 }
+            } else { // send specific one
+
+                auto mn = Find(vin);
+
+                if(mn && mn->IsEnabled() && !mn->addr.IsRFC1918()) {
+                    LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn->vin.prevout.ToStringShort());
+
+                    CMasternodeBroadcast mnb = CMasternodeBroadcast(*mn);
+                    uint256 hash = mnb.GetHash();
+                    pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
+
+                    if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.insert(std::make_pair(hash, mnb));
+
+                    LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
+                }
+
+                return;
             }
         }
 
-        if (vin == CTxIn()) {
+        if (vin == CTxIn()) { // send the total count
             g_connman->PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::SYNCSTATUSCOUNT, MASTERNODE_SYNC_LIST, nInvCount));
             LogPrint(BCLog::MASTERNODE, "dseg - Sent %d Masternode entries to peer %i\n", nInvCount, pfrom->GetId());
         }

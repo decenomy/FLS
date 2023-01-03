@@ -1955,35 +1955,6 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
     // track money
     nMoneySupply -= (nValueOut - nValueIn);
 
-    // clean last paid
-    {
-        std::vector<CMasternodePayee> mnpayees;
-
-        {
-            LOCK2(cs_mapMasternodeBlocks, cs_vecPayments);
-
-            if (masternodePayments.mapMasternodeBlocks.count(pindex->nHeight)) {
-                mnpayees = masternodePayments.mapMasternodeBlocks[pindex->nHeight].vecPayments;
-            }
-        }
-
-        for(auto mnp : mnpayees) {
-            auto pmn = mnodeman.Find(mnp.scriptPubKey);
-
-            if(pmn) {
-                pmn->lastPaid = UINT64_MAX;
-            }
-        }
-
-        if(pindex->paidPayee) {
-            auto pmn = mnodeman.Find(*pindex->paidPayee);
-
-            if(pmn) {
-                pmn->lastPaid = UINT64_MAX;
-            }
-        }
-    }
-
     // move best block pointer to prevout block
     view.SetBestBlock(pindex->pprev->GetBlockHash());
 
@@ -3381,9 +3352,7 @@ bool AcceptBlockHeader(const CBlock& block, CValidationState& state, CBlockIndex
             int level = 100;
 
             if(mapRejectedBlocks.find(block.hashPrevBlock) != mapRejectedBlocks.end()) {
-                auto elapsed = (GetTime() - mapRejectedBlocks[block.hashPrevBlock]) / MINUTE_IN_SECONDS;
-
-                level = elapsed <= 20 ? 0 : (level < elapsed ? level : elapsed);
+                level = 0; // let it be reconsidered
             }
 
             return state.DoS(level, error("%s : prev block height=%d hash=%s is invalid, unable to add block %s", __func__, pindexPrev->nHeight, block.hashPrevBlock.GetHex(), block.GetHash().GetHex()),

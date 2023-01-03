@@ -284,7 +284,52 @@ UniValue startmasternode (const JSONRPCRequest& request)
     EnsureWalletIsUnlocked();
 
     if (strCommand == "local") {
-        throw std::runtime_error("'local' disabled\n");
+        if (!fMasterNode) throw std::runtime_error("you must set masternode=1 in the configuration\n");
+
+        UniValue resultsObj(UniValue::VARR);
+        
+        auto amns = amnodeman.GetActiveMasternodes();
+        auto legacy = amns.size() == 1 && amns[0].strAlias == "legacy";
+
+        for (auto& amn : amns) {
+
+            UniValue mnObj(UniValue::VOBJ);
+
+            if (amn.GetStatus() != ACTIVE_MASTERNODE_STARTED) {
+                amn.ResetStatus();
+                if (fLock)
+                    pwalletMain->Lock();
+            }
+
+            CMasternode* pmn = mnodeman.Find(*(amn.vin));
+
+            if (pmn) {
+                UniValue mnObj(UniValue::VOBJ);
+                mnObj.push_back(Pair("alias", amn.strAlias));
+                mnObj.push_back(Pair("txhash", amn.vin->prevout.hash.ToString()));
+                mnObj.push_back(Pair("outputidx", (uint64_t)amn.vin->prevout.n));
+                mnObj.push_back(Pair("netaddr", amn.service.ToString()));
+                mnObj.push_back(Pair("addr", EncodeDestination(pmn->pubKeyCollateralAddress.GetID())));
+                mnObj.push_back(Pair("status", amn.GetStatus()));
+                mnObj.push_back(Pair("message", amn.GetStatusMessage()));
+                if (legacy && amn.strAlias == "legacy") return amn.GetStatusMessage();
+                resultsObj.push_back(mnObj);
+            } else {
+                UniValue mnObj(UniValue::VOBJ);
+                mnObj.push_back(Pair("alias", amn.strAlias));
+                mnObj.push_back(Pair("txhash", "N/A"));
+                mnObj.push_back(Pair("outputidx", -1));
+                mnObj.push_back(Pair("netaddr", amn.service.ToString()));
+                mnObj.push_back(Pair("addr", "N/A"));
+                mnObj.push_back(Pair("status", amn.GetStatus()));
+                mnObj.push_back(Pair("message", amn.GetStatusMessage()));
+                resultsObj.push_back(mnObj);
+                if (legacy && amn.strAlias == "legacy") return amn.GetStatusMessage();
+                continue;
+            }
+        }
+
+        return resultsObj;
     }
 
     if (strCommand == "all" || strCommand == "many" || strCommand == "missing" || strCommand == "disabled") {

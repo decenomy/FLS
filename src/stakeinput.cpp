@@ -145,7 +145,7 @@ CBlockIndex* CPivStake::GetIndexFrom()
 }
 
 // Verify stake contextual checks
-bool CPivStake::ContextCheck(int nHeight, uint32_t nTime)
+bool CPivStake::ContextCheck(int nHeight, uint32_t nTime, bool fSkipLog)
 {
     const Consensus::Params& consensus = Params().GetConsensus();
     // Get Stake input block time/height
@@ -157,7 +157,10 @@ bool CPivStake::ContextCheck(int nHeight, uint32_t nTime)
 
     // Check that the stake has the required depth/age
     if (!consensus.HasStakeMinAgeOrDepth(nHeight, nTime, nHeightBlockFrom, nTimeBlockFrom)) {
-        return error("%s : min age violation - height=%d - time=%d, nHeightBlockFrom=%d, nTimeBlockFrom=%d",
+        if(fSkipLog) 
+            return false;
+        else
+            return error("%s : min age violation - height=%d - time=%d, nHeightBlockFrom=%d, nTimeBlockFrom=%d",
                          __func__, nHeight, nTime, nHeightBlockFrom, nTimeBlockFrom);
     }
     

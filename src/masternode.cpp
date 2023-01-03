@@ -81,7 +81,6 @@ CMasternode::CMasternode() :
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     lastTimeCollateralChecked = 0;
-    lastPaid = UINT64_MAX;
 }
 
 CMasternode::CMasternode(const CMasternode& other) :
@@ -103,7 +102,6 @@ CMasternode::CMasternode(const CMasternode& other) :
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     lastTimeCollateralChecked = 0;
-    lastPaid = other.lastPaid;
 }
 
 uint256 CMasternode::GetSignatureHash() const
@@ -289,8 +287,7 @@ int64_t CMasternode::GetLastPaidV1(CBlockIndex* pblockindex, const CScript& mnpa
                 // Search for this payee, with at least 2 votes. This will aid in consensus
                 // allowing the network to converge on the same payees quickly, then keep the same schedule.
                 if (it->second.HasPayeeWithVotes(mnpayee, 2)) {
-                    lastPaid = pblockindex->nTime + nOffset;
-                    return lastPaid;
+                    return pblockindex->nTime + nOffset;
                 }
             }
         }
@@ -302,8 +299,7 @@ int64_t CMasternode::GetLastPaidV1(CBlockIndex* pblockindex, const CScript& mnpa
         }
     }
 
-    lastPaid = 0;
-    return lastPaid;
+    return 0;
 }
 
 int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpayee)
@@ -313,8 +309,7 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
 
         auto paidpayee = pblockindex->GetPaidPayee();
         if(paidpayee && mnpayee == *paidpayee) {
-            lastPaid = pblockindex->nTime; // doesn't need the offset because it is deterministically read from the blockchain
-            return lastPaid;
+            return pblockindex->nTime; // doesn't need the offset because it is deterministically read from the blockchain
         }
         
         pblockindex = pblockindex->pprev;
@@ -324,13 +319,11 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
         }
     }
 
-    lastPaid = 0;
-    return lastPaid;
+    return 0;
 }
 
 int64_t CMasternode::GetLastPaid()
 {
-    if(lastPaid != UINT64_MAX) return lastPaid;
     CBlockIndex* pblockindex = GetChainTip();
     if (pblockindex == nullptr) return false;
 

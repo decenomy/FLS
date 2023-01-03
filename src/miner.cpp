@@ -646,9 +646,12 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
         fStakingStatus = true;
         
         if (!pblocktemplate.get()) {
-            MilliSleep(MINUTE_IN_SECONDS * 1000);
+            if(!consensus.NetworkUpgradeActive(chainActive.Tip()->nHeight + 1, Consensus::UPGRADE_POS)) {
+                MilliSleep(1000);
+            }
             continue;
         }
+
         CBlock* pblock = &pblocktemplate->block;
 
         // POS - block found: process it

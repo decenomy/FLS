@@ -906,10 +906,12 @@ void DashboardWidget::onError(QString error, int type)
 void DashboardWidget::setPrivacy(bool isPrivate) 
 {
 #ifdef USE_QTCHARTS
-    if(isPrivate) {
-        axisY->hide();
-    } else {
-        axisY->show();
+    if (axisY) {
+        if(isPrivate) {
+            axisY->hide();
+        } else {
+            axisY->show();
+        }
     }
 #endif
 

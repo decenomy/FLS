@@ -29,7 +29,7 @@ public:
     virtual CAmount GetValue() const = 0;
     virtual bool CreateTxOuts(CWallet* pwallet, std::vector<CTxOut>& vout, CAmount nTotal, const bool onlyP2PK) = 0;
     virtual CDataStream GetUniqueness() const = 0;
-    virtual bool ContextCheck(int nHeight, uint32_t nTime) = 0;
+    virtual bool ContextCheck(int nHeight, uint32_t nTime, bool fSkipLog = false) = 0;
 };
 
 
@@ -52,7 +52,7 @@ public:
     CDataStream GetUniqueness() const override;
     bool CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut = UINT256_ZERO) override;
     bool CreateTxOuts(CWallet* pwallet, std::vector<CTxOut>& vout, CAmount nTotal, const bool onlyP2PK) override;
-    bool ContextCheck(int nHeight, uint32_t nTime) override;
+    bool ContextCheck(int nHeight, uint32_t nTime, bool fSkipLog = false) override;
 };
 
 
