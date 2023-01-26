@@ -370,6 +370,7 @@ static const CRPCCommand vRPCCommands[] =
         {"flits", "createmasternodekey", &createmasternodekey, true },
         {"flits", "getmasternodeoutputs", &getmasternodeoutputs, true },
         {"flits", "listmasternodeconf", &listmasternodeconf, true },
+        {"flits", "getactivemasternodecount", &getactivemasternodecount, true },
         {"flits", "getmasternodestatus", &getmasternodestatus, true },
         {"flits", "getmasternodewinners", &getmasternodewinners, true },
         {"flits", "getmasternodescores", &getmasternodescores, true },

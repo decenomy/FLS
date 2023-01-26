@@ -257,7 +257,7 @@ bool MasterNodeWizardDialog::createMN()
         int indexOut = -1;
         for (int i=0; i < (int)walletTx->vout.size(); i++) {
             CTxOut& out = walletTx->vout[i];
-            if (out.nValue == CMasternode::CMasternode::GetNextWeekMasternodeCollateral()) {
+            if (out.nValue == CMasternode::GetNextWeekMasternodeCollateral()) {
                 indexOut = i;
                 break;
             }

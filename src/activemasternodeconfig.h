@@ -7,6 +7,7 @@
 #ifndef SRC_ACTIVEMASTERNODECONFIG_H_
 #define SRC_ACTIVEMASTERNODECONFIG_H_
 
+#include "uint256.h"
 #include <string>
 #include <vector>
 
@@ -29,17 +30,16 @@ public:
         }
     };
 
-    void clear();
-    bool read(std::string& strErr);
-    CActiveMasternodeConfig::CActiveMasternodeEntry& add(std::string strAlias, std::string strMasterNodePrivKey);
-    void remove(std::string strAlias);
+    bool Load(std::string& strErr);
+    uint256 GetFileHash();
 
-    std::vector<CActiveMasternodeEntry>& getEntries()
+    std::vector<CActiveMasternodeEntry>& Entries()
     {
         return vEntries;
     }
 private:
     std::vector<CActiveMasternodeEntry> vEntries;
+    void add(std::string strAlias, std::string strMasterNodePrivKey);
 };
 
 #endif /* SRC_ACTIVEMASTERNODECONFIG_H_ */

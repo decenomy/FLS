@@ -1958,6 +1958,17 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
     // move best block pointer to prevout block
     view.SetBestBlock(pindex->pprev->GetBlockHash());
 
+    // Clean lastPaid
+    auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
+    auto paidPayee = block.GetPaidPayee(pindex->nHeight, amount);
+    if(!paidPayee.empty()) {
+        auto pmn = mnodeman.Find(paidPayee);
+
+        if(pmn) {
+            pmn->lastPaid = INT64_MAX;
+        }
+    }
+
     return fClean ? DISCONNECT_OK : DISCONNECT_UNCLEAN;
 }
 
@@ -2188,6 +2199,17 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     int64_t nTime4 = GetTimeMicros();
     nTimeCallbacks += nTime4 - nTime3;
     LogPrint(BCLog::BENCH, "    - Callbacks: %.2fms [%.2fs]\n", 0.001 * (nTime4 - nTime3), nTimeCallbacks * 0.000001);
+    
+    // Fill lastPaid
+    auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
+    auto paidPayee = block.GetPaidPayee(pindex->nHeight, amount);
+    if(!paidPayee.empty()) {
+        auto pmn = mnodeman.Find(paidPayee);
+
+        if(pmn) {
+            pmn->lastPaid = pindex->GetBlockTime();
+        }
+    }
 
     return true;
 }

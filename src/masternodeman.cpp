@@ -274,8 +274,7 @@ void CMasternodeMan::CheckAndRemove(bool forceExpiredRemoval)
     while (it != vMasternodes.end()) {
         if ((**it).activeState == CMasternode::MASTERNODE_REMOVE ||
             (**it).activeState == CMasternode::MASTERNODE_VIN_SPENT ||
-            (forceExpiredRemoval && (**it).activeState == CMasternode::MASTERNODE_EXPIRED) ||
-            (**it).protocolVersion < ActiveProtocol()) {
+            (forceExpiredRemoval && (**it).activeState == CMasternode::MASTERNODE_EXPIRED)) {
             LogPrint(BCLog::MASTERNODE, "CMasternodeMan: Removing inactive Masternode %s - %i now\n", (**it).vin.prevout.ToStringShort(), size() - 1);
 
             //erase all of the broadcasts we've seen from this vin
@@ -404,16 +403,12 @@ void CMasternodeMan::Clear()
 int CMasternodeMan::stable_size ()
 {
     int nStable_size = 0;
-    int nMinProtocol = ActiveProtocol();
     int64_t nMasternode_Min_Age = MN_WINNER_MINIMUM_AGE;
     int64_t nMasternode_Age = 0;
 
     LOCK2(cs_main, cs);
 
     for (auto mn : vMasternodes) {
-        if (mn->protocolVersion < nMinProtocol) {
-            continue; // Skip obsolete versions
-        }
         if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT) &&
             sporkManager.IsSporkActive(SPORK_108_FORCE_MASTERNODE_MIN_AGE)) 
         {
@@ -432,23 +427,22 @@ int CMasternodeMan::stable_size ()
     return nStable_size;
 }
 
-int CMasternodeMan::CountEnabled(int protocolVersion)
+int CMasternodeMan::CountEnabled()
 {
     int i = 0;
-    protocolVersion = protocolVersion == -1 ? ActiveProtocol() : protocolVersion;
 
     LOCK2(cs_main, cs);
 
     for (auto mn : vMasternodes) {
         mn->Check();
-        if (mn->protocolVersion < protocolVersion || !mn->IsEnabled()) continue;
+        if (!mn->IsEnabled()) continue;
         i++;
     }
 
     return i;
 }
 
-void CMasternodeMan::CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion)
+void CMasternodeMan::CountNetworks(int& ipv4, int& ipv6, int& onion)
 {
     LOCK2(cs_main, cs);
 
@@ -563,9 +557,6 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
             mn->Check();
             if (!mn->IsEnabled()) continue;
 
-            // //check protocol version
-            if (mn->protocolVersion < ActiveProtocol()) continue;
-
             //it's in the list (up to 8 entries ahead of current block to allow propagation) -- so let's skip it
             if (masternodePayments.IsScheduled(*mn, nBlockHeight)) continue;
 
@@ -626,19 +617,17 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     return pBestMasternode;
 }
 
-CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight, int minProtocol)
+CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight)
 {
     int64_t score = 0;
     CMasternode* winner = NULL;
-
-    if(minProtocol == 0) minProtocol = ActiveProtocol();
 
     LOCK2(cs_main, cs);
 
     // scan for winner
     for (auto mn : vMasternodes) {
         mn->Check();
-        if (mn->protocolVersion < minProtocol || !mn->IsEnabled()) continue;
+        if (!mn->IsEnabled()) continue;
 
         // calculate the score for each Masternode
         uint256 n = mn->CalculateScore(mod, nBlockHeight);
@@ -654,7 +643,7 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
     return winner;
 }
 
-int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight, int minProtocol)
+int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight)
 {
     std::vector<std::pair<int64_t, CTxIn>> vecMasternodeScores;
     int64_t nMasternode_Min_Age = MN_WINNER_MINIMUM_AGE;
@@ -673,11 +662,6 @@ int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight, in
 
     // scan for winner
     for (auto mn : vMasternodes) {
-        if (mn->protocolVersion < minProtocol) {
-            LogPrint(BCLog::MASTERNODE,"Skipping Masternode with obsolete version %d\n", mn->protocolVersion);
-            continue;                                                       // Skip obsolete versions
-        }
-
         if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT) &&
             sporkManager.IsSporkActive(SPORK_108_FORCE_MASTERNODE_MIN_AGE)) 
         {
@@ -710,7 +694,7 @@ int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight, in
     return defaultValue;
 }
 
-std::vector<std::pair<int, CMasternode> > CMasternodeMan::GetMasternodeRanks(int64_t nBlockHeight, int minProtocol)
+std::vector<std::pair<int, CMasternode>> CMasternodeMan::GetMasternodeRanks(int64_t nBlockHeight)
 {
     std::vector<std::pair<int64_t, CMasternode> > vecMasternodeScores;
     std::vector<std::pair<int, CMasternode> > vecMasternodeRanks;
@@ -731,8 +715,6 @@ std::vector<std::pair<int, CMasternode> > CMasternodeMan::GetMasternodeRanks(int
 
         // scan for winner
         for (CMasternode& mn : vmn) {
-
-            if (mn.protocolVersion < minProtocol) continue;
 
             if (!mn.IsEnabled()) {
                 vecMasternodeScores.push_back(std::make_pair(INT_MAX, mn));

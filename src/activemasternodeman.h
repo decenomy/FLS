@@ -8,6 +8,7 @@
 #define ACTIVEMASTERNODES_H
 
 #include "activemasternode.h"
+#include "activemasternodeconfig.h"
 
 #include <vector>
 
@@ -16,12 +17,21 @@ class CActiveMasternodeMan
 {
 private:
     std::vector<CActiveMasternode> vActiveMasternodes;
+    uint256 fileHash = UINT256_ZERO;
+    // critical section to protect the inner data structures
+    mutable RecursiveMutex cs;
 public:
     /// Manage status of all Masternodes
     void ManageStatus();
     void ResetStatus();
     std::vector<CActiveMasternode>& GetActiveMasternodes() { return vActiveMasternodes; }
-    void Add(CActiveMasternode activeMasternode);
+    bool Add(CActiveMasternodeConfig::CActiveMasternodeEntry ame, std::string& strErr);
+    bool Add(std::string strAlias, std::string strMasterNodePrivKey, std::string& strErr) {
+        return Add(CActiveMasternodeConfig::CActiveMasternodeEntry(strAlias, strMasterNodePrivKey), strErr);
+    }
+    bool Load(std::string& strErr);
+    bool Reload(std::string& strErr);
+    std::size_t Count() { return vActiveMasternodes.size(); }
 };
 
 #endif //ACTIVEMASTERNODES_H

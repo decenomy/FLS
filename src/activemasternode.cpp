@@ -40,7 +40,7 @@ void CActiveMasternode::ManageStatus()
         pmn = mnodeman.Find(pubKeyMasternode);
         if (pmn != nullptr) {
             pmn->Check();
-            if (pmn->IsEnabled() && pmn->protocolVersion == PROTOCOL_VERSION)
+            if (pmn->IsEnabled())
                 EnableHotColdMasterNode(pmn->vin, pmn->addr);
         }
     }

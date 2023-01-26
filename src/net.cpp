@@ -1083,6 +1083,17 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
         }
     }
 
+    // close obsolete nodes' connection
+    {
+        LOCK(cs_vNodes);
+        for (CNode* pnode : vNodes) {
+            if (pnode->nVersion > 0 && pnode->nVersion < ActiveProtocol()) {
+                pnode->fDisconnect = true;
+                pnode->CloseSocketDisconnect();
+            }
+        }
+    }
+
     if (hSocket != INVALID_SOCKET)
         if (!addr.SetSockAddr((const struct sockaddr*)&sockaddr))
             LogPrintf("Warning: Unknown socket family\n");

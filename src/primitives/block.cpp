@@ -35,6 +35,17 @@ uint256 CBlockHeader::GetHash() const
     return SerializeHash(*this); // nVersion >= 4
 }
 
+CScript CBlock::GetPaidPayee(int nHeight, CAmount nAmount) const
+{
+    const auto& tx = vtx[IsProofOfWork() ? 0 : 1];
+
+    for (const CTxOut& out : tx.vout) {
+        if (out.nValue == nAmount) return out.scriptPubKey;
+    }
+
+    return CScript();
+}
+
 std::string CBlock::ToString() const
 {
     std::stringstream s;

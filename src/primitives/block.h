@@ -136,6 +136,8 @@ public:
         return !IsProofOfStake();
     }
 
+    CScript GetPaidPayee(int nHeight, CAmount nAmount) const;
+
     std::string ToString() const;
     void print() const;
 };

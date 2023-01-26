@@ -180,12 +180,6 @@ bool CMasternodePaymentWinner::IsValid(CNode* pnode, std::string& strError)
         return false;
     }
 
-    if (pmn->protocolVersion < ActiveProtocol()) {
-        strError = strprintf("Masternode protocol too old %d - req %d", pmn->protocolVersion, ActiveProtocol());
-        LogPrint(BCLog::MASTERNODE,"CMasternodePaymentWinner::IsValid - %s\n", strError);
-        return false;
-    }
-
     if (sporkManager.IsSporkActive(SPORK_102_FORCE_ENABLED_MASTERNODE)) {
         if (pmn->Status() != "ENABLED") {
             strError = strprintf("Masternode is not in ENABLED state - Status(): %d", pmn->Status());
@@ -194,7 +188,7 @@ bool CMasternodePaymentWinner::IsValid(CNode* pnode, std::string& strError)
         }
     }
 
-    int n = mnodeman.GetMasternodeRank(vinMasternode, nBlockHeight - 100, ActiveProtocol());
+    int n = mnodeman.GetMasternodeRank(vinMasternode, nBlockHeight - 100);
 
     if (n > MNPAYMENTS_SIGNATURES_TOTAL) {
         //It's common to have masternodes mistakenly think they are in the top 10
@@ -278,10 +272,18 @@ bool IsBlockPayeeValid(const CBlock& block, int nBlockHeight)
     // fails if spork 8 is enabled and
     // spork 113 is disabled or current time is outside the reconsider window
     if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
-        if (!sporkManager.IsSporkActive(SPORK_113_RECONSIDER_WINDOW_ENFORCEMENT) ||
-            (t / MINUTE_IN_SECONDS) % 10 != reconsiderWindowMin) {
+        if (!sporkManager.IsSporkActive(SPORK_113_RECONSIDER_WINDOW_ENFORCEMENT)) 
+        {
             return false;
         }
+
+        if ((t / MINUTE_IN_SECONDS) % 10 != reconsiderWindowMin) 
+        {
+            return false;
+        }
+
+        LogPrint(BCLog::MASTERNODE,"Masternode payment enforcement reconsidered, accepting block\n");
+        return true;
     }
 
     LogPrint(BCLog::MASTERNODE,"Masternode payment enforcement is disabled, accepting block\n");
@@ -694,14 +696,8 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
         return result;
     } else {
         LogPrint(BCLog::MASTERNODE, "CMasternodePayments::IsTransactionValid - Missing required payment of %s\n", FormatMoney(requiredMasternodePayment).c_str());
-    }
 
-    auto t = GetTime();
-    // returns true if it is inside the reconsider window
-    if (found &&
-        sporkManager.IsSporkActive(SPORK_113_RECONSIDER_WINDOW_ENFORCEMENT) &&
-        (t / MINUTE_IN_SECONDS) % 10 == reconsiderWindowMin) {
-        return true;
+        return false;
     }
 
     return false;
@@ -759,6 +755,10 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, int nBlo
         return mnbp.IsTransactionValid(txNew, nBlockHeight);
     }
 
+    if (sporkManager.IsSporkActive(SPORK_112_MASTERNODE_LAST_PAID_V2)) { // if voting is disabled, try again
+        return mnbp.IsTransactionValid(txNew, nBlockHeight);
+    }
+
     return true;
 }
 
@@ -807,7 +807,7 @@ void CMasternodePayments::ProcessBlock(int nBlockHeight)
 
         //reference node - hybrid mode
 
-        int n = mnodeman.GetMasternodeRank(*(activeMasternode.vin), nBlockHeight - 100, ActiveProtocol());
+        int n = mnodeman.GetMasternodeRank(*(activeMasternode.vin), nBlockHeight - 100);
 
         if (n == -1 || n == INT_MAX) {
             LogPrint(BCLog::MASTERNODE, "CMasternodePayments::ProcessBlock - Unknown Masternode\n");

@@ -14,28 +14,18 @@
 
 CActiveMasternodeConfig activeMasternodeConfig;
 
-CActiveMasternodeConfig::CActiveMasternodeEntry& CActiveMasternodeConfig::add(std::string strAlias, std::string strMasterNodePrivKey)
+void CActiveMasternodeConfig::add(std::string strAlias, std::string strMasterNodePrivKey)
 {
     CActiveMasternodeEntry cme(strAlias, strMasterNodePrivKey);
     vEntries.push_back(cme);
-    return vEntries.back();
 }
 
-void CActiveMasternodeConfig::remove(std::string strAlias)
+bool CActiveMasternodeConfig::Load(std::string& strErr)
 {
-    int pos = -1;
-    for (int i = 0; i < ((int)vEntries.size()); ++i) {
-        CActiveMasternodeEntry e = vEntries[i];
-        if (e.strAlias == strAlias) {
-            pos = i;
-            break;
-        }
-    }
-    vEntries.erase(vEntries.begin() + pos);
-}
+    auto backup = vEntries;
 
-bool CActiveMasternodeConfig::read(std::string& strErr)
-{
+    vEntries.clear();
+
     int linenumber = 1;
     fs::path pathActiveMasternodeConfigFile = GetActiveMasternodeConfigFile();
     fs::ifstream streamConfig(pathActiveMasternodeConfigFile);
@@ -73,6 +63,7 @@ bool CActiveMasternodeConfig::read(std::string& strErr)
                 strErr = _("Could not parse activemasternode.conf") + "\n" +
                          strprintf(_("Line: %d"), linenumber) + "\n\"" + line + "\"";
                 streamConfig.close();
+                vEntries = backup;
                 return false;
             }
         }
@@ -80,6 +71,7 @@ bool CActiveMasternodeConfig::read(std::string& strErr)
         if (strAlias.empty()) {
             strErr = _("alias cannot be empty in activemasternode.conf");
             streamConfig.close();
+            vEntries = backup;
             return false;
         }
 
@@ -88,4 +80,29 @@ bool CActiveMasternodeConfig::read(std::string& strErr)
 
     streamConfig.close();
     return true;
+}
+
+uint256 CActiveMasternodeConfig::GetFileHash() {
+    fs::path pathActiveMasternodeConfigFile = GetActiveMasternodeConfigFile();
+    fs::ifstream streamConfig(pathActiveMasternodeConfigFile);
+
+    if (!streamConfig.good()) {
+        return UINT256_ZERO;
+    }
+
+    //get length of file
+    streamConfig.seekg(0, streamConfig.end);
+    size_t length = streamConfig.tellg();
+    streamConfig.seekg(0, streamConfig.beg);
+
+    //read file
+    if (length > 0) {
+        std::vector<char> buffer;
+        buffer.resize(length);    
+        streamConfig.read(&buffer[0], length);
+
+        return Hash(&buffer[0], &buffer[0] + length);
+    }
+
+    return UINT256_ZERO;
 }

@@ -304,12 +304,16 @@ int64_t CMasternode::GetLastPaidV1(CBlockIndex* pblockindex, const CScript& mnpa
 
 int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpayee)
 {
+    if(lastPaid != INT64_MAX) return lastPaid;
+
     int max_depth = mnodeman.CountEnabled() * 2; // go a little bit further than V1
+
     for (int n = 0; n < max_depth; n++) { 
 
         auto paidpayee = pblockindex->GetPaidPayee();
         if(paidpayee && mnpayee == *paidpayee) {
-            return pblockindex->nTime; // doesn't need the offset because it is deterministically read from the blockchain
+            lastPaid = pblockindex->nTime;
+            return lastPaid;
         }
         
         pblockindex = pblockindex->pprev;
@@ -319,7 +323,8 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
         }
     }
 
-    return 0;
+    lastPaid = 0;
+    return lastPaid;
 }
 
 int64_t CMasternode::GetLastPaid()
@@ -711,11 +716,6 @@ bool CMasternodeBroadcast::CheckAndUpdate(int& nDos)
     if(lastPing.IsNull() || !lastPing.CheckAndUpdate(nDos, false, true))
     return false;
 
-    if (protocolVersion < ActiveProtocol()) {
-        LogPrint(BCLog::MASTERNODE, "mnb - ignoring outdated Masternode %s protocol version %d\n", vin.prevout.ToStringShort(), protocolVersion);
-        return false;
-    }
-
     CScript pubkeyScript;
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 
@@ -863,7 +863,12 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
                 sigTime, vin.prevout.hash.ToString(), MASTERNODE_MIN_CONFIRMATIONS, pConfIndex->GetBlockTime());
             return false;
         }
-        if (GetMasternodeNodeCollateral(nConfHeight) != GetMasternodeNodeCollateral(chainActive.Height())) {
+        
+        auto week_in_blocks = WEEK_IN_SECONDS / Params().GetConsensus().nTargetSpacing;
+
+        if (GetMasternodeNodeCollateral(nConfHeight) != GetMasternodeNodeCollateral(chainActive.Height()) && 
+            GetMasternodeNodeCollateral(nConfHeight + week_in_blocks) != GetMasternodeNodeCollateral(chainActive.Height())) 
+        {
             LogPrint(BCLog::MASTERNODE,"mnb - Wrong collateral transaction value of %d for Masternode %s (%i conf block is at %d)\n",
                 GetMasternodeNodeCollateral(nConfHeight) / COIN, vin.prevout.hash.ToString(), MASTERNODE_MIN_CONFIRMATIONS, pConfIndex->GetBlockTime());
             return false;
@@ -876,8 +881,7 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
 
     // if it matches our Masternode privkey, then we've been remotely activated
     for (auto& activeMasternode : amnodeman.GetActiveMasternodes()) {
-        if (pubKeyMasternode == activeMasternode.pubKeyMasternode &&
-            protocolVersion == PROTOCOL_VERSION) {
+        if (pubKeyMasternode == activeMasternode.pubKeyMasternode) {
             activeMasternode.EnableHotColdMasterNode(vin, addr);
         }
     }
@@ -975,7 +979,7 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fChec
 
     LogPrint(BCLog::MNPING, "%s: New Ping - %s - %s - %lli\n", __func__, GetHash().ToString(), blockHash.ToString(), sigTime);
 
-    if (isMasternodeFound && pmn->protocolVersion >= ActiveProtocol()) {
+    if (isMasternodeFound) {
         if (fRequireEnabled && !pmn->IsEnabled()) return false;
 
         // update only if there is no known ping for this masternode or

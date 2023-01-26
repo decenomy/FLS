@@ -128,7 +128,7 @@ UniValue getmasternodecount (const JSONRPCRequest& request)
     if (nChainHeight < 0) return "unknown";
 
     int nCount = mnodeman.GetNextMasternodeInQueueCount(nChainHeight);
-    mnodeman.CountNetworks(ActiveProtocol(), ipv4, ipv6, onion);
+    mnodeman.CountNetworks(ipv4, ipv6, onion);
 
     obj.push_back(Pair("total", mnodeman.size()));
     obj.push_back(Pair("stable", mnodeman.stable_size()));
@@ -513,6 +513,64 @@ UniValue listmasternodeconf (const JSONRPCRequest& request)
 
     return ret;
 }
+
+UniValue getactivemasternodecount (const JSONRPCRequest& request)
+{
+    if (request.fHelp || (request.params.size() > 0))
+        throw std::runtime_error(
+            "getactivemasternodecount\n"
+            "\nGet active masternode count values\n"
+
+            "\nResult:\n"
+            "{\n"
+            "  \"total\": n,        (numeric) Total masternodes\n"
+            "  \"initial\": n,      (numeric) Initial state masternodes\n"
+            "  \"syncing\": n,      (numeric) Syncing masternodes\n"
+            "  \"not_capable\": n,  (numeric) Not capable masternodes\n"
+            "  \"started\": n,      (numeric) Started masternodes\n"
+            "}\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("getactivemasternodecount", "") + HelpExampleRpc("getactivemasternodecount", ""));
+
+    if (!fMasterNode)
+        throw JSONRPCError(RPC_MISC_ERROR, _("This is not a masternode."));
+
+    int total = 0;
+    int initial = 0;
+    int syncing = 0;
+    int not_capable = 0;
+    int started = 0;
+    
+    for (auto& amn : amnodeman.GetActiveMasternodes()) {
+        switch(amn.GetStatus()) {
+            case ACTIVE_MASTERNODE_INITIAL:
+                initial++;
+                break;
+            case ACTIVE_MASTERNODE_SYNC_IN_PROCESS:
+                syncing++;
+                break;
+            case ACTIVE_MASTERNODE_NOT_CAPABLE:
+                not_capable++;
+                break;
+            case ACTIVE_MASTERNODE_STARTED:
+                started++;
+                break;
+        }
+        total++;
+    }
+
+    UniValue obj(UniValue::VOBJ);
+
+    obj.push_back(Pair("total", total));
+    obj.push_back(Pair("initial", initial));
+    obj.push_back(Pair("syncing", syncing));
+    obj.push_back(Pair("not_capable", not_capable));
+    obj.push_back(Pair("started", started));
+
+    return obj;
+}
+
 
 UniValue getmasternodestatus(const JSONRPCRequest& request)
 {
