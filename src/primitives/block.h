@@ -136,7 +136,7 @@ public:
         return !IsProofOfStake();
     }
 
-    CScript GetPaidPayee(int nHeight, CAmount nAmount) const;
+    CScript GetPaidPayee(CAmount nAmount) const;
 
     std::string ToString() const;
     void print() const;

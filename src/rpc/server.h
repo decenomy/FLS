@@ -199,6 +199,7 @@ extern UniValue getnettotals(const JSONRPCRequest& request);
 extern UniValue setban(const JSONRPCRequest& request);
 extern UniValue listbanned(const JSONRPCRequest& request);
 extern UniValue clearbanned(const JSONRPCRequest& request);
+extern UniValue checkconnection(const JSONRPCRequest& request);
 
 extern UniValue bip38encrypt(const JSONRPCRequest& request);
 extern UniValue bip38decrypt(const JSONRPCRequest& request);
@@ -256,6 +257,7 @@ extern UniValue createmasternodebroadcast(const JSONRPCRequest& request);
 extern UniValue decodemasternodebroadcast(const JSONRPCRequest& request);
 extern UniValue relaymasternodebroadcast(const JSONRPCRequest& request);
 extern UniValue masternodecurrent(const JSONRPCRequest& request);
+extern UniValue reloadmasternodeconfig(const JSONRPCRequest& request);
 extern UniValue startmasternode(const JSONRPCRequest& request);
 extern UniValue createmasternodekey(const JSONRPCRequest& request);
 extern UniValue getmasternodeoutputs(const JSONRPCRequest& request);
@@ -264,6 +266,7 @@ extern UniValue getactivemasternodecount(const JSONRPCRequest& request);
 extern UniValue getmasternodestatus(const JSONRPCRequest& request);
 extern UniValue getmasternodewinners(const JSONRPCRequest& request);
 extern UniValue getmasternodescores(const JSONRPCRequest& request);
+extern UniValue mnping(const JSONRPCRequest& request);
 
 extern UniValue getinfo(const JSONRPCRequest& request); // in rpc/misc.cpp
 extern UniValue logging(const JSONRPCRequest& request);

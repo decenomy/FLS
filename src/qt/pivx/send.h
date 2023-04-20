@@ -17,7 +17,7 @@
 #include "coincontroldialog.h"
 #include "qt/pivx/tooltipmenu.h"
 
-static const int MAX_SEND_POPUP_ENTRIES = 8;
+static const int MAX_SEND_POPUP_ENTRIES = 64;
 
 class PIVXGUI;
 class ClientModel;

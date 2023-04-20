@@ -35,7 +35,7 @@ uint256 CBlockHeader::GetHash() const
     return SerializeHash(*this); // nVersion >= 4
 }
 
-CScript CBlock::GetPaidPayee(int nHeight, CAmount nAmount) const
+CScript CBlock::GetPaidPayee(CAmount nAmount) const
 {
     const auto& tx = vtx[IsProofOfWork() ? 0 : 1];
 

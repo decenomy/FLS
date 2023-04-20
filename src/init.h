@@ -10,6 +10,13 @@
 
 #include <string>
 
+const bool DEFAULT_PROXYRANDOMIZE = true;
+const bool DEFAULT_REST_ENABLE = false;
+const bool DEFAULT_DISABLE_SAFEMODE = false;
+const bool DEFAULT_STOPAFTERBLOCKIMPORT = false;
+const bool DEFAULT_MASTERNODE  = false;
+const bool DEFAULT_MNCONFLOCK = true;
+
 class CScheduler;
 class CWallet;
 

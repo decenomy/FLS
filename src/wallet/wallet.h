@@ -266,6 +266,8 @@ private:
 public:
 
     static const CAmount DEFAULT_STAKE_SPLIT_THRESHOLD = 500 * COIN;
+    static const CAmount DEFAULT_AUTO_COMBINE_THRESHOLD = 0 * COIN;
+    static const bool DEFAULT_COMBINE_DUST = false;
 
     //! Generates hd wallet //
     bool SetupSPKM(bool newKeypool = true);

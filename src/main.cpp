@@ -33,6 +33,7 @@
 #include "netbase.h"
 #include "policy/policy.h"
 #include "pow.h"
+#include "reverse_iterate.h"
 #include "spork.h"
 #include "sporkdb.h"
 #include "txdb.h"
@@ -1960,7 +1961,7 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
 
     // Clean lastPaid
     auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
-    auto paidPayee = block.GetPaidPayee(pindex->nHeight, amount);
+    auto paidPayee = block.GetPaidPayee(amount);
     if(!paidPayee.empty()) {
         auto pmn = mnodeman.Find(paidPayee);
 
@@ -2202,7 +2203,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     
     // Fill lastPaid
     auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
-    auto paidPayee = block.GetPaidPayee(pindex->nHeight, amount);
+    auto paidPayee = block.GetPaidPayee(amount);
     if(!paidPayee.empty()) {
         auto pmn = mnodeman.Find(paidPayee);
 
@@ -3197,6 +3198,25 @@ bool CheckBlockTime(const CBlockHeader& block, CValidationState& state, CBlockIn
     return true;
 }
 
+//! Returns last CBlockIndex* that is a checkpoint
+const CBlockIndex* GetLastCheckpoint() EXCLUSIVE_LOCKS_REQUIRED(cs_main)
+{
+    AssertLockHeld(cs_main);
+
+    if (!Checkpoints::fEnabled)
+        return nullptr;
+
+    const Checkpoints::MapCheckpoints& checkpoints = *Params().Checkpoints().mapCheckpoints;
+
+    for (const auto& i : reverse_iterate(checkpoints)) {
+        const uint256& hash = i.second;
+        CBlockIndex* pindex = LookupBlockIndex(hash);
+        if (pindex)
+            return pindex;
+    }
+    return nullptr;
+}
+
 bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& state, CBlockIndex* const pindexPrev)
 {
     const Consensus::Params& consensus = Params().GetConsensus();
@@ -4017,6 +4037,120 @@ bool CVerifyDB::VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth
     }
 
     LogPrintf("No coin database inconsistencies in last %i blocks (%i transactions)\n", chainHeight - pindexState->nHeight, nGoodTransactions);
+
+    return true;
+}
+
+bool RewindBlockIndex(int blocksToRollBack)
+{
+    LOCK(cs_main);
+
+    CValidationState state;
+    int nHeight = chainActive.Height();
+
+    if (blocksToRollBack > nHeight) {
+        return false;
+    }
+
+    int targetHeight = nHeight - blocksToRollBack;
+
+    double blocksRolledBack = 0;
+    // Iterate to start removing blocks
+    while (nHeight > targetHeight) {
+        blocksRolledBack++;
+        // End loop if shutdown was requested
+        if (ShutdownRequested()) return false;
+
+        if (!DisconnectTip(state)) {
+            FlushStateToDisk(state, FLUSH_STATE_PERIODIC);
+            return error("%s: unable to disconnect block at height %i", __func__, nHeight);
+        }
+
+        if(nHeight % std::max((blocksToRollBack / 100), 1) == 0) {
+            uiInterface.InitMessage(
+                strprintf(
+                    _("Rewinding blocks: %d (%.2f%%) ..."),
+                    blocksRolledBack,
+                    (blocksRolledBack / blocksToRollBack) * 100
+                )
+            );
+            // flush state to disk.
+            if (!FlushStateToDisk(state, FLUSH_STATE_PERIODIC)) {
+                return false;
+            }
+        }
+
+        nHeight = chainActive.Height();
+    }
+
+    // flush state to disk.
+    if (!FlushStateToDisk(state, FLUSH_STATE_PERIODIC)) {
+        return false;
+    }
+
+    // Collect blocks to be removed (blocks in mapBlockIndex must be at least BLOCK_VALID_TREE).
+    // We do this after actual disconnecting, otherwise we'll end up writing the lack of data
+    // to disk before writing the chainstate, resulting in a failure to continue if interrupted.
+    std::vector<const CBlockIndex*> vBlocks;
+    for (BlockMap::iterator it = mapBlockIndex.begin(); it != mapBlockIndex.end(); it++) {
+        CBlockIndex* pindexIter = it->second;
+        if (!chainActive.Contains(pindexIter)) {
+            // Add to the list of blocks to remove
+            vBlocks.emplace_back(pindexIter);
+            if (pindexIter == pindexBestInvalid) {
+                // Reset invalid block marker if it was pointing to this block
+                pindexBestInvalid = nullptr;
+            }
+            // Reduce validity
+            pindexIter->nStatus = std::min<unsigned int>(pindexIter->nStatus & BLOCK_VALID_MASK, BLOCK_VALID_TREE) | (pindexIter->nStatus & ~BLOCK_VALID_MASK);
+            // Remove have-data flags.
+            pindexIter->nStatus &= ~(BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO);
+            // Remove storage location.
+            pindexIter->nFile = 0;
+            pindexIter->nDataPos = 0;
+            pindexIter->nUndoPos = 0;
+            // Remove various other things
+            pindexIter->nTx = 0;
+            pindexIter->nChainTx = 0;
+            pindexIter->nSequenceId = 0;
+            // Update indices
+            setBlockIndexCandidates.erase(pindexIter);
+            auto ret = mapBlocksUnlinked.equal_range(pindexIter->pprev);
+            while (ret.first != ret.second) {
+                if (ret.first->second == pindexIter) {
+                    ret.first = mapBlocksUnlinked.erase(ret.first);
+                } else {
+                    ++ret.first;
+                }
+            }
+        } else if (pindexIter->IsValid(BLOCK_VALID_TRANSACTIONS) && pindexIter->nChainTx) {
+            setBlockIndexCandidates.insert(pindexIter);
+        }
+    }
+
+    // Set pindexBestHeader to the current chain tip
+    // (since we are about to delete the block it is pointing to)
+    pindexBestHeader = chainActive.Tip();
+
+    // Erase block indices on-disk
+    if (!pblocktree->EraseBatchSync(vBlocks)) {
+        return AbortNode(state, "Failed to erase from block index database");
+    }
+
+    // Erase block indices in-memory
+    for (auto pindex : vBlocks) {
+        auto ret = mapBlockIndex.find(*pindex->phashBlock);
+        if (ret != mapBlockIndex.end()) {
+            mapBlockIndex.erase(ret);
+            delete pindex;
+        }
+    }
+
+    CheckBlockIndex();
+
+    if (!FlushStateToDisk(state, FLUSH_STATE_ALWAYS)) {
+        return false;
+    }
 
     return true;
 }

@@ -45,6 +45,7 @@ public:
     void hideEvent(QHideEvent *event) override;
 
 private Q_SLOTS:
+    void onReloadClicked();
     void onCreateMNClicked();
     void onStartAllClicked(int type);
     void changeTheme(bool isLightTheme, QString &theme) override;

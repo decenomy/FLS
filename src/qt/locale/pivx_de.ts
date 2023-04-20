@@ -3501,7 +3501,7 @@ Es gab ein Problem bei dem Versuch die Adressen unter %1 zu speichern. Bitte ver
                            FLS utilizes a Proof of Stake (PoS) consensus system algorithm,
                            allowing all owners of FLS to participate in earning block rewards
                            while securing the network with full node wallets, as well as to
-                           run Masternodes to earn additional income regulary.
+                           run Masternodes to earn additional income regularly.
                            &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                          </source>
         <translation>FLS ist eine Form von digitalem Online-Geld mit Blockchain-Technologie, das einfach weltweit, sofort und nahezu gebührenfrei überwiesen werden kann. FLS beinhaltet marktführende Datenschutzsicherheit.
@@ -5673,8 +5673,8 @@ Flits Wallet</source>
     </message>
     <message>
         <source>Do not accept transactions whose size with all in-mempool ancestors exceeds &lt;n&gt; kilobytes (default: %u)</source>
-        <translation> 
- 
+        <translation>
+
 Akzeptiere keine Transaktion, deren vorherige Größe mit &lt;n&gt; im Mempool überschritten wird (Standard: %u)</translation>
     </message>
     <message>
@@ -5735,7 +5735,7 @@ Akzeptiere keine Transaktion, deren vorherige Größe mit &lt;n&gt; im Mempool �
     </message>
     <message>
         <source>Error: -listen must be true if -masternode is set.</source>
-        <translation> 
+        <translation>
 Fehler: -listen muss true sein, wenn -masternode gesetzt ist</translation>
     </message>
     <message>
@@ -5773,8 +5773,8 @@ Fehler: -listen muss true sein, wenn -masternode gesetzt ist</translation>
     </message>
     <message>
         <source>Keep the transaction memory pool below &lt;n&gt; megabytes (default: %u)</source>
-        <translation> 
- 
+        <translation>
+
 Halte den Transaktionsspeicherpool unter &lt;n&gt;  Megabyte (Standard: %u)</translation>
     </message>
     <message>
@@ -5967,7 +5967,7 @@ Halte den Transaktionsspeicherpool unter &lt;n&gt;  Megabyte (Standard: %u)</tra
     </message>
     <message>
         <source>The threshold value cannot be less than %s</source>
-        <translation> 
+        <translation>
 Der Schwellenwert darf nicht kleiner sein als %s</translation>
     </message>
     <message>

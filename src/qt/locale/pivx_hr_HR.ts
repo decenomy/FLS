@@ -2404,7 +2404,7 @@ Adresa: %4
         <source>Deletes all local blockchain folders so the wallet synchronizes from scratch.</source>
         <translation>Briše sve lokalne blockchain direktorije pa se novčanik sinkronizira od početka.</translation>
     </message>
-    <message>   
+    <message>
         <source>The buttons below will restart the wallet with command-line options to repair the wallet, fix issues with corrupt blockhain files or missing/obsolete transactions.</source>
         <translation>Donji gumbi će ponovo pokrenuti novčanik pomoću opcija naredbenog retka za popravak lisnice, popraviti probleme s korumpiranim datotekama blockchaina ili nedostajućim / zastarjelim transakcijama.</translation>
     </message>
@@ -3431,7 +3431,7 @@ Došlo je do greške prilikom spremanja popisa adresa u %1. Molimo pokušajte po
                            FLS utilizes a Proof of Stake (PoS) consensus system algorithm,
                            allowing all owners of FLS to participate in earning block rewards
                            while securing the network with full node wallets, as well as to
-                           run Masternodes to earn additional income regulary.
+                           run Masternodes to earn additional income regularly.
                            &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                          </source>
         <translation>

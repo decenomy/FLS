@@ -9,6 +9,7 @@
 #endif
 
 #include "netaddress.h"
+#include "netbase.h"
 #include "hash.h"
 #include "utilstrencodings.h"
 #include "tinyformat.h"
@@ -476,6 +477,17 @@ CService::CService(const struct sockaddr_in& addr) : CNetAddr(addr.sin_addr), po
 CService::CService(const struct sockaddr_in6 &addr) : CNetAddr(addr.sin6_addr, addr.sin6_scope_id), port(ntohs(addr.sin6_port))
 {
    assert(addr.sin6_family == AF_INET6);
+}
+
+CService::CService(const char* pszIpPort, int portDefault) : CService::CService()
+{
+    CService ip;
+    if (Lookup(pszIpPort, ip, portDefault, false))
+        *this = ip;
+}
+
+CService::CService(const std::string& strIpPort, int portDefault) : CService::CService(strIpPort.c_str(), portDefault)
+{
 }
 
 bool CService::SetSockAddr(const struct sockaddr *paddr)

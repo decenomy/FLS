@@ -106,7 +106,7 @@ public:
         entries = std::vector<CMasternodeEntry>();
     }
 
-    void clear();
+    void clear() { entries.clear(); }
     bool read(std::string& strErr);
     CMasternodeConfig::CMasternodeEntry* add(std::string alias, std::string ip, std::string privKey, std::string txHash, std::string outputIndex);
     void remove(std::string alias);

@@ -3509,7 +3509,7 @@ There was an error trying to save the address list to %1. Please try again.</tra
                            FLS utilizes a Proof of Stake (PoS) consensus system algorithm,
                            allowing all owners of FLS to participate in earning block rewards
                            while securing the network with full node wallets, as well as to
-                           run Masternodes to earn additional income regulary.
+                           run Masternodes to earn additional income regularly.
                            &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                          </source>
         <translation>
@@ -3522,7 +3522,7 @@ There was an error trying to save the address list to %1. Please try again.</tra
                            FLS utilizes a Proof of Stake (PoS) consensus system algorithm,
                            allowing all owners of FLS to participate in earning block rewards
                            while securing the network with full node wallets, as well as to
-                           run Masternodes to earn additional income regulary.
+                           run Masternodes to earn additional income regularly.
                            &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
                          </translation>
     </message>

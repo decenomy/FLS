@@ -17,10 +17,42 @@
 #include "guiinterface.h"
 #include "util.h"
 #include "version.h"
-
-
 #include <univalue.h>
 
+UniValue checkconnection(const JSONRPCRequest& request)
+{
+    if (request.fHelp || (request.params.size() != 1))
+        throw std::runtime_error(
+            "checkconnection \"address\"\n"
+            "\nAttempts to connect to specified node\n"
+
+            "\nArguments:\n"
+            "1. \"node\"     (string, required) The node address (see getpeerinfo for nodes)\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("checkconnection", "\"192.168.0.6:__PORT_MAINNET__\"") + HelpExampleRpc("checkconnection", "\"192.168.0.6:__PORT_MAINNET__\""));
+
+    std::string strNode = request.params[0].get_str();
+    CService service = CService(strNode, Params().GetDefaultPort());
+    CAddress addr(service, NODE_NETWORK);
+
+    if(!g_connman)
+        throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
+
+    bool connected = false;
+    g_connman->ForEachNode([&connected, &service](CNode* pnode) {
+        if ((CNetAddr)pnode->addr == (CNetAddr)service)
+            connected = true;
+    });
+
+    if(!connected) {
+        if (!g_connman->OpenNetworkConnection(addr, true, nullptr)) {
+            throw std::runtime_error("Could not connect to " + service.ToString());
+        }
+    }
+    
+    return NullUniValue;
+}
 
 UniValue getconnectioncount(const JSONRPCRequest& request)
 {
@@ -181,8 +213,12 @@ UniValue addnode(const JSONRPCRequest& request)
     std::string strCommand;
     if (request.params.size() == 2)
         strCommand = request.params[1].get_str();
-    if (request.fHelp || request.params.size() != 2 ||
-        (strCommand != "onetry" && strCommand != "add" && strCommand != "remove"))
+    else
+        strCommand = "onetry";
+
+    if (request.fHelp || 
+        (request.params.size() != 1 && request.params.size() != 2) ||
+        (request.params.size() == 2 && strCommand != "onetry" && strCommand != "add" && strCommand != "remove"))
         throw std::runtime_error(
             "addnode \"node\" \"add|remove|onetry\"\n"
             "\nAttempts add or remove a node from the addnode list.\n"
@@ -190,7 +226,7 @@ UniValue addnode(const JSONRPCRequest& request)
 
             "\nArguments:\n"
             "1. \"node\"     (string, required) The node (see getpeerinfo for nodes)\n"
-            "2. \"command\"  (string, required) 'add' to add a node to the list, 'remove' to remove a node from the list, 'onetry' to try a connection to the node once\n"
+            "2. \"command\"  (string, optional) 'add' to add a node to the list, 'remove' to remove a node from the list, 'onetry' (default) to try a connection to the node once\n"
 
             "\nExamples:\n" +
             HelpExampleCli("addnode", "\"192.168.0.6:32972\" \"onetry\"") + HelpExampleRpc("addnode", "\"192.168.0.6:32972\", \"onetry\""));

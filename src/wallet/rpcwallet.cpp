@@ -2908,6 +2908,13 @@ UniValue getstakesplitthreshold(const JSONRPCRequest& request)
 
 UniValue autocombinerewards(const JSONRPCRequest& request)
 {
+    if (!IsDeprecatedRPCEnabled("autocombinerewards")) {
+        if (request.fHelp) {
+            throw std::runtime_error("autocombinerewards (Deprecated, will be removed in a future update. To use this command, start flitsd with -deprecatedrpc=autocombinerewards)");
+        }
+        throw JSONRPCError(RPC_METHOD_DEPRECATED, "autocombinerewards is deprecated and will be removed in a future update. To use this command, start flitsd with -deprecatedrpc=autocombinerewards");
+    }
+
     bool fEnable;
     if (request.params.size() >= 1)
         fEnable = request.params[0].get_bool();
@@ -2915,6 +2922,7 @@ UniValue autocombinerewards(const JSONRPCRequest& request)
     if (request.fHelp || request.params.size() < 1 || (fEnable && request.params.size() != 2) || request.params.size() > 2)
         throw std::runtime_error(
             "autocombinerewards enable ( threshold )\n"
+            "\nDEPRECATED!!! This command will be removed in a future version!!!\n"
             "\nWallet will automatically monitor for any coins with value below the threshold amount, and combine them if they reside with the same FLS address\n"
             "When autocombinerewards runs it will create a transaction, and therefore will be subject to transaction fees.\n"
 
@@ -2938,6 +2946,88 @@ UniValue autocombinerewards(const JSONRPCRequest& request)
         throw std::runtime_error("Changed settings in wallet but failed to save to database\n");
 
     return NullUniValue;
+}
+
+UniValue setautocombinethreshold(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.empty() || request.params.size() > 2)
+        throw std::runtime_error(
+            "setautocombinethreshold enable ( value )\n"
+            "\nThis will set the auto-combine threshold value.\n"
+            "\nWallet will automatically monitor for any coins with value below the threshold amount, and combine them if they reside with the same FLS address\n"
+            "When auto-combine runs it will create a transaction, and therefore will be subject to transaction fees.\n"
+
+            "\nArguments:\n"
+            "1. enable          (boolean, required) Enable auto combine (true) or disable (false).\n"
+            "2. threshold       (numeric, optional. required if enable is true) Threshold amount. Must be greater than 1.\n"
+
+            "\nResult:\n"
+            "{\n"
+            "  \"enabled\": true|false,      (boolean) true if auto-combine is enabled, otherwise false\n"
+            "  \"threshold\": n.nnn,         (numeric) auto-combine threshold in FLS\n"
+            "  \"saved\": true|false         (boolean) true if setting was saved to the database, otherwise false\n"
+            "}\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("setautocombinethreshold", "true 500.12") + HelpExampleRpc("setautocombinethreshold", "true, 500.12"));
+
+    RPCTypeCheck(request.params, {UniValue::VBOOL, UniValue::VNUM});
+
+    bool fEnable = request.params[0].get_bool();
+    CAmount nThreshold = 0;
+
+    if (fEnable) {
+        if (request.params.size() < 2) {
+            throw JSONRPCError(RPC_INVALID_PARAMETER, "Missing threshold value");
+        }
+        nThreshold = AmountFromValue(request.params[1]);
+        if (nThreshold < COIN)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("The threshold value cannot be less than %s", FormatMoney(COIN)));
+    }
+
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+
+    {
+        LOCK(pwalletMain->cs_wallet);
+        pwalletMain->fCombineDust = fEnable;
+        pwalletMain->nAutoCombineThreshold = nThreshold;
+
+        UniValue result(UniValue::VOBJ);
+        result.pushKV("enabled", fEnable);
+        result.pushKV("threshold", ValueFromAmount(pwalletMain->nAutoCombineThreshold));
+        if (walletdb.WriteAutoCombineSettings(fEnable, nThreshold)) {
+            result.pushKV("saved", "true");
+        } else {
+            result.pushKV("saved", "false");
+        }
+
+        return result;
+    }
+}
+
+UniValue getautocombinethreshold(const JSONRPCRequest& request)
+{
+    if (request.fHelp || !request.params.empty())
+        throw std::runtime_error(
+            "getautocombinethreshold\n"
+            "\nReturns the current threshold for auto combining UTXOs, if any\n"
+
+            "\nResult:\n"
+            "{\n"
+            "  \"enabled\": true|false,        (boolean) true if auto-combine is enabled, otherwise false\n"
+            "  \"threshold\": n.nnn            (numeric) the auto-combine threshold amount in FLS\n"
+            "}\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("getautocombinethreshold", "") + HelpExampleRpc("getautocombinethreshold", ""));
+
+    LOCK(pwalletMain->cs_wallet);
+
+    UniValue result(UniValue::VOBJ);
+    result.pushKV("enabled", pwalletMain->fCombineDust);
+    result.pushKV("threshold", ValueFromAmount(pwalletMain->nAutoCombineThreshold));
+
+    return result;
 }
 
 UniValue printMultiSend()
@@ -3172,6 +3262,8 @@ const CRPCCommand vWalletRPCCommands[] =
         //  --------------------- ------------------------    -----------------------    ----------
         //{ "rawtransactions",    "fundrawtransaction",       &fundrawtransaction,       false },
         {"wallet",              "autocombinerewards",       &autocombinerewards,       false },
+        { "wallet",             "setautocombinethreshold",  &setautocombinethreshold,  false },
+        { "wallet",             "getautocombinethreshold",  &getautocombinethreshold,  false },
         {"wallet",              "abandontransaction",       &abandontransaction,       false },
         { "wallet",             "addmultisigaddress",       &addmultisigaddress,       true  },
         { "wallet",             "backupwallet",             &backupwallet,             true  },

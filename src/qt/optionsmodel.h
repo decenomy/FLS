@@ -53,6 +53,8 @@ public:
         ShowMasternodesTab,  // bool
         Listen,              // bool
         StakeSplitThreshold,    // CAmount (LongLong)
+        CombineDust,            // bool
+        AutoCombineThreshold,   // CAmount (LongLong)
         fUseCustomFee,          // bool
         nCustomFee,             // CAmount (LongLong)
         OptionIDRowCount,
@@ -69,6 +71,8 @@ public:
     void setDisplayUnit(const QVariant& value);
     /* Update StakeSplitThreshold's value in wallet */
     void setStakeSplitThreshold(const CAmount value);
+    void setCombineDust(bool fCombineDust);
+    void setAutoCombineThreshold(const CAmount nAutoCombineThreshold);
     double getSSTMinimum() const;
     bool isSSTValid();
     /* Update Custom Fee value in wallet */
