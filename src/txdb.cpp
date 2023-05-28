@@ -288,6 +288,8 @@ bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256
                 //         return error("LoadBlockIndex() : CheckProofOfWork failed: %s", pindexNew->ToString());
                 // }
 
+                pindexNew->nMoneySupply = diskindex.nMoneySupply;
+
                 pcursor->Next();
             } else {
                 return error("%s : failed to read value", __func__);

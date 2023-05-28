@@ -524,7 +524,7 @@ void sph_haval160_4_close(void *cc, void *dst);
  * @param n     the number of extra bits (0 to 7)
  * @param dst   the output buffer
  */
-void sph_haval160_3_addbits_and_close(void *cc,
+void sph_haval160_4_addbits_and_close(void *cc,
 	unsigned ub, unsigned n, void *dst);
 
 /**

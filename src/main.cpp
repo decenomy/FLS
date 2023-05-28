@@ -51,6 +51,7 @@
 #include <boost/foreach.hpp>
 #include <atomic>
 #include <queue>
+#include <regex>
 
 
 #if defined(NDEBUG)
@@ -1653,7 +1654,7 @@ int GetSpendHeight(const CCoinsViewCache& inputs)
 namespace Consensus {
 bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoinsViewCache& inputs, int nSpendHeight)
 {
-    // if we have already a checkpoint newer than this block 
+    // if we have already a checkpoint newer than this block
     // then it is OK
     if (nSpendHeight <= Checkpoints::GetTotalBlocksEstimate())
         return true;
@@ -1894,6 +1895,8 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
     CBlockUndo blockUndo;
     CAmount nValueOut = 0;
     CAmount nValueIn = 0;
+    CAmount nUnspendableValue = 0;
+
     CDiskBlockPos pos = pindex->GetUndoPos();
     if (pos.IsNull()) {
         error("%s: no undo data available", __func__);
@@ -1914,8 +1917,8 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
         const CTransaction& tx = block.vtx[i];
 
         nValueOut += tx.GetValueOut();
+        nUnspendableValue += tx.GetUnspendableValueOut();
         uint256 hash = tx.GetHash();
-
 
         // Check that all outputs are available and match the outputs in the block itself
         // exactly.
@@ -1954,7 +1957,7 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
     }
 
     // track money
-    nMoneySupply -= (nValueOut - nValueIn);
+    nMoneySupply -= (nValueOut - nValueIn - nUnspendableValue);
 
     // move best block pointer to prevout block
     view.SetBestBlock(pindex->pprev->GetBlockHash());
@@ -2072,9 +2075,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     blockundo.vtxundo.reserve(block.vtx.size() - 1);
     CAmount nValueOut = 0;
     CAmount nValueIn = 0;
+    CAmount nUnspendableValue = 0;
     unsigned int nMaxBlockSigOps = MAX_BLOCK_SIGOPS_CURRENT;
     std::vector<uint256> vSpendsInBlock;
-    uint256 hashBlock = block.GetHash();
 
     std::vector<PrecomputedTransactionData> precomTxData;
     precomTxData.reserve(block.vtx.size()); // Required so that pointers to individual precomTxData don't get invalidated
@@ -2119,6 +2122,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
             control.Add(vChecks);
         }
         nValueOut += tx.GetValueOut();
+        nUnspendableValue += tx.GetUnspendableValueOut();
 
         CTxUndo undoDummy;
         if (i > 0) {
@@ -2186,7 +2190,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     view.SetBestBlock(pindex->GetBlockHash());
 
     // Update FLS money supply
-    nMoneySupply += (nValueOut - nValueIn);
+    nMoneySupply += (nValueOut - nValueIn - nUnspendableValue);
 
     int64_t nTime3 = GetTimeMicros();
     nTimeIndex += nTime3 - nTime2;
@@ -2200,7 +2204,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     int64_t nTime4 = GetTimeMicros();
     nTimeCallbacks += nTime4 - nTime3;
     LogPrint(BCLog::BENCH, "    - Callbacks: %.2fms [%.2fs]\n", 0.001 * (nTime4 - nTime3), nTimeCallbacks * 0.000001);
-    
+
     // Fill lastPaid
     auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
     auto paidPayee = block.GetPaidPayee(amount);
@@ -2403,6 +2407,10 @@ bool static DisconnectTip(CValidationState& state)
     // UpdateTransactionsFromBlock finds descendants of any transactions in this
     // block that were added back and cleans up the mempool state.
     mempool.UpdateTransactionsFromBlock(vHashUpdate);
+
+    // Updates money supply
+    pindexDelete->pprev->nMoneySupply = nMoneySupply;
+
     // Update chainActive and related variables.
     UpdateTip(pindexDelete->pprev);
     // Let wallets know transactions went from 1-confirmed to
@@ -2474,6 +2482,10 @@ bool static ConnectTip(CValidationState& state, CBlockIndex* pindexNew, const CB
 
     // Remove conflicting transactions from the mempool.
     mempool.removeForBlock(pblock->vtx, pindexNew->nHeight, txConflicted, !IsInitialBlockDownload());
+
+    // Updates money supply
+    pindexNew->nMoneySupply = nMoneySupply;
+
     // Update chainActive & related variables.
     UpdateTip(pindexNew);
 
@@ -3117,14 +3129,16 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         // but issue an initial reject message.
         // The case also exists that the sending peer could not have enough data to see
         // that this block is invalid, so don't issue an outright ban.
-        if (nHeight != 0 && !IsInitialBlockDownload()) {
+        if (nHeight != 0 && !IsInitialBlockDownload() &&
+            GetAdjustedTime() - block.GetBlockTime() < DEFAULT_BLOCK_PAYEE_VERIFICATION_TIMEOUT)
+        {
             // check masternode payment
             if (!IsBlockPayeeValid(block, nHeight)) {
                 mapRejectedBlocks.insert(std::make_pair(block.GetHash(), GetTime()));
                 return state.DoS(0, false, REJECT_INVALID, "bad-cb-payee", false, "Couldn't find masternode payment");
             }
         } else {
-            LogPrintf("%s: Masternode payment checks skipped on sync\n", __func__);
+            LogPrintf("%s: Masternode payment checks skipped on sync and second layer verification timeout\n", __func__);
         }
     }
 
@@ -3233,7 +3247,7 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     //If this is a reorg, check that it is not too deep
     int nMaxReorgDepth = GetArg("-maxreorg", DEFAULT_MAX_REORG_DEPTH);
     if (chainHeight - nHeight >= nMaxReorgDepth)
-        return state.DoS(1, error("%s: forked chain older than max reorganization depth (height %d)", __func__, chainHeight - nHeight));
+        return state.DoS(100, error("%s: forked chain older than max reorganization depth (height %d)", __func__, chainHeight - nHeight));
 
     // Check blocktime (past limit, future limit and mask)
     if (!CheckBlockTime(block, state, pindexPrev))
@@ -3334,7 +3348,7 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
     // Size limits
     if (nHeight != 0 && !IsInitialBlockDownload()) {
         unsigned int nMaxBlockSize = std::max(
-            (unsigned int)1000, 
+            (unsigned int)1000,
             std::min(
                 (unsigned int)sporkManager.GetSporkValue(SPORK_105_MAX_BLOCK_SIZE),
                 MAX_BLOCK_SIZE_CURRENT
@@ -3390,7 +3404,7 @@ bool AcceptBlockHeader(const CBlock& block, CValidationState& state, CBlockIndex
                     return true;
                 }
             }
-            
+
             int level = 100;
 
             if(mapRejectedBlocks.find(block.hashPrevBlock) != mapRejectedBlocks.end()) {
@@ -3484,7 +3498,6 @@ bool AcceptBlock(const CBlock& block, CValidationState& state, CBlockIndex** ppi
     }
 
     int nHeight = pindex->nHeight;
-    int splitHeight = -1;
 
     if (isPoS) {
         LOCK(cs_main);
@@ -3500,7 +3513,7 @@ bool AcceptBlock(const CBlock& block, CValidationState& state, CBlockIndex** ppi
         std::vector<CTxIn> pivInputs;
 
         for (const CTxIn& stakeIn : stakeTxIn.vin) {
-            pivInputs.push_back(stakeIn);            
+            pivInputs.push_back(stakeIn);
         }
         const bool hasPIVInputs = !pivInputs.empty();
 
@@ -3565,9 +3578,6 @@ bool AcceptBlock(const CBlock& block, CValidationState& state, CBlockIndex** ppi
                     return error("%s: previous block %s not on disk", __func__, prev->GetBlockHash().GetHex());
 
             }
-
-            // Split height
-            splitHeight = prev->nHeight;
         }
 
         // If the stake is not a zPoS then let's check if the inputs were spent on the main chain
@@ -4041,19 +4051,51 @@ bool CVerifyDB::VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth
     return true;
 }
 
-bool RewindBlockIndex(int blocksToRollBack)
+bool RewindBlockIndex(std::string param)
 {
     LOCK(cs_main);
 
-    CValidationState state;
     int nHeight = chainActive.Height();
+    int targetHeight = nHeight;
+    int blocksToRollBack = 0;
+    if (param.size() == 0) {
+        const CBlockIndex* prevCheckPoint;
+        prevCheckPoint = GetLastCheckpoint();
+        const int checkPointHeight = prevCheckPoint ? prevCheckPoint->nHeight : 0;
+        targetHeight = checkPointHeight;
+    } else {
+        // Match a hex number that is 64 digits long.
+        if (std::regex_match(param, std::regex("^[0-9a-fA-F]{64}$"))) {
+            const uint256 hash(uint256S(param));
+            if (!IsBlockHashInChain(hash)) {
+                throw std::runtime_error("Block not found. Unable to rewind the blockchain to the given block.\n");
+                return false;
+            }
 
-    if (blocksToRollBack > nHeight) {
+            CBlockIndex* block;
+            block = LookupBlockIndex(hash);
+
+            targetHeight = block->nHeight;
+        } else if (std::regex_match(param, std::regex("^[0-9]+$"))) {
+            blocksToRollBack = stoi(param);
+            targetHeight = nHeight - blocksToRollBack;
+            if (nHeight < blocksToRollBack || blocksToRollBack < 1) {
+                throw std::runtime_error("Invalid value. Unable to rewind the blockchain by the given number of blocks.\n");
+                return false;
+            }
+        } else {
+            throw std::runtime_error("Incorrect parameter format. Enter a block hash as a 64 char hex string or a decimal number.\n");
+            return false;
+        }
+    }
+
+    CValidationState state;
+
+    if (targetHeight > nHeight) {
         return false;
     }
 
-    int targetHeight = nHeight - blocksToRollBack;
-
+    blocksToRollBack = nHeight - targetHeight;
     double blocksRolledBack = 0;
     // Iterate to start removing blocks
     while (nHeight > targetHeight) {
@@ -4864,9 +4906,9 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
 
         shortFromName.erase(
             std::remove_if(
-                shortFromName.begin(), 
-                shortFromName.end(), 
-                []( char const& c ) -> bool { return !std::isalnum(c); }), 
+                shortFromName.begin(),
+                shortFromName.end(),
+                []( char const& c ) -> bool { return !std::isalnum(c); }),
             shortFromName.end()
         );
 

@@ -38,8 +38,10 @@ SettingsWalletOptionsWidget::SettingsWalletOptionsWidget(PIVXGUI* _window, QWidg
     // Checkbox+spinbox
     ui->spinBoxAutoCombineThreshold->setProperty("cssClass", "btn-spin-box");
     ui->spinBoxAutoCombineThreshold->setAttribute(Qt::WA_MacShowFocusRect, 0);
-    ui->spinBoxAutoCombineThreshold->setEnabled(false);
+    ui->spinBoxAutoCombineThreshold->setVisible(false);
     connect(ui->checkBoxAutoCombine, &QCheckBox::stateChanged, this, &SettingsWalletOptionsWidget::onAutoCombineCheckboxStateChanged);
+    connect(ui->spinBoxAutoCombineThreshold, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+            this, &SettingsWalletOptionsWidget::onSpinBoxAutoCombineThresholdChanged);
     setShadow(ui->spinBoxAutoCombineThreshold);
 
     // Radio buttons
@@ -96,19 +98,30 @@ void SettingsWalletOptionsWidget::setSpinBoxStakeSplitThreshold(double val)
     ui->spinBoxStakeSplitThreshold->setValue(val);
 }
 
-void SettingsWalletOptionsWidget::onSpinBoxStakeSplitThresholdChanged(){
+void SettingsWalletOptionsWidget::onSpinBoxStakeSplitThresholdChanged()
+{
     if (ui->spinBoxStakeSplitThreshold->value() > 0) {
-        // Autocombine threshold must be < 2*stake split threshold, and the smallest amount by which it can be smaller is 0.00000001.
-        ui->spinBoxAutoCombineThreshold->setMaximum(ui->spinBoxStakeSplitThreshold->value() * 2 - 0.00000001);
-    } else {
-        ui->spinBoxAutoCombineThreshold->setMaximum(0);
+        if (ui->spinBoxAutoCombineThreshold->value() >= ui->spinBoxStakeSplitThreshold->value() * 2) {
+            ui->spinBoxAutoCombineThreshold->setValue(ui->spinBoxStakeSplitThreshold->value() * 2 - 1);
+        }
     }
 }
 
-void SettingsWalletOptionsWidget::onAutoCombineCheckboxStateChanged(){
-    ui->spinBoxAutoCombineThreshold->setEnabled(ui->checkBoxAutoCombine->isChecked());
+void SettingsWalletOptionsWidget::onSpinBoxAutoCombineThresholdChanged()
+{
+    if (ui->spinBoxStakeSplitThreshold->value() > 0) {
+        if (ui->spinBoxAutoCombineThreshold->value() >= ui->spinBoxStakeSplitThreshold->value() * 2) {
+            ui->spinBoxAutoCombineThreshold->setValue(ui->spinBoxStakeSplitThreshold->value() * 2 - 1);
+        }
+    }
 }
 
-SettingsWalletOptionsWidget::~SettingsWalletOptionsWidget(){
+void SettingsWalletOptionsWidget::onAutoCombineCheckboxStateChanged()
+{
+    ui->spinBoxAutoCombineThreshold->setVisible(ui->checkBoxAutoCombine->isChecked());
+}
+
+SettingsWalletOptionsWidget::~SettingsWalletOptionsWidget()
+{
     delete ui;
 }

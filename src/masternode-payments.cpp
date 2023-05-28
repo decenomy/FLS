@@ -566,7 +566,7 @@ bool CMasternodePayments::AddWinningMasternode(CMasternodePaymentWinner& winnerI
         }
 
         mapMasternodePayeeVotes[winnerIn.GetHash()] = winnerIn;
-        }
+    }
 
     {
         LOCK(cs_mapMasternodeBlocks);
@@ -589,6 +589,8 @@ bool CMasternodeBlockPayees::IsTransactionValidV1(const CTransaction& txNew, int
     for (CMasternodePayee& payee : vecPayments)
         if (payee.nVotes >= nMaxSignatures && payee.nVotes >= MNPAYMENTS_SIGNATURES_REQUIRED)
             nMaxSignatures = payee.nVotes;
+
+    LogPrint(BCLog::MASTERNODE, "%s - nMaxSignatures: %d\n", __func__, nMaxSignatures);
 
     // if we don't have at least 6 signatures on a payee, approve whichever is the longest chain
     if (nMaxSignatures < MNPAYMENTS_SIGNATURES_REQUIRED) {
@@ -622,6 +624,10 @@ bool CMasternodeBlockPayees::IsTransactionValidV1(const CTransaction& txNew, int
                     result = true;
                 }
 
+                CTxDestination addr;
+                ExtractDestination(payee.scriptPubKey, addr);
+                LogPrint(BCLog::MASTERNODE, "%s - payee.scriptPubKey: %s\n", __func__, EncodeDestination(addr));
+
                 return result;
             }
 
@@ -635,7 +641,7 @@ bool CMasternodeBlockPayees::IsTransactionValidV1(const CTransaction& txNew, int
         }
     }
 
-    LogPrint(BCLog::MASTERNODE,"CMasternodePayments::IsTransactionValid - Missing required payment of %s to %s\n", FormatMoney(requiredMasternodePayment).c_str(), strPayeesPossible.c_str());
+    LogPrint(BCLog::MASTERNODE,"%s - Missing required payment of %s to %s\n", __func__, FormatMoney(requiredMasternodePayment).c_str(), strPayeesPossible.c_str());
     
     return false;
 }
@@ -644,11 +650,13 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
 {
     // if there is no MNs, then there is no enough data to perform verification
     if (mnodeman.CountEnabled() == 0) {
+        LogPrint(BCLog::MASTERNODE, "%s - mnodeman.CountEnabled() == 0\n", __func__);
         return true;
     }
 
     // if the masternode list is not synced, then there is no enough data to perform verification
     if (!masternodeSync.IsSynced()) {
+        LogPrint(BCLog::MASTERNODE, "%s - !masternodeSync.IsSynced()\n", __func__);
         return true;
     }
 
@@ -664,6 +672,21 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
     }
 
     if (found) {
+
+        if(LogAcceptCategory(BCLog::MASTERNODE)) {
+            auto mn = mnodeman.Find(paidPayee);
+
+            if(mn) {
+                CScript payee = GetScriptForDestination(mn->pubKeyCollateralAddress.GetID());
+
+                CTxDestination addr;
+                ExtractDestination(payee, addr);
+
+                LogPrint(BCLog::MASTERNODE, "%s - Paid masternode %s\n", __func__, EncodeDestination(addr));
+                LogPrint(BCLog::MASTERNODE, "%s - Last paid at ~%d blocks\n", __func__, mn->SecondsSincePayment(chainActive[nBlockHeight - 1]) / Params().GetConsensus().nTargetSpacing);
+            }
+        }
+
         // fetch the paid masternode from our masternode list
         auto pmn = mnodeman.Find(paidPayee);
 
@@ -675,6 +698,25 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
 
         auto nmn = eligible.first;
         auto result = false;
+
+        if(LogAcceptCategory(BCLog::MASTERNODE)) {
+            CScript payee = GetScriptForDestination(nmn->pubKeyCollateralAddress.GetID());
+
+            CTxDestination addr;
+            ExtractDestination(payee, addr);
+
+            LogPrint(BCLog::MASTERNODE, "%s - Elected masternode %s\n", __func__, EncodeDestination(addr));
+
+            for (auto& txin : eligible.second) {
+                auto pmn2 = mnodeman.Find(txin);
+                CScript payee2 = GetScriptForDestination(pmn2->pubKeyCollateralAddress.GetID());
+
+                CTxDestination addr2;
+                ExtractDestination(payee2, addr2);
+
+                LogPrint(BCLog::MASTERNODE, "%s - Eligible masternode %s - Last paid at ~%d blocks (%d)\n", __func__, EncodeDestination(addr2), pmn2->SecondsSincePayment(chainActive[nBlockHeight - 1]) / Params().GetConsensus().nTargetSpacing, pmn2->GetLastPaid(chainActive[nBlockHeight - 1]));
+            }
+        }
 
         if (pmn->GetVin() == nmn->GetVin()) { // if they match, then the paid masternode is OK
             result = true;
@@ -689,13 +731,13 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
                 CTxDestination addr;
                 ExtractDestination(paidPayee, addr);
 
-                LogPrint(BCLog::MASTERNODE, "CMasternodePayments::IsTransactionValid - Paid masternode %s is not eligible\n", EncodeDestination(addr));
+                LogPrint(BCLog::MASTERNODE, "%s - Paid masternode %s is not eligible\n", __func__, EncodeDestination(addr));
             }
         }
 
         return result;
     } else {
-        LogPrint(BCLog::MASTERNODE, "CMasternodePayments::IsTransactionValid - Missing required payment of %s\n", FormatMoney(requiredMasternodePayment).c_str());
+        LogPrint(BCLog::MASTERNODE, "%s - Missing required payment of %s\n", __func__, FormatMoney(requiredMasternodePayment));
 
         return false;
     }
@@ -705,9 +747,15 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
 
 bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew, int nBlockHeight)
 {
-    return !sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) ?
+    auto pVersion = sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) ? 2 : 1;
+
+    auto result = pVersion == 1 ?
                IsTransactionValidV1(txNew, nBlockHeight) :
                IsTransactionValidV2(txNew, nBlockHeight);
+
+    LogPrint(BCLog::MASTERNODE, "%s - IsTransactionValidV%d: %d\n", __func__, pVersion, result);
+
+    return result;
 }
 
 std::string CMasternodeBlockPayees::GetRequiredPaymentsString()

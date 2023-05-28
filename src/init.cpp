@@ -397,15 +397,13 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-pid=<file>", strprintf(_("Specify pid file (default: %s)"), PIVX_PID_FILENAME));
 #endif
     strUsage += HelpMessageOpt("-reindex", _("Rebuild block chain index from current blk000??.dat files") + " " + _("on startup"));
-    strUsage += HelpMessageOpt("-reindexmoneysupply", strprintf(_("Reindex the %s and z%s money supply statistics"), CURRENCY_UNIT, CURRENCY_UNIT) + " " + _("on startup"));
     strUsage += HelpMessageOpt("-resync", _("Delete blockchain folders and resync from scratch") + " " + _("on startup"));
     strUsage += HelpMessageOpt("-rewindblockindex[=<n or hash>]", _("When used without a value, rewinds blockchain to last checkpoint. When passing a number, rolls back the chain by the given number of blocks. When passing a block hash (as a hex string), rewind up to (not including) the block with the matching hash."));
 #if !defined(WIN32)
     strUsage += HelpMessageOpt("-sysperms", _("Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)"));
 #endif
     strUsage += HelpMessageOpt("-txindex", strprintf(_("Maintain a full transaction index, used by the getrawtransaction rpc call (default: %u)"), DEFAULT_TXINDEX));
-    strUsage += HelpMessageOpt("-forcestart", _("Attempt to force blockchain corruption recovery") + " " + _("on startup"));
-
+    
     strUsage += HelpMessageGroup(_("Connection options:"));
     strUsage += HelpMessageOpt("-addnode=<ip>", _("Add a node to connect to and attempt to keep the connection open"));
     strUsage += HelpMessageOpt("-banscore=<n>", strprintf(_("Threshold for disconnecting misbehaving peers (default: %u)"), DEFAULT_BANSCORE_THRESHOLD));
@@ -1491,31 +1489,36 @@ bool AppInit2()
                     break;
                 }
 
-                {
-                    LOCK(cs_main);
-                    nMoneySupply = 0;
+                if (chainActive.Tip() != nullptr) {
+                    if (!chainActive.Tip()->nMoneySupply) {
+                        LOCK(cs_main);
+                        nMoneySupply = 0;
 
-                    std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
+                        std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
 
-                    while (pcursor->Valid()) {
-                        boost::this_thread::interruption_point();
-                        COutPoint key;
-                        Coin coin;
-                        if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
-                            // ----------- burn address scanning -----------
-                            CTxDestination source;
-                            if (ExtractDestination(coin.out.scriptPubKey, source)) {
-                                const std::string addr = EncodeDestination(source);
-                                if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
-                                    consensus.mBurnAddresses.at(addr) < chainActive.Height()) 
-                                {
-                                    pcursor->Next();
-                                    continue;
+                        while (pcursor->Valid()) {
+                            boost::this_thread::interruption_point();
+                            COutPoint key;
+                            Coin coin;
+                            if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
+                                // ----------- burn address scanning -----------
+                                CTxDestination source;
+                                if (ExtractDestination(coin.out.scriptPubKey, source)) {
+                                    const std::string addr = EncodeDestination(source);
+                                    if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
+                                        consensus.mBurnAddresses.at(addr) < chainActive.Height()) {
+                                        pcursor->Next();
+                                        continue;
+                                    }
                                 }
+                                nMoneySupply += coin.out.nValue;
                             }
-                            nMoneySupply += coin.out.nValue;
+                            pcursor->Next();
                         }
-                        pcursor->Next();
+
+                        chainActive.Tip()->nMoneySupply = nMoneySupply;
+                    } else {
+                        nMoneySupply = chainActive.Tip()->nMoneySupply.get();
                     }
                 }
 
@@ -1529,40 +1532,15 @@ bool AppInit2()
                         // and how many blocks to rewind.
                         std::string targetBlockHashStr = GetArg("-rewindblockindex", "");
 
-                        // Determining the default value (up to last checkpoint).
-                        int nHeight = chainActive.Height();
-                        const CBlockIndex* prevCheckPoint;
-                        {
-                            LOCK(cs_main);
-                            prevCheckPoint = GetLastCheckpoint();
-                        }
-                        const int checkPointHeight = prevCheckPoint ? prevCheckPoint->nHeight : 0;
-                        int blocksToRollBack = nHeight - checkPointHeight;
-
-                        // 256 bit hash has length 256/4=64 when represented as hex.
-                        if (targetBlockHashStr.length() == 64) {
-                            const uint256 hash(uint256S(targetBlockHashStr));
-                            if (!IsBlockHashInChain(hash)) {
-                                strLoadError = _("Block not found. Unable to rewind the blockchain to the given block.");
-                                break;
-                            }
-
-                            CBlockIndex* block = LookupBlockIndex(hash);
-
-                            blocksToRollBack = nHeight - block->nHeight;
-                        } else if (!targetBlockHashStr.empty()) {
-                            blocksToRollBack = GetArg("-rewindblockindex", 0);
-                            if (nHeight < blocksToRollBack || blocksToRollBack < 1) {
-                                strLoadError = _("Invalid value. Unable to rewind the blockchain by the given number of blocks.");
-                                break;
-                            }
-                        }
-
                         uiInterface.InitMessage(_("Rewinding blocks..."));
-                        if (!RewindBlockIndex(blocksToRollBack)) {
+
+                        if (!RewindBlockIndex(targetBlockHashStr)) {
                             strLoadError = _("Unable to rewind the blockchain. You will need to redownload the blockchain");
                             break;
                         }
+
+                        // Clear the banned adresses to aid the recovery of a possible fork
+                        g_connman->ClearBanned();
                     }
 
                     // Flag sent to validation code to let it know it can skip certain checks

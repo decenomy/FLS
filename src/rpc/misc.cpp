@@ -203,6 +203,10 @@ UniValue mnsync(const JSONRPCRequest& request)
     }
 
     if (strMode == "reset") {
+        LOCK(cs_main);
+        
+        g_connman->DisconnectAll();
+        g_connman->ClearBanned();
         masternodeSync.Reset();
         return "success";
     }

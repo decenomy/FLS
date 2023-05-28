@@ -276,6 +276,10 @@ public:
 
     // Return sum of txouts.
     CAmount GetValueOut() const;
+
+    // Return the sum of spendable txouts.
+    CAmount GetUnspendableValueOut() const;
+
     // GetValueIn() is a method on CCoinsViewCache, because
     // inputs must be known to compute value in.
 

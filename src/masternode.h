@@ -171,6 +171,7 @@ public:
         swap(first.activeState, second.activeState);
         swap(first.sigTime, second.sigTime);
         swap(first.lastPing, second.lastPing);
+        swap(first.lastPaid, second.lastPaid);
         swap(first.unitTest, second.unitTest);
         swap(first.allowFreeTx, second.allowFreeTx);
         swap(first.protocolVersion, second.protocolVersion);
@@ -216,9 +217,13 @@ public:
         READWRITE(nLastDsq);
         READWRITE(nScanningErrorCount);
         READWRITE(nLastScanningErrorBlockHeight);
+
+        if (ser_action.ForRead()) {
+            lastPaid = INT64_MAX;
+        }
     }
 
-    int64_t SecondsSincePayment();
+    int64_t SecondsSincePayment(CBlockIndex* pblockindex);
 
     bool UpdateFromNewBroadcast(CMasternodeBroadcast& mnb);
 
@@ -263,7 +268,7 @@ public:
         return strStatus;
     }
 
-    int64_t GetLastPaid();
+    int64_t GetLastPaid(CBlockIndex* pblockindex);
     bool IsValidNetAddr();
 
     /// Is the input associated with collateral public key? (and there is collateral - checking if valid masternode)

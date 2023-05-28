@@ -251,10 +251,15 @@ void CMasternode::Check(bool forceCheck)
     activeState = MASTERNODE_ENABLED; // OK
 }
 
-int64_t CMasternode::SecondsSincePayment()
+int64_t CMasternode::SecondsSincePayment(CBlockIndex* pblockindex)
 {
+    auto lp = GetLastPaid(pblockindex);
 
-    int64_t sec = (GetAdjustedTime() - GetLastPaid());
+    if(sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) && lp == 0) {
+        return sigTime;
+    }
+
+    int64_t sec = (GetAdjustedTime() - lp);
     int64_t month = MONTH_IN_SECONDS;
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
@@ -306,10 +311,8 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
 {
     if(lastPaid != INT64_MAX) return lastPaid;
 
-    int max_depth = mnodeman.CountEnabled() * 2; // go a little bit further than V1
-
-    for (int n = 0; n < max_depth; n++) {
-
+    do
+    {
         auto paidpayee = pblockindex->GetPaidPayee();
         if(paidpayee && mnpayee == *paidpayee) {
             lastPaid = pblockindex->nTime;
@@ -322,14 +325,14 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
             break;
         }
     }
+    while(pblockindex->GetBlockTime() > sigTime);
 
     lastPaid = 0;
     return lastPaid;
 }
 
-int64_t CMasternode::GetLastPaid()
+int64_t CMasternode::GetLastPaid(CBlockIndex* pblockindex)
 {
-    CBlockIndex* pblockindex = GetChainTip();
     if (pblockindex == nullptr) return false;
 
     const CScript& mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());

@@ -2468,6 +2468,14 @@ bool CConnman::DisconnectNode(NodeId id)
     return false;
 }
 
+void CConnman::DisconnectAll()
+{
+    LOCK(cs_vNodes);
+    for(CNode* pnode : vNodes) {
+        pnode->fDisconnect = true;
+    }
+}
+
 void CConnman::RelayInv(CInv& inv)
 {
     LOCK(cs_vNodes);

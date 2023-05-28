@@ -217,6 +217,10 @@ public:
     std::vector<unsigned char> vStakeModifier{};
     unsigned int nFlags{0};
 
+    //! (memory only) MoneySupply for this block.
+    //! Will be nullopt if there was no calculations made into it.
+    Optional<CAmount> nMoneySupply{nullopt};
+
     //! block header
     int nVersion{0};
     uint256 hashMerkleRoot{};
@@ -274,6 +278,12 @@ public:
 };
 
 /** Used to marshal pointers into hashes for db storage. */
+
+// New serialization introduced on PIVX
+static const int DBI_SER_VERSION_NO_MS = 0;   // removes nMoneySupply from persisted block index
+// New serialization introduced on DSW
+static const int DBI_SER_VERSION_MS = INT32_MAX;   // reintroduces the nMoneySupply to the persisted block index
+
 class CDiskBlockIndex : public CBlockIndex
 {
 public:
@@ -308,14 +318,51 @@ public:
         if (nStatus & BLOCK_HAVE_UNDO)
             READWRITE(VARINT(nUndoPos));
 
-        READWRITE(nFlags);
-        READWRITE(this->nVersion);
-        READWRITE(vStakeModifier);
-        READWRITE(hashPrev);
-        READWRITE(hashMerkleRoot);
-        READWRITE(nTime);
-        READWRITE(nBits);
-        READWRITE(nNonce);
+        if (nSerVersion >= DBI_SER_VERSION_NO_MS) {
+            // Serialization with CLIENT_VERSION >= DBI_SER_VERSION_NO_MS
+            READWRITE(nFlags);
+            READWRITE(this->nVersion);
+            READWRITE(vStakeModifier);
+            READWRITE(hashPrev);
+            READWRITE(hashMerkleRoot);
+            READWRITE(nTime);
+            READWRITE(nBits);
+            READWRITE(nNonce);
+
+            if (this->nVersion >= 7 && nSerVersion >= DBI_SER_VERSION_MS) {
+                READWRITE(nMoneySupply);
+            }
+
+        } else if (ser_action.ForRead()) {
+            // Serialization with CLIENT_VERSION <= DBI_SER_VERSION_NO_MS
+            int64_t nMint = 0;
+            uint256 hashNext{};
+            READWRITE(nMint);
+            READWRITE(nMoneySupply);
+            READWRITE(nFlags);
+            if (!Params().GetConsensus().NetworkUpgradeActive(nHeight, Consensus::UPGRADE_STAKE_MODIFIER_V2)) {
+                uint64_t nStakeModifier = 0;
+                READWRITE(nStakeModifier);
+                this->SetStakeModifier(nStakeModifier, this->GeneratedStakeModifier());
+            } else {
+                uint256 nStakeModifierV2;
+                READWRITE(nStakeModifierV2);
+                this->SetStakeModifier(nStakeModifierV2);
+            }
+            if (IsProofOfStake()) {
+                COutPoint prevoutStake;
+                unsigned int nStakeTime = 0;
+                READWRITE(prevoutStake);
+                READWRITE(nStakeTime);
+            }
+            READWRITE(this->nVersion);
+            READWRITE(hashPrev);
+            READWRITE(hashNext);
+            READWRITE(hashMerkleRoot);
+            READWRITE(nTime);
+            READWRITE(nBits);
+            READWRITE(nNonce);
+        }
     }
 
 
@@ -356,7 +403,7 @@ public:
     }
 
     /** Returns the index entry for the tip of this chain, or NULL if none. */
-    CBlockIndex* Tip(bool fProofOfStake = false) const
+    CBlockIndex* Tip() const
     {
         LOCK(cs);
 
@@ -365,7 +412,7 @@ public:
         return vChain[s - 1];
     }
 
-    inline uint256 TipHash() 
+    inline uint256 TipHash()
     {
         const auto tip = WITH_LOCK(cs, return Tip());
         if(tip) return Tip()->GetBlockHash();

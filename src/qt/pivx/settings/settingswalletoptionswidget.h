@@ -24,6 +24,7 @@ public:
     void setMapper(QDataWidgetMapper *mapper);
     void setSpinBoxStakeSplitThreshold(double val);
     void onSpinBoxStakeSplitThresholdChanged();
+    void onSpinBoxAutoCombineThresholdChanged();
     void onAutoCombineCheckboxStateChanged();
 
 Q_SIGNALS:

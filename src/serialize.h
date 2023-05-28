@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "compat/endian.h"
+#include "optional.h"
 #include "prevector.h"
 #include "sporkid.h"
 
@@ -531,6 +532,13 @@ template<typename Stream, typename T, std::size_t N> void Serialize(Stream& os, 
 template<typename Stream, typename T, std::size_t N> void Unserialize(Stream& is, std::array<T, N>& item);
 
 /**
+ * optional
+ */
+template<typename T> unsigned int GetSerializeSize(const Optional<T> &item);
+template<typename Stream, typename T> void Serialize(Stream& os, const Optional<T>& item);
+template<typename Stream, typename T> void Unserialize(Stream& is, Optional<T>& item);
+
+/**
  * array
  */
 template<typename T, std::size_t N>
@@ -541,6 +549,36 @@ unsigned int GetSerializeSize(const std::array<T, N> &item)
         size += GetSerializeSize(item[0]);
     }
     return size;
+}
+
+template<typename Stream, typename T>
+void Serialize(Stream& os, const Optional<T>& item)
+{
+    // If the value is there, put 0x01 and then serialize the value.
+    // If it's not, put 0x00.
+    if (item) {
+        unsigned char discriminant = 0x01;
+        Serialize(os, discriminant);
+        Serialize(os, *item);
+    } else {
+        unsigned char discriminant = 0x00;
+        Serialize(os, discriminant);
+    }
+}
+
+template<typename Stream, typename T>
+void Unserialize(Stream& is, Optional<T>& item)
+{
+    unsigned char discriminant = 0x00;
+    Unserialize(is, discriminant);
+
+    if (discriminant == 0x00) {
+        item = boost::none;
+    } else {
+        T object;
+        Unserialize(is, object);
+        item = object;
+    }
 }
 
 template<typename Stream, typename T, std::size_t N>

@@ -248,6 +248,7 @@ extern UniValue invalidateblock(const JSONRPCRequest& request);
 extern UniValue reconsiderblock(const JSONRPCRequest& request);
 extern UniValue getblockindexstats(const JSONRPCRequest& request);
 extern UniValue getburnaddresses(const JSONRPCRequest& request);
+extern UniValue rewindblockindex(const JSONRPCRequest& request);
 extern void validaterange(const UniValue& params, int& heightStart, int& heightEnd, int minHeightStart=1);
 
 // in rpc/masternode.cpp
