@@ -216,7 +216,18 @@ bool CMasternodeMan::Add(CMasternode& mn)
     CMasternode* pmn = Find(mn.vin);
     CMasternode* pmnByAddr = Find(mn.addr);
     bool masternodeRankV2 = Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_MASTERNODE_RANK_V2);
-    if (pmn == NULL && (sporkManager.IsSporkActive(SPORK_111_ALLOW_DUPLICATE_MN_IPS) || !masternodeRankV2 || pmnByAddr == NULL)) {
+
+    auto mnScript = Find(GetScriptForDestination(mn.pubKeyCollateralAddress.GetID()));
+    if(mnScript) {
+        auto it = std::find(vMasternodes.begin(), vMasternodes.end(), mnScript);
+        if(it != vMasternodes.end()) vMasternodes.erase(it);
+
+        return false;
+    }
+
+    if (pmn == NULL && 
+        (sporkManager.IsSporkActive(SPORK_111_ALLOW_DUPLICATE_MN_IPS) || !masternodeRankV2 || pmnByAddr == NULL) 
+    ) {
         LogPrint(BCLog::MASTERNODE, "CMasternodeMan: Adding new Masternode %s - count %i now\n", mn.vin.prevout.ToStringShort(), size() + 1);
         auto m = new CMasternode(mn);
         vMasternodes.push_back(m);
@@ -537,7 +548,7 @@ CMasternode* CMasternodeMan::Find(const CService &addr)
 //
 // Deterministically select the oldest/best masternode to pay on the network
 //
-CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCount, std::vector<CTxIn>& vEligibleTxIns, bool fJustCount)
+CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCount, std::vector<CTxIn>& vEligibleTxIns, bool fJustCount, bool fCleanLastPaid)
 {
 
     CMasternode* pBestMasternode = nullptr;
@@ -579,25 +590,38 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     nCount = (int)vecMasternodeLastPaid.size();
 
     //when the network is in the process of upgrading, don't penalize nodes that recently restarted
-    if (fFilterSigTime && nCount < nMnCount / 3) return GetNextMasternodeInQueueForPayment(nBlockHeight, false, nCount, vEligibleTxIns, fJustCount);
+    if (fFilterSigTime && nCount < nMnCount / 3) return GetNextMasternodeInQueueForPayment(nBlockHeight, false, nCount, vEligibleTxIns, fJustCount, fCleanLastPaid);
 
     if(!fJustCount) {
+
         // Sort them high to low
         sort(vecMasternodeLastPaid.rbegin(), vecMasternodeLastPaid.rend(), CompareLastPaid());
 
-        // Look at 1/10 or 5/100 min 10 (V2) of the oldest nodes (by last payment), calculate their scores and pay the best one
-        //  -- This doesn't look at who is being paid in the +8-10 blocks, allowing for double payments very rarely
-        //  -- 1/100 payments should be a double payment on mainnet - (1/(3000/10))*2
-        //  -- (chance per block * chances before IsScheduled will fire)
         auto nEnabled = CountEnabled();
         int nEligibleNetwork = nEnabled / 10; 
         
         if(sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) {
             nEligibleNetwork = std::max(10, nEnabled * 5 / 100); // oldest 5% or the minimal of 10 MNs
         }
-        
-        int nCountEligible = 0;
+
+        int n = 0;
+        // clean last paid and recalculate again
+        if(fCleanLastPaid && sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) {
+            for (const auto& s : vecMasternodeLastPaid) {
+                CMasternode* pmn = Find(s.second);
+                if (!pmn) continue;
+
+                pmn->lastPaid = INT64_MAX;
+
+                n++;
+                if (n >= nEligibleNetwork / 3) break;
+            }
+
+            return GetNextMasternodeInQueueForPayment(nBlockHeight, fFilterSigTime, nCount, vEligibleTxIns, fJustCount, false);
+        }
+
         uint256 nHigh;
+        int nCountEligible = 0;
         for (const auto& s : vecMasternodeLastPaid) {
             CMasternode* pmn = Find(s.second);
             if (!pmn) continue;
