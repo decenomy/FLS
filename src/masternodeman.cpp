@@ -639,7 +639,11 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
             }
 
             vEligibleTxIns.push_back(s.second);
-            nCountEligible++;
+            if (sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) && 
+                pmn->GetLastPaid(chainActive[nBlockHeight - 1]) != 0
+            ) {
+                nCountEligible++;
+            }
             if (nCountEligible >= nEligibleNetwork) break;
         }
     }

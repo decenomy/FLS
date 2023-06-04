@@ -235,7 +235,12 @@ void CMasternodeSync::Process()
         return;
     }
 
-    LogPrint(BCLog::MASTERNODE, "CMasternodeSync::Process() - tick %d RequestedMasternodeAssets %d\n", tick, RequestedMasternodeAssets);
+    LogPrint(
+        BCLog::MASTERNODE, "%s - tick %d RequestedMasternodeAssets %d\n", 
+        __func__, 
+        tick, 
+        RequestedMasternodeAssets
+    );
 
     if (RequestedMasternodeAssets == MASTERNODE_SYNC_INITIAL) GetNextAsset();
 
@@ -286,11 +291,18 @@ bool CMasternodeSync::SyncWithNode(CNode* pnode, bool isRegTestNet)
             // due to the fact that the MASTERNODE_SYNC_MNW phase is skipped
             auto syncFactor = sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) ? 4 : 2;
 
-            LogPrint(BCLog::MASTERNODE, "CMasternodeSync::Process() - lastMasternodeList %lld (GetTime() - MASTERNODE_SYNC_TIMEOUT) %lld\n", lastMasternodeList, GetTime() - MASTERNODE_SYNC_TIMEOUT * syncFactor);
+            LogPrint(
+                BCLog::MASTERNODE, 
+                "%s - lastMasternodeList %lld (GetTime() - MASTERNODE_SYNC_TIMEOUT) %lld\n", 
+                __func__,
+                lastMasternodeList, 
+                GetTime() - MASTERNODE_SYNC_TIMEOUT * syncFactor
+            );
+
             if (lastMasternodeList > 0 && countMasternodeList > 0 &&
                 lastMasternodeList < GetTime() - MASTERNODE_SYNC_TIMEOUT * syncFactor && 
                 RequestedMasternodeAttempt >= MASTERNODE_SYNC_THRESHOLD &&
-                mnodeman.size() >= (sumMasternodeList * 90) / (countMasternodeList * 100) // only move on after getting a properly sized MN list
+                mnodeman.CountEnabled() >= (sumMasternodeList * 90) / (countMasternodeList * 100) // only move on after getting a properly sized MN list
             ) { // hasn't received a new item in the last 20 seconds, so we'll move to the next step
                 GetNextAsset();
                 return false;

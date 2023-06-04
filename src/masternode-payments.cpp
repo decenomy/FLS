@@ -714,8 +714,23 @@ bool CMasternodeBlockPayees::IsTransactionValidV2(const CTransaction& txNew, int
                 CTxDestination addr2;
                 ExtractDestination(payee2, addr2);
 
-                LogPrint(BCLog::MASTERNODE, "%s - Eligible masternode %s - Last paid at ~%d blocks (%d)\n", __func__, EncodeDestination(addr2), pmn2->SecondsSincePayment(chainActive[nBlockHeight - 1]) / Params().GetConsensus().nTargetSpacing, pmn2->GetLastPaid(chainActive[nBlockHeight - 1]));
+                LogPrint(
+                    BCLog::MASTERNODE, 
+                    "%s - Eligible masternode %s - Last paid at ~%d blocks (%d)(%d)\n", 
+                    __func__, 
+                    EncodeDestination(addr2), 
+                    pmn2->SecondsSincePayment(chainActive[nBlockHeight - 1]) / Params().GetConsensus().nTargetSpacing, 
+                    pmn2->GetLastPaid(chainActive[nBlockHeight - 1]), 
+                    pmn2->sigTime
+                );
             }
+
+            LogPrint(
+                BCLog::MASTERNODE, 
+                "%s - Elected masternodes count %d\n", 
+                __func__, 
+                eligible.second.size()
+            );
         }
 
         if (pmn->GetVin() == nmn->GetVin()) { // if they match, then the paid masternode is OK

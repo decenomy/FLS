@@ -256,7 +256,7 @@ int64_t CMasternode::SecondsSincePayment(CBlockIndex* pblockindex)
     auto lp = GetLastPaid(pblockindex);
 
     if(sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) && lp == 0) {
-        return sigTime;
+        lp = sigTime;
     }
 
     int64_t sec = (GetAdjustedTime() - lp);
@@ -311,6 +311,9 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
 {
     if(lastPaid != INT64_MAX) return lastPaid;
 
+    int max_depth = mnodeman.CountEnabled() * 2;
+    int n = 0;
+
     do
     {
         auto paidpayee = pblockindex->GetPaidPayee();
@@ -324,8 +327,10 @@ int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpa
         if (pblockindex == nullptr || pblockindex->nHeight <= 0) {
             break;
         }
+
+        n++;
     }
-    while(pblockindex->GetBlockTime() > sigTime);
+    while(pblockindex->GetBlockTime() > sigTime && n <= max_depth);
 
     lastPaid = 0;
     return lastPaid;
