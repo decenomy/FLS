@@ -3129,7 +3129,8 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         // but issue an initial reject message.
         // The case also exists that the sending peer could not have enough data to see
         // that this block is invalid, so don't issue an outright ban.
-        if (nHeight != 0 && !IsInitialBlockDownload() &&
+        if (nHeight != 0 && 
+            !IsInitialBlockDownload() &&
             GetAdjustedTime() - block.GetBlockTime() < DEFAULT_BLOCK_PAYEE_VERIFICATION_TIMEOUT)
         {
             // check masternode payment
@@ -3459,9 +3460,7 @@ bool AcceptBlock(const CBlock& block, CValidationState& state, CBlockIndex** ppi
             int level = 100;
 
             if(mapRejectedBlocks.find(block.hashPrevBlock) != mapRejectedBlocks.end()) {
-                auto elapsed = (GetTime() - mapRejectedBlocks[block.hashPrevBlock]) / MINUTE_IN_SECONDS;
-
-                level = elapsed <= 20 ? 0 : (level < elapsed ? level : elapsed);
+                level = 0; // let it be reconsidered
             }
 
             return state.DoS(level, error("%s : prev block %s is invalid, unable to add block %s", __func__, block.hashPrevBlock.GetHex(), block.GetHash().GetHex()),

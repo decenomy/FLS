@@ -280,9 +280,9 @@ public:
 /** Used to marshal pointers into hashes for db storage. */
 
 // New serialization introduced on PIVX
-static const int DBI_SER_VERSION_NO_MS = 0;   // removes nMoneySupply from persisted block index
+static const int DBI_SER_VERSION_NO_MS = 0;     // removes nMoneySupply from persisted block index
 // New serialization introduced on DSW
-static const int DBI_SER_VERSION_MS = INT32_MAX;   // reintroduces the nMoneySupply to the persisted block index
+static const int DBI_SER_VERSION_MS = 3000300;  // reintroduces the nMoneySupply to the persisted block index
 
 class CDiskBlockIndex : public CBlockIndex
 {

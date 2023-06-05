@@ -260,7 +260,7 @@ bool IsBlockPayeeValid(const CBlock& block, int nBlockHeight)
         reconsiderWindowTime = t;
 
         for (auto it = mapRejectedBlocks.cbegin(); it != mapRejectedBlocks.cend();) { // clean up old entries
-            it = (GetTime() - (*it).second) > HOUR_IN_SECONDS ? mapRejectedBlocks.erase(it) : std::next(it);
+            it = (GetAdjustedTime() - (*it).second) > DAY_IN_SECONDS ? mapRejectedBlocks.erase(it) : std::next(it);
         }
     }
 
