@@ -1651,9 +1651,9 @@ CAmount CWallet::GetStakingBalance() const
 {
     return std::max(CAmount(0), loopTxsBalance(
             [](const uint256& id, const CWalletTx& pcoin, CAmount& nTotal) {
-        if (pcoin.IsTrusted() && 
-            pcoin.GetDepthInMainChain() 
-                >= 
+        if (pcoin.IsTrusted() &&
+            pcoin.GetDepthInMainChain()
+                >=
             (Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
                     Params().GetConsensus().nStakeMinDepthV2 : Params().GetConsensus().nStakeMinDepth)
         ) {
@@ -1810,7 +1810,7 @@ bool CWallet::GetMasternodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet, CKey& 
     CTxOut txOut = wtx.vout[nOutputIndex];
 
     // Masternode collateral value
-    if (!CMasternode::CheckMasternodeCollateral(txOut.nValue)) 
+    if (!CMasternode::CheckMasternodeCollateral(txOut.nValue))
     {
         strError = "Invalid collateral tx value";
         return error("%s: tx %s, index %d not a masternode collateral", __func__, strTxHash, nOutputIndex);
@@ -1863,7 +1863,7 @@ bool CWallet::AvailableCoins(std::vector<COutput>* pCoins,      // --> populates
 {
     if (pCoins) pCoins->clear();
     const bool fCoinsSelected = (coinControl != nullptr) && coinControl->HasSelected();
-    
+
     {
         LOCK2(cs_main, cs_wallet);
         for (std::map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it) {
@@ -1876,9 +1876,9 @@ bool CWallet::AvailableCoins(std::vector<COutput>* pCoins,      // --> populates
                 continue;
 
             // Check min depth requirement for stake inputs
-            if (nCoinType == STAKEABLE_COINS && 
-                nDepth 
-                    < 
+            if (nCoinType == STAKEABLE_COINS &&
+                nDepth
+                    <
                 (Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
                     Params().GetConsensus().nStakeMinDepthV2 : Params().GetConsensus().nStakeMinDepth)) continue;
 
@@ -2503,7 +2503,7 @@ bool CWallet::CreateCoinStake(
         if (WITH_LOCK(cs_main, return chainActive.Height()) != pindexPrev->nHeight) return false;
 
         // Make sure the wallet is unlocked and shutdown hasn't been requested
-        if (IsLocked() || ShutdownRequested()) return false; 
+        if (IsLocked() || ShutdownRequested()) return false;
 
         nCredit = 0;
 
@@ -2623,7 +2623,7 @@ CWallet::CommitResult CWallet::CommitTransaction(CWalletTx& wtxNew, CReserveKey&
             AddToWallet(wtxNew);
 
             // Notify that old coins are spent
-            
+
             std::set<uint256> updated_hashes;
             for (const CTxIn& txin : wtxNew.vin) {
                 // notify only once
@@ -3242,12 +3242,17 @@ void CWallet::AutoCombineDust(CConnman* connman)
         return;
     }
 
-    std::map<CTxDestination, std::vector<COutput> > mapCoinsByAddress = AvailableCoinsByAddress(true, nAutoCombineThreshold * COIN);
+    // Make sure we don't break the settings saved in the old wallets where the autocombine threshold was saved incorrectly.
+    CAmount adjustedAutoCombineThreshold = nAutoCombineThreshold;
+    if (nAutoCombineThreshold < COIN) {
+        adjustedAutoCombineThreshold = nAutoCombineThreshold * COIN;
+    }
+
+    std::map<CTxDestination, std::vector<COutput> > mapCoinsByAddress = AvailableCoinsByAddress(true, adjustedAutoCombineThreshold);
 
     //coins are sectioned by address. This combination code only wants to combine inputs that belong to the same address
     for (std::map<CTxDestination, std::vector<COutput> >::iterator it = mapCoinsByAddress.begin(); it != mapCoinsByAddress.end(); it++) {
         std::vector<COutput> vCoins, vRewardCoins;
-        bool maxSize = false;
         vCoins = it->second;
 
         // We don't want the tx to be refused for being too large
@@ -3270,13 +3275,12 @@ void CWallet::AutoCombineDust(CConnman* connman)
             nTotalRewardsValue += out.Value();
 
             // Combine to the threshold and not way above
-            if (nTotalRewardsValue > nAutoCombineThreshold * COIN)
+            if (nTotalRewardsValue > adjustedAutoCombineThreshold)
                 break;
 
             // Around 180 bytes per input. We use 190 to be certain
             txSizeEstimate += 190;
             if (txSizeEstimate >= MAX_STANDARD_TX_SIZE - 200) {
-                maxSize = true;
                 break;
             }
         }
@@ -3317,7 +3321,7 @@ void CWallet::AutoCombineDust(CConnman* connman)
         }
 
         //we don't combine below the threshold unless the fees are 0 to avoid paying fees over fees over fees
-        if (!maxSize && nTotalRewardsValue < nAutoCombineThreshold * COIN && nFeeRet > 0)
+        if (nTotalRewardsValue < adjustedAutoCombineThreshold && nFeeRet > 0)
             continue;
 
         const CWallet::CommitResult& res = CommitTransaction(wtx, keyChange, connman);

@@ -1019,7 +1019,7 @@ UniValue getbalance(const JSONRPCRequest& request)
             "                    To use this deprecated argument, start flitsd with -deprecatedrpc=accounts. Only include transactions confirmed at least this many times.\n"
             "3. includeWatchonly (bool, optional, default=false) DEPRECATED. This argument will be removed in v5.0.\n"
             "                    To use this deprecated argument, start flitsd with -deprecatedrpc=accounts. Also include balance in watchonly addresses (see 'importaddress')\n"
-            
+
             "\nResult:\n"
             "amount              (numeric) The total amount in FLS received for this account.\n"
 
@@ -1045,7 +1045,7 @@ UniValue getbalance(const JSONRPCRequest& request)
         isminefilter filter = ISMINE_SPENDABLE;
         if (request.params.size() > 2 && request.params[2].get_bool())
             filter = filter | ISMINE_WATCH_ONLY;
-        
+
         return ValueFromAmount(pwalletMain->GetLegacyBalance(filter, nMinDepth, account));
     }
 
@@ -1172,7 +1172,7 @@ UniValue sendfrom(const JSONRPCRequest& request)
             "6. \"comment-to\"        (string, optional) An optional comment to store the name of the person or organization \n"
             "                                     to which you're sending the transaction. This is not part of the transaction, \n"
             "                                     it is just kept in your wallet.\n"
-            
+
             "\nResult:\n"
             "\"transactionid\"        (string) The transaction id.\n"
 
@@ -1203,7 +1203,7 @@ UniValue sendfrom(const JSONRPCRequest& request)
         wtx.mapValue["to"] = request.params[5].get_str();
 
     isminefilter filter = ISMINE_SPENDABLE;
-    
+
     EnsureWalletIsUnlocked();
 
     // Check funds
@@ -1236,7 +1236,7 @@ UniValue sendmany(const JSONRPCRequest& request)
             "    }\n"
             "3. minconf                 (numeric, optional, default=1) Only use the balance confirmed at least this many times.\n"
             "4. \"comment\"             (string, optional) A comment\n"
-            
+
             "\nResult:\n"
             "\"transactionid\"          (string) The transaction id for the send. Only 1 transaction is created regardless of \n"
             "                                    the number of addresses.\n"
@@ -1263,7 +1263,7 @@ UniValue sendmany(const JSONRPCRequest& request)
             "    }\n"
             "3. minconf                 (numeric, optional, default=1) Only use the balance confirmed at least this many times.\n"
             "4. \"comment\"             (string, optional) A comment\n"
-            
+
             "\nResult:\n"
             "\"transactionid\"          (string) The transaction id for the send. Only 1 transaction is created regardless of \n"
             "                                    the number of addresses.\n"
@@ -1320,7 +1320,7 @@ UniValue sendmany(const JSONRPCRequest& request)
     }
 
     isminefilter filter = ISMINE_SPENDABLE;
-    
+
     EnsureWalletIsUnlocked();
 
     // Check funds
@@ -1732,7 +1732,7 @@ UniValue listtransactions(const JSONRPCRequest& request)
             "2. count          (numeric, optional, default=10) The number of transactions to return\n"
             "3. from           (numeric, optional, default=0) The number of transactions to skip\n"
             "4. includeWatchonly (bool, optional, default=false) Include transactions to watchonly addresses (see 'importaddress')\n"
-            
+
             "\nResult:\n"
             "[\n"
             "  {\n"
@@ -1783,7 +1783,7 @@ UniValue listtransactions(const JSONRPCRequest& request)
             "2. count          (numeric, optional, default=10) The number of transactions to return\n"
             "3. from           (numeric, optional, default=0) The number of transactions to skip\n"
             "4. includeWatchonly (bool, optional, default=false) Include transactions to watchonly addresses (see 'importaddress')\n"
-            
+
             "\nResult:\n"
             "[\n"
             "  {\n"
@@ -1852,7 +1852,7 @@ UniValue listtransactions(const JSONRPCRequest& request)
     isminefilter filter = ISMINE_SPENDABLE;
     if ( request.params.size() > 3 && request.params[3].get_bool() )
             filter = filter | ISMINE_WATCH_ONLY;
-    
+
     if (nCount < 0)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Negative count");
     if (nFrom < 0)
@@ -2969,7 +2969,7 @@ UniValue setautocombinethreshold(const JSONRPCRequest& request)
             "}\n"
 
             "\nExamples:\n" +
-            HelpExampleCli("setautocombinethreshold", "true 500.12") + HelpExampleRpc("setautocombinethreshold", "true, 500.12"));
+            HelpExampleCli("setautocombinethreshold", "true 500") + HelpExampleRpc("setautocombinethreshold", "true, 500"));
 
     RPCTypeCheck(request.params, {UniValue::VBOOL, UniValue::VNUM});
 
@@ -2983,6 +2983,8 @@ UniValue setautocombinethreshold(const JSONRPCRequest& request)
         nThreshold = AmountFromValue(request.params[1]);
         if (nThreshold < COIN)
             throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("The threshold value cannot be less than %s", FormatMoney(COIN)));
+        if (nThreshold % COIN != 0)
+            throw JSONRPCError(RPC_INVALID_PARAMETER, strprintf("The threshold value must be an integer"));
     }
 
     CWalletDB walletdb(pwalletMain->strWalletFile);

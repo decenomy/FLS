@@ -167,10 +167,10 @@
           <item>
            <widget class="QDoubleSpinBox" name="spinBoxAutoCombineThreshold">
             <property name="decimals">
-             <number>8</number>
+             <number>0</number>
             </property>
             <property name="minimum">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="maximum">
              <number>999999</number>
