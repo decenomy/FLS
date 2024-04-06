@@ -397,6 +397,9 @@ public:
     bool VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth);
 };
 
+// Resync the supply with the txout set
+void ResyncSupply();
+
 /** Rewind chain.
  *  param can contain a number of blocks to rewind or a block hash to rewind to */
 bool RewindBlockIndex(std::string param = "");

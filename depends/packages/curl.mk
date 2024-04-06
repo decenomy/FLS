@@ -7,7 +7,7 @@ $(package)_sha256_hash=816e41809c043ff285e8c0f06a75a1fa250211bbfb2dc0a037eeef39f
 $(package)_dependencies=openssl
 
 define $(package)_set_vars
-  $(package)_config_opts=--with-openssl --disable-shared --enable-static
+  $(package)_config_opts=--with-openssl=$(host_prefix) --disable-shared --enable-static
 endef
 
 define $(package)_config_cmds

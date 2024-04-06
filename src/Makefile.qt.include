@@ -508,7 +508,6 @@ BITCOIN_QT_WALLET_CPP = \
   qt/coincontroltreewidget.cpp \
   qt/editaddressdialog.cpp \
   qt/openuridialog.cpp \
-  qt/paymentrequestplus.cpp \
   qt/paymentserver.cpp \
   qt/recentrequeststablemodel.cpp \
   qt/transactionfilterproxy.cpp \

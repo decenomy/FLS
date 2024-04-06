@@ -1,5 +1,5 @@
 # FROM decenomy/dsw-linux-arm64-builder:latest
-FROM decenomy/dsw-linux-arm64-builder@sha256:e687b911b160c600716dbd1d481f82e3d22c1fbe9cb035097552fe0504d1b78d
+FROM decenomy/dsw-linux-arm64-builder@sha256:ff64795ac415846c3576ba98526266ec0cf8c9810c695e2644f460f6070de678
 
 # ARG for specifying the number of cores
 ARG CPU_CORES=1

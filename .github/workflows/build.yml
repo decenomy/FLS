@@ -3,7 +3,7 @@ name: Build and Extract Files from Docker Container
 on:
   push:
     branches:
-      - master
+      - '*'
 
 jobs:
   build-files-linux-x64:
@@ -16,6 +16,8 @@ jobs:
 
       - name: Build and Extract Files from Docker Container
         run: |
+          # Extract the name of the repository and use it as the ticker value
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
           # Build the Docker image from the Dockerfile in the repository
           docker build \
             --build-arg CPU_CORES=$(nproc) \
@@ -36,9 +38,9 @@ jobs:
           docker cp flits-linux-x64-build-container:/FLS/deploy/linux-x64 release_files/
 
       - name: Archive and Upload Extracted Files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
+          name: release-artifacts-linux-x64
           path: release_files
   build-files-linux-arm64:
     runs-on: ubuntu-22.04
@@ -50,6 +52,8 @@ jobs:
 
       - name: Build and Extract Files from Docker Container
         run: |
+          # Extract the name of the repository and use it as the ticker value
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
           # Build the Docker image from the Dockerfile in the repository
           docker build \
             --build-arg CPU_CORES=$(nproc) \
@@ -70,9 +74,9 @@ jobs:
           docker cp flits-linux-arm64-build-container:/FLS/deploy/linux-arm64 release_files/
 
       - name: Archive and Upload Extracted Files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
+          name: release-artifacts-linux-arm64
           path: release_files
   build-windows-x64:
     runs-on: ubuntu-22.04
@@ -84,6 +88,8 @@ jobs:
 
       - name: Build and Extract Files from Docker Container
         run: |
+          # Extract the name of the repository and use it as the ticker value
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
           # Build the Docker image from the Dockerfile in the repository
           docker build \
             --build-arg CPU_CORES=$(nproc) \
@@ -104,9 +110,9 @@ jobs:
           docker cp flits-windows-x64-build-container:/FLS/deploy/windows-x64 release_files/
 
       - name: Archive and Upload Extracted Files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
+          name: release-artifacts-windows-x64
           path: release_files
   build-macos-x64:
     runs-on: ubuntu-22.04
@@ -118,6 +124,8 @@ jobs:
 
       - name: Build and Extract Files from Docker Container
         run: |
+          # Extract the name of the repository and use it as the ticker value
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
           # Build the Docker image from the Dockerfile in the repository
           docker build \
             --build-arg CPU_CORES=$(nproc) \
@@ -138,7 +146,7 @@ jobs:
           docker cp flits-macos-x64-build-container:/FLS/deploy/macos-x64 release_files/
 
       - name: Archive and Upload Extracted Files
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
+          name: release-artifacts-macos-x64
           path: release_files

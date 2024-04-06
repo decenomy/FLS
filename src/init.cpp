@@ -1530,39 +1530,6 @@ bool AppInit2()
                     break;
                 }
 
-                if (chainActive.Tip() != nullptr) {
-                    if (!chainActive.Tip()->nMoneySupply) {
-                        LOCK(cs_main);
-                        nMoneySupply = 0;
-
-                        std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
-
-                        while (pcursor->Valid()) {
-                            boost::this_thread::interruption_point();
-                            COutPoint key;
-                            Coin coin;
-                            if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
-                                // ----------- burn address scanning -----------
-                                CTxDestination source;
-                                if (ExtractDestination(coin.out.scriptPubKey, source)) {
-                                    const std::string addr = EncodeDestination(source);
-                                    if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
-                                        consensus.mBurnAddresses.at(addr) < chainActive.Height()) {
-                                        pcursor->Next();
-                                        continue;
-                                    }
-                                }
-                                nMoneySupply += coin.out.nValue;
-                            }
-                            pcursor->Next();
-                        }
-
-                        chainActive.Tip()->nMoneySupply = nMoneySupply;
-                    } else {
-                        nMoneySupply = chainActive.Tip()->nMoneySupply.get();
-                    }
-                }
-
                 if (!fReindex) {
                     uiInterface.InitMessage(_("Verifying blocks..."));
 

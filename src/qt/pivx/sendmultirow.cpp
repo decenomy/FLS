@@ -158,11 +158,11 @@ bool SendMultiRow::validate()
 
     // Check input validity
     bool retval = true;
-
+    /*
     // Skip checks for payment request
     if (recipient.paymentRequest.IsInitialized())
         return retval;
-
+    */
     // Check address validity, returns false if it's invalid
     QString address = ui->lineEditAddress->text();
     if (address.isEmpty()){
@@ -191,9 +191,10 @@ bool SendMultiRow::validate()
 SendCoinsRecipient SendMultiRow::getValue()
 {
     // Payment request
+    /*
     if (recipient.paymentRequest.IsInitialized())
         return recipient;
-
+    */
     // Normal payment
     recipient.address = getAddress();
     recipient.label = ui->lineEditDescription->text();

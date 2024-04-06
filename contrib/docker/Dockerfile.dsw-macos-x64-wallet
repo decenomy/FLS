@@ -1,5 +1,5 @@
 #FROM decenomy/dsw-macos-x64-builder:latest
-FROM decenomy/dsw-macos-x64-builder@sha256:bdef2e446c09c7f601cc490841711e8f4ca47e4f81ba4306a8d2ace0b58012db
+FROM decenomy/dsw-macos-x64-builder@sha256:395f7c9cc2ec9767674c0a226ca86855253f8558f94e367d02cfff45fa909f94
 
 # ARG for specifying the number of cores
 ARG CPU_CORES=1

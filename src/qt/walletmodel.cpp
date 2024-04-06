@@ -298,22 +298,7 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
     // Pre-check input data for validity
     Q_FOREACH (const SendCoinsRecipient& rcp, recipients) {
-        if (rcp.paymentRequest.IsInitialized()) { // PaymentRequest...
-            CAmount subtotal = 0;
-            const payments::PaymentDetails& details = rcp.paymentRequest.getDetails();
-            for (int i = 0; i < details.outputs_size(); i++) {
-                const payments::Output& out = details.outputs(i);
-                if (out.amount() <= 0) continue;
-                subtotal += out.amount();
-                const unsigned char* scriptStr = (const unsigned char*)out.script().data();
-                CScript scriptPubKey(scriptStr, scriptStr + out.script().size());
-                vecSend.push_back(CRecipient{scriptPubKey, static_cast<CAmount>(out.amount()), false});
-            }
-            if (subtotal <= 0) {
-                return InvalidAmount;
-            }
-            total += subtotal;
-        } else { // User-entered FLS address / amount:
+        { // User-entered __DSW__ address / amount:
             if (!validateAddress(rcp.address)) {
                 return InvalidAddress;
             }
@@ -405,6 +390,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction& tran
     {
         LOCK2(cs_main, wallet->cs_wallet);
         CWalletTx* newTx = transaction.getTransaction();
+        /*
         QList<SendCoinsRecipient> recipients = transaction.getRecipients();
 
         // Store PaymentRequests in wtx.vOrderForm in wallet.
@@ -419,7 +405,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction& tran
                 newTx->vOrderForm.push_back(std::make_pair("Message", rcp.message.toStdString()));
             }
         }
-
+        */
         CReserveKey* keyChange = transaction.getPossibleKeyChange();
         const CWallet::CommitResult& res = wallet->CommitTransaction(*newTx, *keyChange, g_connman.get());
         if (res.status != CWallet::CommitStatus::OK) {
@@ -436,12 +422,12 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction& tran
     // and emit coinsSent signal for each recipient
     Q_FOREACH (const SendCoinsRecipient& rcp, transaction.getRecipients()) {
         // Don't touch the address book when we have a payment request
-        if (!rcp.paymentRequest.IsInitialized()) {
+        //if (!rcp.paymentRequest.IsInitialized()) {
             CTxDestination address = DecodeDestination(rcp.address.toStdString());
             std::string purpose = AddressBook::AddressBookPurpose::SEND;
             std::string strLabel = rcp.label.toStdString();
             updateAddressBookLabels(address, strLabel, purpose);
-        }
+        //}
         Q_EMIT coinsSent(wallet, rcp, transaction_array);
     }
     emitBalanceChanged(); // update balance immediately, otherwise there could be a short noticeable delay until pollBalanceChanged hits

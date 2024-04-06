@@ -1957,9 +1957,6 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
             nValueIn += view.GetValueIn(tx);
     }
 
-    // track money
-    nMoneySupply -= (nValueOut - nValueIn - nUnspendableValue);
-
     // move best block pointer to prevout block
     view.SetBestBlock(pindex->pprev->GetBlockHash());
 
@@ -2019,6 +2016,15 @@ static int64_t nTimeTotal = 0;
 bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pindex, CCoinsViewCache& view, bool fJustCheck, bool fAlreadyChecked)
 {
     AssertLockHeld(cs_main);
+
+    int nHeight = pindex->nHeight;
+
+    static auto& mapCheckpoints = *(Params().Checkpoints().mapCheckpoints);
+    static auto nLastCheckpointHeight = std::max_element(
+        mapCheckpoints.begin(), mapCheckpoints.end(),
+        [](const std::pair<const int, uint256>& a, const std::pair<const int, uint256>& b) { return a.first < b.first; }
+    )->first;
+
     // Check it again in case a previous version let a bad block in
     if (!fAlreadyChecked && !CheckBlock(block, state, !fJustCheck, !fJustCheck)) {
         if (state.CorruptionPossible()) {
@@ -2125,6 +2131,20 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         nValueOut += tx.GetValueOut();
         nUnspendableValue += tx.GetUnspendableValueOut();
 
+        // ----------- burn address scanning -----------
+        if(nHeight > nLastCheckpointHeight) {
+            for (unsigned int i = 0; i < tx.vout.size(); i++) {
+                CTxDestination source;
+                if (tx.vout[i].scriptPubKey.IsNormalPaymentScript() && ExtractDestination(tx.vout[i].scriptPubKey, source)) {
+                    const std::string addr = EncodeDestination(source);
+                    if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
+                        consensus.mBurnAddresses.at(addr) < nHeight) {
+                        nUnspendableValue += tx.vout[i].nValue;
+                    }
+                }
+            }
+        }
+
         CTxUndo undoDummy;
         if (i > 0) {
             blockundo.vtxundo.emplace_back();
@@ -2190,8 +2210,35 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     // add this block to the view's block chain
     view.SetBestBlock(pindex->GetBlockHash());
 
-    // Update FLS money supply
-    nMoneySupply += (nValueOut - nValueIn - nUnspendableValue);
+    // Recalculate the money supply taking in account the existent burn addresses
+    if(nHeight == nLastCheckpointHeight)
+    {
+        std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
+
+        while (pcursor->Valid()) {
+            boost::this_thread::interruption_point();
+            COutPoint key;
+            Coin coin;
+            if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
+                // ----------- burn address scanning -----------
+                CTxDestination source;
+                if (ExtractDestination(coin.out.scriptPubKey, source)) {
+                    const std::string addr = EncodeDestination(source);
+                    if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
+                        consensus.mBurnAddresses.at(addr) < nHeight) 
+                    {
+                        nUnspendableValue += coin.out.nValue;
+                        pcursor->Next();
+                        continue;
+                    }
+                }
+            }
+            pcursor->Next();
+        }
+    }
+
+    // Update __DSW__ money supply
+    pindex->nMoneySupply = pindex->pprev->nMoneySupply.get() + (nValueOut - nValueIn - nUnspendableValue);
 
     int64_t nTime3 = GetTimeMicros();
     nTimeIndex += nTime3 - nTime2;
@@ -2409,9 +2456,6 @@ bool static DisconnectTip(CValidationState& state)
     // block that were added back and cleans up the mempool state.
     mempool.UpdateTransactionsFromBlock(vHashUpdate);
 
-    // Updates money supply
-    pindexDelete->pprev->nMoneySupply = nMoneySupply;
-
     // Update chainActive and related variables.
     UpdateTip(pindexDelete->pprev);
     // Let wallets know transactions went from 1-confirmed to
@@ -2483,9 +2527,6 @@ bool static ConnectTip(CValidationState& state, CBlockIndex* pindexNew, const CB
 
     // Remove conflicting transactions from the mempool.
     mempool.removeForBlock(pblock->vtx, pindexNew->nHeight, txConflicted, !IsInitialBlockDownload());
-
-    // Updates money supply
-    pindexNew->nMoneySupply = nMoneySupply;
 
     // Update chainActive & related variables.
     UpdateTip(pindexNew);
@@ -4048,7 +4089,44 @@ bool CVerifyDB::VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth
 
     LogPrintf("No coin database inconsistencies in last %i blocks (%i transactions)\n", chainHeight - pindexState->nHeight, nGoodTransactions);
 
+    ResyncSupply();
+
     return true;
+}
+
+void ResyncSupply()
+{
+    LOCK(cs_main);
+
+    if (chainActive.Tip() == NULL || chainActive.Tip()->pprev == NULL)
+        return;
+
+    CAmount nMoneySupply = 0;
+    auto& consensus = Params().GetConsensus();
+
+    std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
+
+    while (pcursor->Valid()) {
+        boost::this_thread::interruption_point();
+        COutPoint key;
+        Coin coin;
+        if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
+            // ----------- burn address scanning -----------
+            CTxDestination source;
+            if (ExtractDestination(coin.out.scriptPubKey, source)) {
+                const std::string addr = EncodeDestination(source);
+                if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
+                    consensus.mBurnAddresses.at(addr) < chainActive.Height()) {
+                    pcursor->Next();
+                    continue;
+                }
+            }
+            nMoneySupply += coin.out.nValue;
+        }
+        pcursor->Next();
+    }
+
+    chainActive.Tip()->nMoneySupply = nMoneySupply;
 }
 
 bool RewindBlockIndex(std::string param)
@@ -4193,6 +4271,8 @@ bool RewindBlockIndex(std::string param)
     if (!FlushStateToDisk(state, FLUSH_STATE_ALWAYS)) {
         return false;
     }
+
+    ResyncSupply();
 
     return true;
 }

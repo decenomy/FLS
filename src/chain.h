@@ -217,9 +217,8 @@ public:
     std::vector<unsigned char> vStakeModifier{};
     unsigned int nFlags{0};
 
-    //! (memory only) MoneySupply for this block.
-    //! Will be nullopt if there was no calculations made into it.
-    Optional<CAmount> nMoneySupply{nullopt};
+    //! Money supply at this block.
+    Optional<CAmount> nMoneySupply{0};
 
     //! block header
     int nVersion{0};
