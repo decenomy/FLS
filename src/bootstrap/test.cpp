@@ -36,21 +36,21 @@ int main() {
         }
     }
     */
-    
+
     const std::string url = "https://bootstraps.decenomy.net/"+std::string(COIN)+"/bootstrap.zip";
     //const std::string url = std::string(BOOTSTRAP_URL)+std::string(TICKER)+"/bootstrap.zip";
     const std::string outputFileName = "bootstrap.zip";
     const std::string extractPath = "bootstrap_";
 
     std::cout << "Download: " << url << std::endl;
+    
+    if(Bootstrap::isDirectory(extractPath))
+        Bootstrap::rmDirectory(extractPath);
 
-    if(BOOTSTRAP::isDirectory(extractPath))
-        BOOTSTRAP::rmDirectory(extractPath);
-
-    if (BOOTSTRAP::DownloadFile(url, outputFileName)) {
+    if (Bootstrap::DownloadFile(url, outputFileName)) {
         std::cout << "File downloaded successfully." << std::endl;
 
-        if (BOOTSTRAP::extractZip(outputFileName, extractPath)) {
+        if (Bootstrap::extractZip(outputFileName, extractPath)) {
             std::cout << "Zip file extracted successfully." << std::endl;
         } else {
             std::cerr << "Error extracting zip file." << std::endl;

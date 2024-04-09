@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 #include <sys/stat.h>
 
 #include <boost/filesystem.hpp>
@@ -17,10 +19,14 @@
 #define TICKER "FLS"
 #endif
 
-class BOOTSTRAP{
+#define APPLE_CA_PATH "/etc/ssl/cert.pem"
+#define LINUX_CA_PATH "/etc/ssl/certs/ca-certificates.crt"
+#define WIN_CA_PATH ""
+
+class Bootstrap{
 
 public:
-
+	static bool init(const char* path);
 	static bool rmDirectory(const std::string& path);
 	static bool isDirectory(const std::string& path);
 	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);

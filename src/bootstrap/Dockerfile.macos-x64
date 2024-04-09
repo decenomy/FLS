@@ -1,0 +1,10 @@
+FROM decenomy/dsw-macos-x64-builder@sha256:395f7c9cc2ec9767674c0a226ca86855253f8558f94e367d02cfff45fa909f94
+
+# Set up a development tools directory
+WORKDIR /home/app
+
+COPY . /home/app
+
+RUN macos=true make bootstrap
+
+RUN export PATH="/wrapped:$PATH"

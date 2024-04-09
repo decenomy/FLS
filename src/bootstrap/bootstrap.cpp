@@ -4,7 +4,7 @@
 namespace fs = boost::filesystem;
 static bool log_flag = false;
 
-bool BOOTSTRAP::rmDirectory(const std::string& directory_path) {
+bool Bootstrap::rmDirectory(const std::string& directory_path) {
 
     try {
         // Check if the directory exists
@@ -23,7 +23,7 @@ bool BOOTSTRAP::rmDirectory(const std::string& directory_path) {
     return true;
 }
 
-bool BOOTSTRAP::isDirectory(const std::string& directory_path) {
+bool Bootstrap::isDirectory(const std::string& directory_path) {
 
     if (fs::exists(directory_path)) return true;
 
@@ -31,7 +31,7 @@ bool BOOTSTRAP::isDirectory(const std::string& directory_path) {
 }
 
 // Callback function to write downloaded data to a file
-size_t BOOTSTRAP::WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+size_t Bootstrap::WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     size_t total_size = size * nmemb;
     std::ofstream* file = static_cast<std::ofstream*>(userp);
     file->write(static_cast<const char*>(contents), total_size);
@@ -47,8 +47,8 @@ int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
     if(!log_flag && duration.count() % 2 == 0){
         log_flag = true;
-        std::printf("-bootstrap: Download: %d%%\n", (uint8_t)progress);
-        //LogPrintf("-bootstrap: Download: %d%%\n", (uint8_t)progress);
+        std::printf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
+        //LogPrintf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
         //uiInterface.ShowProgress(_("Download: "), (uint8_t)progress);    
     }else if(duration.count() % 2 != 0) log_flag = false;
     
@@ -56,7 +56,7 @@ int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal
 }
 
 // Function to download a file using libcurl
-bool BOOTSTRAP::DownloadFile(const std::string& url, const std::string& outputFileName) {
+bool Bootstrap::DownloadFile(const std::string& url, const std::string& outputFileName) {
     CURL* curl = curl_easy_init();
     if (!curl) {
         //std::cerr << "Error initializing libcurl." << std::endl;
@@ -87,6 +87,19 @@ bool BOOTSTRAP::DownloadFile(const std::string& url, const std::string& outputFi
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
     curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
 
+    #if defined(__APPLE__)
+        std::cout << "apple ca path: " << (const char*)APPLE_CA_PATH << std::endl;
+        curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)APPLE_CA_PATH);
+    #elif defined(__linux__)
+        std::cout << "linux ca path: " << (const char*)LINUX_CA_PATH << std::endl;
+        curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)LINUX_CA_PATH);
+    #elif defined(_WIN32)
+        std::cout << "windows ca path: " << (const char*)WIN_CA_PATH << std::endl;
+        curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)WIN_CA_PATH);
+    #else
+        std::cerr << "OS not recognized, CA Path not defined" << std::endl;
+    #endif
+
     CURLcode res = curl_easy_perform(curl);
 
     curl_easy_cleanup(curl);
@@ -100,7 +113,7 @@ bool BOOTSTRAP::DownloadFile(const std::string& url, const std::string& outputFi
     return true;
 }
 
-bool BOOTSTRAP::extractZip(const std::string& zipFilePath, const std::string& outputFolderPath) {
+bool Bootstrap::extractZip(const std::string& zipFilePath, const std::string& outputFolderPath) {
 
     // Open the zip file
     unzFile zipFile = unzOpen(zipFilePath.c_str());
@@ -181,7 +194,7 @@ bool BOOTSTRAP::extractZip(const std::string& zipFilePath, const std::string& ou
 
 }
 
-bool BOOTSTRAP::ensureOutputFolder(const std::string& outputPath) {
+bool Bootstrap::ensureOutputFolder(const std::string& outputPath) {
     try {
         if (!fs::exists(outputPath)) {
             // Create the directory if it doesn't exist
@@ -200,7 +213,7 @@ bool BOOTSTRAP::ensureOutputFolder(const std::string& outputPath) {
     return true;
 }
 
-bool BOOTSTRAP::endsWithSlash(const std::string& str) {
+bool Bootstrap::endsWithSlash(const std::string& str) {
     // Check if the string ends with '/'
     return !str.empty() && str.back() == '/';
 }

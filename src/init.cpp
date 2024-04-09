@@ -1240,13 +1240,13 @@ bool AppInit2()
 
                   LogPrintf("-bootstrap: Download: %s\n", url.c_str());
 
-                  if(BOOTSTRAP::isDirectory(extractPath))
-                      BOOTSTRAP::rmDirectory(extractPath);
+                  if(Bootstrap::isDirectory(extractPath))
+                      Bootstrap::rmDirectory(extractPath);
 
-                  if (BOOTSTRAP::DownloadFile(url, outputFileName)) {
+                  if (Bootstrap::DownloadFile(url, outputFileName)) {
                       LogPrintf("-bootstrap: File downloaded successfully \n");
 
-                      if (BOOTSTRAP::extractZip(outputFileName, extractPath)) {
+                      if (Bootstrap::extractZip(outputFileName, extractPath)) {
                           LogPrintf("-bootstrap: Zip file extracted successfully \n");
                           try {
                               fs::rename(extractPath+"/blocks", blocksDir);
