@@ -39,7 +39,7 @@ size_t Bootstrap::WriteCallback(void* contents, size_t size, size_t nmemb, void*
 }
 
 // Define a function to handle progress updates
-int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+int Bootstrap::ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
     // Calculate progress percentage
     double progress = (dlnow > 0) ? (dlnow / dltotal) * 100.0 : 0.0;
 
@@ -56,7 +56,8 @@ int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal
 }
 
 // Function to download a file using libcurl
-bool Bootstrap::DownloadFile(const std::string& url, const std::string& outputFileName) {
+bool Bootstrap::DownloadFile(const std::string& url, const std::string& outputFileName, curl_progress_callback func) {
+
     CURL* curl = curl_easy_init();
     if (!curl) {
         //std::cerr << "Error initializing libcurl." << std::endl;
@@ -85,7 +86,10 @@ bool Bootstrap::DownloadFile(const std::string& url, const std::string& outputFi
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &outputFile);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+    if(func == nullptr)
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, ProgressCallback);
+    else
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, func);
 
     #if defined(__APPLE__)
         std::cout << "apple ca path: " << (const char*)APPLE_CA_PATH << std::endl;

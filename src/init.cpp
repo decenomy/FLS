@@ -884,6 +884,28 @@ static std::string ResolveErrMsg(const char * const optname, const std::string& 
     return strprintf(_("Cannot resolve -%s address: '%s'"), optname, strBind);
 }
 
+// Define the progress callback function
+static int downloadProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+
+    // Calculate progress percentage
+    double progress = (dlnow > 0) ? (dlnow / dltotal) * 100.0 : 0.0;
+
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
+    static bool log_flag = false; // Declare log_flag as static
+    if (!log_flag && duration.count() % 2 == 0) {
+        log_flag = true;
+        //std::printf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
+        LogPrintf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
+        uiInterface.ShowProgress(_("Download: "), (uint8_t)progress);    
+    } else if (duration.count() % 2 != 0) {
+        log_flag = false;
+    }
+
+    return 0;
+}
+
+
 void InitLogging()
 {
     //g_logger->m_print_to_file = !IsArgNegated("-debuglogfile");
@@ -1243,7 +1265,7 @@ bool AppInit2()
                   if(Bootstrap::isDirectory(extractPath))
                       Bootstrap::rmDirectory(extractPath);
 
-                  if (Bootstrap::DownloadFile(url, outputFileName)) {
+                  if (Bootstrap::DownloadFile(url, outputFileName, downloadProgressCallback)) {
                       LogPrintf("-bootstrap: File downloaded successfully \n");
 
                       if (Bootstrap::extractZip(outputFileName, extractPath)) {

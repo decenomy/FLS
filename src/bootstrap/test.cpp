@@ -2,6 +2,26 @@
 
 #include "bootstrap.h"
 
+// Define the progress callback function
+static int downloadProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+
+    // Calculate progress percentage
+    double progress = (dlnow > 0) ? (dlnow / dltotal) * 100.0 : 0.0;
+
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
+    static bool log_flag = false; // Declare log_flag as static
+    if (!log_flag && duration.count() % 2 == 0) {
+        log_flag = true;
+        std::printf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
+        // LogPrintf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
+        // uiInterface.ShowProgress(_("Download: "), (uint8_t)progress);    
+    } else if (duration.count() % 2 != 0) {
+        log_flag = false;
+    }
+
+    return 0;
+}
 
 int main() {
 
@@ -43,11 +63,11 @@ int main() {
     const std::string extractPath = "bootstrap_";
 
     std::cout << "Download: " << url << std::endl;
-    
+
     if(Bootstrap::isDirectory(extractPath))
         Bootstrap::rmDirectory(extractPath);
 
-    if (Bootstrap::DownloadFile(url, outputFileName)) {
+    if (Bootstrap::DownloadFile(url, outputFileName, downloadProgressCallback)) {
         std::cout << "File downloaded successfully." << std::endl;
 
         if (Bootstrap::extractZip(outputFileName, extractPath)) {
