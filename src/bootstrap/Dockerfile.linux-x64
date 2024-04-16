@@ -1,0 +1,10 @@
+FROM decenomy/dsw-linux-x64-builder@sha256:49894f78ac27318ed1c018c80e674f99e6b45ac382c9b98a2aa0c94d8bd755a4
+
+# Set up a development tools directory
+WORKDIR /home/app
+
+COPY . /home/app
+
+RUN make docker_linux_test
+
+RUN export PATH="/wrapped:$PATH"

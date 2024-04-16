@@ -885,7 +885,7 @@ static std::string ResolveErrMsg(const char * const optname, const std::string& 
 }
 
 // Define the progress callback function
-static int downloadProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+static int DownloadProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
 
     // Calculate progress percentage
     double progress = (dlnow > 0) ? (dlnow / dltotal) * 100.0 : 0.0;
@@ -1265,7 +1265,7 @@ bool AppInit2()
                   if(Bootstrap::isDirectory(extractPath))
                       Bootstrap::rmDirectory(extractPath);
 
-                  if (Bootstrap::DownloadFile(url, outputFileName, downloadProgressCallback)) {
+                  if (Bootstrap::DownloadFile(url, outputFileName, DownloadProgressCallback)) {
                       LogPrintf("-bootstrap: File downloaded successfully \n");
 
                       if (Bootstrap::extractZip(outputFileName, extractPath)) {

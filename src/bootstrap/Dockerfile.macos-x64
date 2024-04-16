@@ -5,6 +5,6 @@ WORKDIR /home/app
 
 COPY . /home/app
 
-RUN macos=true make bootstrap
+RUN make docker_macos_test
 
 RUN export PATH="/wrapped:$PATH"

@@ -83,6 +83,7 @@ bool Bootstrap::DownloadFile(const std::string& url, const std::string& outputFi
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L); // Verify the peer's SSL certificate
+    curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &outputFile);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
@@ -95,11 +96,11 @@ bool Bootstrap::DownloadFile(const std::string& url, const std::string& outputFi
         std::cout << "apple ca path: " << (const char*)APPLE_CA_PATH << std::endl;
         curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)APPLE_CA_PATH);
     #elif defined(__linux__)
-        std::cout << "linux ca path: " << (const char*)LINUX_CA_PATH << std::endl;
-        curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)LINUX_CA_PATH);
+        //std::cout << "linux ca path: " << (const char*)LINUX_CA_PATH << std::endl;
+        //curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)LINUX_CA_PATH);
     #elif defined(_WIN32)
-        std::cout << "windows ca path: " << (const char*)WIN_CA_PATH << std::endl;
-        curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)WIN_CA_PATH);
+        ///std::cout << "windows ca path: " << (const char*)WIN_CA_PATH << std::endl;
+        //curl_easy_setopt(curl, CURLOPT_CAINFO, (const char*)WIN_CA_PATH);
     #else
         std::cerr << "OS not recognized, CA Path not defined" << std::endl;
     #endif
