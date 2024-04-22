@@ -25,7 +25,7 @@ jobs:
             --build-arg NAME=Flits \
             --build-arg BASE_NAME=flits \
             --build-arg TARGET=${{ github.ref}} \
-            -t flits-linux-x64-build \
+            -t linux-x64-build-img \
             -f contrib/docker/Dockerfile.dsw-linux-x64-wallet .
 
           # Start the container (if it's not already running)
@@ -61,7 +61,7 @@ jobs:
             --build-arg NAME=Flits \
             --build-arg BASE_NAME=flits \
             --build-arg TARGET=${{ github.ref}} \
-            -t flits-linux-arm64-build \
+            -t linux-arm64-build-img \
             -f contrib/docker/Dockerfile.dsw-linux-arm64-wallet .
 
           # Start the container (if it's not already running)
@@ -97,7 +97,7 @@ jobs:
             --build-arg NAME=Flits \
             --build-arg BASE_NAME=flits \
             --build-arg TARGET=${{ github.ref}} \
-            -t flits-windows-x64-build \
+            -t windows-x64-build-img \
             -f contrib/docker/Dockerfile.dsw-windows-x64-wallet .
 
           # Start the container (if it's not already running)
@@ -133,7 +133,7 @@ jobs:
             --build-arg NAME=Flits \
             --build-arg BASE_NAME=flits \
             --build-arg TARGET=${{ github.ref}} \
-            -t flits-macos-x64-build \
+            -t macos-x64-build-img \
             -f contrib/docker/Dockerfile.dsw-macos-x64-wallet .
 
           # Start the container (if it's not already running)
