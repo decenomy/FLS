@@ -36,6 +36,7 @@
 #include "netbase.h"
 #include "net.h"
 #include "policy/policy.h"
+#include "rewards.h"
 #include "rpc/server.h"
 #include "script/standard.h"
 #include "scheduler.h"
@@ -238,6 +239,9 @@ void PrepareShutdown()
 
     {
         LOCK(cs_main);
+
+        CRewards::Shutdown();
+
         if (pcoinsTip != NULL) {
             FlushStateToDisk();
 
@@ -1084,6 +1088,12 @@ bool AppInit2()
 
     // ********************************************************* Step 4: application initialization: dir lock, daemonize, pidfile, debug log
 
+    fReindex = GetBoolArg("-reindex", false);
+
+    // Initialize dynamic rewards
+    if(!CRewards::Init(fReindex)) 
+        return false;
+
     // Initialize elliptic curve code
     RandomInit();
     ECC_Start();
@@ -1262,8 +1272,7 @@ bool AppInit2()
 
                   LogPrintf("-bootstrap: Download: %s\n", url.c_str());
 
-                  if(Bootstrap::isDirectory(extractPath))
-                      Bootstrap::rmDirectory(extractPath);
+                  Bootstrap::rmDirectory(extractPath);
 
                   if (Bootstrap::DownloadFile(url, outputFileName, DownloadProgressCallback)) {
                       LogPrintf("-bootstrap: File downloaded successfully \n");
@@ -1274,18 +1283,22 @@ bool AppInit2()
                               fs::rename(extractPath+"/blocks", blocksDir);
                               fs::rename(extractPath+"/chainstate", chainstateDir);
                               LogPrintf("-bootstrap: Folders moved successfully \n");
-                              fs::remove(extractPath);
                           } catch (const std::exception& e) {
                               LogPrintf("-bootstrap: Error moving folder: %s\n",e.what());
                           }
+
                       } else {
                           LogPrintf("-bootstrap: Error extracting zip file");
                       }
 
-                      fs::remove(outputFileName);
+                      Bootstrap::rmDirectory(extractPath);
+                      
                   } else {
                       LogPrintf("-bootstrap: Error downloading file");
                   }
+
+                  if(fs::exists(outputFileName))
+                  		fs::remove(outputFileName);
                 }
                 #else
                 LogPrintf("-bootstrap: not enabled\n");
@@ -1459,8 +1472,6 @@ bool AppInit2()
 #endif
 
     // ********************************************************* Step 7: load block chain
-
-    fReindex = GetBoolArg("-reindex", false);
 
     // Create blocks directory if it doesn't already exist
     fs::create_directories(GetDataDir() / "blocks");

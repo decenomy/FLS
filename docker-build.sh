@@ -3,7 +3,7 @@
 # Check if all required arguments are provided
 if [ $# -ne 6 ]; then
     echo "Usage: $0 <TICKER> <NAME> <BASE_NAME> <TARGET> <VERSION> <ARCHITECTURE>"
-    echo "Usage: $0 DSW __Decenomy__ __decenomy__ bootstrap 3.0.0.0 Linux"
+    echo "Usage: $0 DSW __Decenomy__ __decenomy__ develop 3.0.0.0 Linux"
     exit 1
 fi
 

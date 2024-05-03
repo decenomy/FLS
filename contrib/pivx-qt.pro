@@ -107,6 +107,7 @@ HEADERS += src/activemasternode.h \
            src/protocol.h \
            src/pubkey.h \
            src/random.h \
+           src/rewards.h \
            src/rpcclient.h \
            src/rpcprotocol.h \
            src/rpcserver.h \
@@ -407,6 +408,7 @@ SOURCES += src/activemasternode.cpp \
            src/pubkey.cpp \
            src/random.cpp \
            src/rest.cpp \
+           src/rewards.cpp \
            src/rpcblockchain.cpp \
            src/rpcclient.cpp \
            src/rpcdump.cpp \

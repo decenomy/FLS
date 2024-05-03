@@ -1,6 +1,7 @@
 #define COIN "777"
 
 #include "bootstrap.h"
+namespace fs = boost::filesystem;
 
 // Define the progress callback function
 static int downloadProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
@@ -13,7 +14,7 @@ static int downloadProgressCallback(void *clientp, double dltotal, double dlnow,
     static bool log_flag = false; // Declare log_flag as static
     if (!log_flag && duration.count() % 2 == 0) {
         log_flag = true;
-        std::printf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
+        std::printf("-bootstrap: Download: %d%%\n", (uint8_t)progress);
         // LogPrintf("-Bootstrap: Download: %d%%\n", (uint8_t)progress);
         // uiInterface.ShowProgress(_("Download: "), (uint8_t)progress);    
     } else if (duration.count() % 2 != 0) {
@@ -75,9 +76,15 @@ int main() {
         } else {
             std::cerr << "Error extracting zip file." << std::endl;
         }
+
+        if(Bootstrap::isDirectory(extractPath))
+            Bootstrap::rmDirectory(extractPath);
+    
     } else {
         std::cerr << "Error downloading file." << std::endl;
     }
+
+    fs::remove(outputFileName);
 
     return 0;
 }

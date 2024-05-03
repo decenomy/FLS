@@ -298,27 +298,27 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
     // Pre-check input data for validity
     Q_FOREACH (const SendCoinsRecipient& rcp, recipients) {
-        { // User-entered __DSW__ address / amount:
-            if (!validateAddress(rcp.address)) {
-                return InvalidAddress;
-            }
-            if (rcp.amount <= 0) {
-                return InvalidAmount;
-            }
-            setAddress.insert(rcp.address);
-            ++nAddresses;
-
-            CScript scriptPubKey;
-            CTxDestination out = DecodeDestination(rcp.address.toStdString());
-
-            // Regular P2PK or P2PKH
-            scriptPubKey = GetScriptForDestination(out);
-
-            vecSend.push_back(CRecipient{scriptPubKey, rcp.amount, false});
-
-            total += rcp.amount;
+        // User-entered __DSW__ address / amount:
+        if (!validateAddress(rcp.address)) {
+            return InvalidAddress;
         }
+        if (rcp.amount <= 0) {
+            return InvalidAmount;
+        }
+        setAddress.insert(rcp.address);
+        ++nAddresses;
+
+        CScript scriptPubKey;
+        CTxDestination out = DecodeDestination(rcp.address.toStdString());
+
+        // Regular P2PK or P2PKH
+        scriptPubKey = GetScriptForDestination(out);
+
+        vecSend.push_back(CRecipient{scriptPubKey, rcp.amount, false});
+
+        total += rcp.amount;
     }
+    
     if (setAddress.size() != nAddresses) {
         return DuplicateAddress;
     }

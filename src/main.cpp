@@ -34,6 +34,7 @@
 #include "policy/policy.h"
 #include "pow.h"
 #include "reverse_iterate.h"
+#include "rewards.h"
 #include "spork.h"
 #include "sporkdb.h"
 #include "txdb.h"
@@ -1971,6 +1972,9 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
         }
     }
 
+    // Dynamic rewards management
+    if(!CRewards::DisconnectBlock(pindex)) return DISCONNECT_UNCLEAN;
+
     return fClean ? DISCONNECT_OK : DISCONNECT_UNCLEAN;
 }
 
@@ -2163,7 +2167,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs]\n", (unsigned)block.vtx.size(), 0.001 * (nTime1 - nTimeStart), 0.001 * (nTime1 - nTimeStart) / block.vtx.size(), nInputs <= 1 ? 0 : 0.001 * (nTime1 - nTimeStart) / (nInputs - 1), nTimeConnect * 0.000001);
 
     //PoW phase redistributed fees to miner. PoS stage destroys fees.
-    CAmount nExpectedMint = CMasternode::GetBlockValue(pindex->pprev->nHeight + 1);
+    CAmount nExpectedMint = CRewards::GetBlockValue(pindex->pprev->nHeight + 1);
     if (block.IsProofOfWork())
         nExpectedMint += nFees;
 
@@ -2263,6 +2267,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
             pmn->lastPaid = pindex->GetBlockTime();
         }
     }
+
+    // Dynamic rewards management
+    if(!CRewards::ConnectBlock(pindex, nMint, view)) return false;
 
     return true;
 }
@@ -4110,7 +4117,7 @@ void ResyncSupply()
         boost::this_thread::interruption_point();
         COutPoint key;
         Coin coin;
-        if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
+        if (pcursor->GetKey(key) && pcursor->GetValue(coin) && !coin.IsSpent()) {
             // ----------- burn address scanning -----------
             CTxDestination source;
             if (ExtractDestination(coin.out.scriptPubKey, source)) {

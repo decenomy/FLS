@@ -11,6 +11,7 @@
 #include "masternode-sync.h"
 #include "masternodeman.h"
 #include "netmessagemaker.h"
+#include "rewards.h"
 #include "spork.h"
 #include "sync.h"
 #include "util.h"
@@ -327,7 +328,7 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, const CBloc
             txNew.vout.resize(2);
             txNew.vout[1].scriptPubKey = payee;
             txNew.vout[1].nValue = masternodePayment;
-            txNew.vout[0].nValue = CMasternode::GetBlockValue(pindexPrev->nHeight + 1) - masternodePayment;
+            txNew.vout[0].nValue = CRewards::GetBlockValue(pindexPrev->nHeight + 1) - masternodePayment;
         }
 
         CTxDestination address1;

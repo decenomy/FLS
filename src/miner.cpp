@@ -21,6 +21,7 @@
 #include "pow.h"
 #include "primitives/block.h"
 #include "primitives/transaction.h"
+#include "rewards.h"
 #include "timedata.h"
 #include "util.h"
 #include "utilmoneystr.h"
@@ -114,7 +115,7 @@ bool CreateCoinbaseTx(CBlock* pblock, const CScript& scriptPubKeyIn, CBlockIndex
     txNew.vin[0].scriptSig = CScript() << pindexPrev->nHeight + 1 << OP_0;
     // If no payee was detected, then the whole block value goes to the first output.
     if (txNew.vout.size() == 1) {
-        txNew.vout[0].nValue = CMasternode::GetBlockValue(pindexPrev->nHeight + 1);
+        txNew.vout[0].nValue = CRewards::GetBlockValue(pindexPrev->nHeight + 1);
     }
 
     pblock->vtx.emplace_back(txNew);

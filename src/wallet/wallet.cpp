@@ -15,6 +15,7 @@
 #include "masternode-payments.h"
 #include "masternodeconfig.h"
 #include "policy/policy.h"
+#include "rewards.h"
 #include "script/sign.h"
 #include "spork.h"
 #include "util.h"
@@ -2521,7 +2522,7 @@ bool CWallet::CreateCoinStake(
         nCredit += stakeInput.GetValue();
 
         // Add block reward to the credit
-        nCredit += CMasternode::GetBlockValue(pindexPrev->nHeight + 1);
+        nCredit += CRewards::GetBlockValue(pindexPrev->nHeight + 1);
         CAmount nMasternodeCredit = CMasternode::GetMasternodePayment(pindexPrev->nHeight + 1);
 
         // Create the output transaction(s)

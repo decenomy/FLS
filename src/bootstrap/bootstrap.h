@@ -15,6 +15,11 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include "minizip/unzip.h"
+#ifdef BOOTSTRAPTEST
+	#include "logging.h"
+#else
+	#include "../logging.h"
+#endif
 
 #ifndef TICKER
 #define TICKER "FLS"
