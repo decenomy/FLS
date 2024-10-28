@@ -17,7 +17,7 @@ services:
           apt-get update && \
           apt-get install -y wget curl unzip && \
           rm -rf /var/lib/apt/lists/* && \
-          echo $(curl -s https://api.github.com/repos/decenomy/__DSW__/releases/latest | grep "browser_download_url" | grep "Linux-x64.zip" | cut -d '"' -f 4) > latest_release_url && \
+          echo $(curl -s https://api.github.com/repos/decenomy/__DSW__/releases/latest | grep "browser_download_url" | grep -E "Linux(-x64)?\.zip" | cut -d '"' -f 4) > latest_release_url && \
           echo "Latest release URL: $(cat latest_release_url)" && \
           echo $(basename "$(cat latest_release_url)") > latest_filename && \
           echo "Latest filename: $(cat latest_filename)" && \
