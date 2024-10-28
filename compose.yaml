@@ -12,17 +12,22 @@ services:
       - bash
       - -c
       - |
-        apt-get update && \
-        apt-get install -y wget curl unzip && \
-        rm -rf /var/lib/apt/lists/* && \
-        echo $(curl -s https://api.github.com/repos/decenomy/__DSW__/releases/latest | grep "browser_download_url" | grep "Linux-x64.zip" | cut -d '"' -f 4) > latest_release_url && \
-        echo "Latest release URL: $(cat latest_release_url)" && \
-        echo $(basename "$(cat latest_release_url)") > latest_filename && \
-        echo "Latest filename: $(cat latest_filename)" && \
-        wget "$(cat latest_release_url)" && \
-        unzip -q "$(cat latest_filename)" && \
-        rm "$(cat latest_filename)" && \
-        rm latest_filename && \
-        rm latest_release_url && \
-        mv __decenomy__* /usr/local/bin && \
+        if [ ! -f /usr/local/bin/__decenomy__d ]; then
+          echo "__Decenomy__ binary not found, setting up environment..."
+          apt-get update && \
+          apt-get install -y wget curl unzip && \
+          rm -rf /var/lib/apt/lists/* && \
+          echo $(curl -s https://api.github.com/repos/decenomy/__DSW__/releases/latest | grep "browser_download_url" | grep "Linux-x64.zip" | cut -d '"' -f 4) > latest_release_url && \
+          echo "Latest release URL: $(cat latest_release_url)" && \
+          echo $(basename "$(cat latest_release_url)") > latest_filename && \
+          echo "Latest filename: $(cat latest_filename)" && \
+          wget "$(cat latest_release_url)" && \
+          unzip -q "$(cat latest_filename)" && \
+          rm "$(cat latest_filename)" && \
+          rm latest_filename && \
+          rm latest_release_url && \
+          mv __decenomy__* /usr/local/bin;
+        else
+          echo "__Decenomy__ binary already installed, skipping setup."
+        fi
         __decenomy__d
