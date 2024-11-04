@@ -133,6 +133,8 @@ public:
         return false;
     }
 
+    bool exportActiveMasternodes(std::string filename);
+
 private:
     std::vector<CMasternodeEntry> entries;
 };
