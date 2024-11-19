@@ -30,8 +30,6 @@ enum SporkId : int32_t {
     SPORK_112_MASTERNODE_LAST_PAID_V2           = 10111,
     SPORK_114_MN_PAYMENT_V2                     = 10113,
     SPORK_115_MN_COLLATERAL_WINDOW              = 10114,
-    SPORK_116_TOT_SPLY_TRGT_EMISSION            = 10115,
-    SPORK_117_CIRC_SPLY_TRGT_EMISSION           = 10116,
     SPORK_118_MIN_BASE_FEE                      = 10117,
     SPORK_119_MIN_ECON_FEE                      = 10118,
 
@@ -50,6 +48,8 @@ enum SporkId : int32_t {
     SPORK_18_NOOP                               = 10017,
     SPORK_19_NOOP                               = 10018,
     SPORK_113_NOOP                              = 10112,
+    SPORK_116_NOOP                              = 10115,
+    SPORK_117_NOOP                              = 10116,
     SPORK_INVALID                               = -1
 };
 

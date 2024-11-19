@@ -9,6 +9,9 @@
 
 #include "main.h"
 
+static const int64_t TOT_SPLY_TRGT_EMISSION = 50000;
+static const int64_t CIRC_SPLY_TRGT_EMISSION = 100000;
+
 class CBlockchainStatus
 {
 public:

@@ -286,9 +286,9 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCac
             oss << "nCirculatingSupply without staked coins: " << FormatMoney(nCirculatingSupply) << std::endl;
 
             // calculate target emissions
-            const auto nTotalEmissionRate = sporkManager.GetSporkValue(SPORK_116_TOT_SPLY_TRGT_EMISSION);
+            const auto nTotalEmissionRate = TOT_SPLY_TRGT_EMISSION;
             oss << "nTotalEmissionRate: " << nTotalEmissionRate << std::endl;
-            const auto nCirculatingEmissionRate = sporkManager.GetSporkValue(SPORK_117_CIRC_SPLY_TRGT_EMISSION);
+            const auto nCirculatingEmissionRate = CIRC_SPLY_TRGT_EMISSION;
             oss << "nCirculatingEmissionRate: " << nCirculatingEmissionRate << std::endl;
             const auto nActualEmission = nSubsidy * nRewardAdjustmentInterval;
             oss << "nActualEmission: " << FormatMoney(nActualEmission) << std::endl;
