@@ -113,7 +113,7 @@ public Q_SLOTS:
     void showRepair();
     /** Switch to blockchain status tab and show */
     void showBlockchainStatus();
-    /** Open external (default) editor with kyanite.conf */
+    /** Open external (default) editor with __decenomy__.conf */
     void showConfEditor();
     /** Open external (default) editor with masternode.conf */
     void showMNConfEditor();

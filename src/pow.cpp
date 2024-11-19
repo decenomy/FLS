@@ -22,7 +22,7 @@ unsigned int GetNextWorkRequiredPOW(const CBlockIndex* pindexLast)
     const auto& params = Params();
     const auto& consensus = params.GetConsensus();
 
-    /* current difficulty formula, kyanite - DarkGravity v3, written by Evan Duffield - evan@dashpay.io */
+    /* current difficulty formula, __decenomy__ - DarkGravity v3, written by Evan Duffield - evan@dashpay.io */
     const CBlockIndex* BlockLastSolved = pindexLast;
     const CBlockIndex* BlockReading = pindexLast;
     int64_t nActualTimespan = 0;
