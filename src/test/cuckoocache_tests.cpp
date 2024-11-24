@@ -9,6 +9,7 @@
 #include "random.h"
 #include <thread>
 #include <boost/thread.hpp>
+#include <queue>
 
 
 /** Test Suite for CuckooCache

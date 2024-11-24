@@ -8,7 +8,7 @@
 #define MyAppExtraData "https://explorer.decenomy.net/bootstraps/FLS/bootstrap.zip"
 #define MyAppVersion GetVersionNumbersString(".\package\" + MyAppExeName)
 
-#include ReadReg(HKLM, 'Software\WOW6432Node\Mitrich Software\Inno Download Plugin', 'InstallDir') + '\idp.iss'
+#include 'C:\Program Files (x86)\Inno Download Plugin\idp.iss'
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.

@@ -44,6 +44,12 @@ SettingsWalletOptionsWidget::SettingsWalletOptionsWidget(PIVXGUI* _window, QWidg
             this, &SettingsWalletOptionsWidget::onSpinBoxAutoCombineThresholdChanged);
     setShadow(ui->spinBoxAutoCombineThreshold);
 
+    // Combobox
+    ui->labelTitleLoadRecords->setProperty("cssClass", "text-main-settings");
+    ui->spinBoxLoadedRecordsMaxCount->setProperty("cssClass", "btn-spin-box");
+    ui->spinBoxLoadedRecordsMaxCount->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    setShadow(ui->spinBoxLoadedRecordsMaxCount);
+
     // Radio buttons
 
     // Title
@@ -84,6 +90,7 @@ void SettingsWalletOptionsWidget::setMapper(QDataWidgetMapper *mapper){
     mapper->addMapping(ui->spinBoxStakeSplitThreshold, OptionsModel::StakeSplitThreshold);
     mapper->addMapping(ui->checkBoxAutoCombine, OptionsModel::CombineDust);
     mapper->addMapping(ui->spinBoxAutoCombineThreshold, OptionsModel::AutoCombineThreshold);
+    mapper->addMapping(ui->spinBoxLoadedRecordsMaxCount, OptionsModel::LoadedRecordsMaxCount);
 
     // Network
     mapper->addMapping(ui->checkBoxMap, OptionsModel::MapPortUPnP);

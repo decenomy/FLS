@@ -30,33 +30,34 @@ public:
     explicit OptionsModel(QObject* parent = 0);
 
     enum OptionID {
-        StartAtStartup,      // bool
-        MinimizeToTray,      // bool
-        MapPortUPnP,         // bool
-        MinimizeOnClose,     // bool
-        ProxyUse,            // bool
-        ProxyIP,             // QString
-        ProxyPort,           // int
-        DisplayUnit,         // BitcoinUnits::Unit
-        ThirdPartyTxUrls,    // QString
-        Digits,              // QString
-        Theme,               // QString
-        Language,            // QString
-        CoinControlFeatures, // bool
-        ThreadsScriptVerif,  // int
-        DatabaseCache,       // int
-        SpendZeroConfChange, // bool
-        HideCharts,          // bool
-        HideZeroBalances,    // bool
-        HideOrphans,    // bool
-        AnonymizePivxAmount, //int
-        ShowMasternodesTab,  // bool
-        Listen,              // bool
+        StartAtStartup,         // bool
+        MinimizeToTray,         // bool
+        MapPortUPnP,            // bool
+        MinimizeOnClose,        // bool
+        ProxyUse,               // bool
+        ProxyIP,                // QString
+        ProxyPort,              // int
+        DisplayUnit,            // BitcoinUnits::Unit
+        ThirdPartyTxUrls,       // QString
+        Digits,                 // QString
+        Theme,                  // QString
+        Language,               // QString
+        CoinControlFeatures,    // bool
+        ThreadsScriptVerif,     // int
+        DatabaseCache,          // int
+        SpendZeroConfChange,    // bool
+        HideCharts,             // bool
+        HideZeroBalances,       // bool
+        HideOrphans,            // bool
+        AnonymizePivxAmount,    //int
+        ShowMasternodesTab,     // bool
+        Listen,                 // bool
         StakeSplitThreshold,    // CAmount (LongLong)
         CombineDust,            // bool
         AutoCombineThreshold,   // CAmount (LongLong)
         fUseCustomFee,          // bool
         nCustomFee,             // CAmount (LongLong)
+        LoadedRecordsMaxCount,  // int
         OptionIDRowCount,
     };
 
@@ -73,6 +74,7 @@ public:
     void setStakeSplitThreshold(const CAmount value);
     void setCombineDust(bool fCombineDust);
     void setAutoCombineThreshold(const CAmount nAutoCombineThreshold);
+    void setLoadedRecordsMaxCount(const int nLoadedRecordsMaxCount);
     double getSSTMinimum() const;
     bool isSSTValid();
     /* Update Custom Fee value in wallet */

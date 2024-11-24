@@ -18,6 +18,8 @@ BITCOIN_GUI_NAME=flits-qt
 BITCOIN_CLI_NAME=flits-cli
 BITCOIN_TX_NAME=flits-tx
 
+BOOTSTRAP_URL_DEFAULT=https://bootstraps.decenomy.net/
+
 dnl Unless the user specified ARFLAGS, force it to be cr
 AC_ARG_VAR(ARFLAGS, [Flags for the archiver, defaults to <cr> if not set])
 if test "x${ARFLAGS+set}" != "xset"; then
@@ -113,12 +115,26 @@ AC_ARG_WITH([params-dir],
   ],
   [params_path=""])
 
+# Allow the user to specify a different value for BOOTSTRAP_URL
+AC_ARG_WITH([bootstrap-url],
+  [AS_HELP_STRING([--with-bootstrap-url=URL],
+    [URL for bootstrap data])],
+  [BOOTSTRAP_URL="$withval"],
+  [BOOTSTRAP_URL="$BOOTSTRAP_URL_DEFAULT"])
+
 # Enable wallet
 AC_ARG_ENABLE([wallet],
   [AS_HELP_STRING([--disable-wallet],
   [disable wallet (enabled by default)])],
   [enable_wallet=$enableval],
   [enable_wallet=yes])
+
+# Enable bootstrap
+AC_ARG_ENABLE([bootstrap],
+  [AS_HELP_STRING([--disable-bootstrap],
+  [disable bootstrap (enabled by default)])],
+  [enable_bootstrap=$enableval],
+  [enable_bootstrap=yes])
 
 AC_ARG_WITH([miniupnpc],
   [AS_HELP_STRING([--with-miniupnpc],
@@ -499,6 +515,12 @@ case $host in
      AC_PATH_TOOL(WINDRES, windres, none)
      if test x$WINDRES = xnone; then
        AC_MSG_ERROR("windres not found")
+     fi
+
+     # Check for curl-config
+     AC_PATH_PROG([CURL_CONFIG], [curl-config], none, [$prefix/bin])
+     if test x$CURL_CONFIG = xnone; then
+       AC_MSG_ERROR("curl-config not found")
      fi
 
      CPPFLAGS="$CPPFLAGS -D_MT -DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB"
@@ -995,6 +1017,7 @@ AX_BOOST_FILESYSTEM
 AX_BOOST_PROGRAM_OPTIONS
 AX_BOOST_THREAD
 AX_BOOST_CHRONO
+AX_BOOST_JSON
 
 dnl Boost 1.56 through 1.62 allow using std::atomic instead of its own atomic
 dnl counter implementations. In 1.63 and later the std::atomic approach is default.
@@ -1045,7 +1068,7 @@ if test x$use_tests = xyes; then
 fi
 
 if test x$use_boost = xyes; then
-  BOOST_LIBS="$BOOST_LDFLAGS $BOOST_SYSTEM_LIB $BOOST_FILESYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB $BOOST_THREAD_LIB $BOOST_CHRONO_LIB"
+  BOOST_LIBS="$BOOST_LDFLAGS $BOOST_SYSTEM_LIB $BOOST_FILESYSTEM_LIB $BOOST_PROGRAM_OPTIONS_LIB $BOOST_THREAD_LIB $BOOST_CHRONO_LIB $BOOST_JSON_LIB"
 fi
 
 if test x$use_pkgconfig = xyes; then
@@ -1056,6 +1079,21 @@ if test x$use_pkgconfig = xyes; then
       PKG_CHECK_MODULES([SSL], [libssl],, [AC_MSG_ERROR(openssl  not found.)])
       PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto  not found.)])
       BITCOIN_QT_CHECK([PKG_CHECK_MODULES([PROTOBUF], [protobuf], [have_protobuf=yes], [BITCOIN_QT_FAIL(libprotobuf not found)])])
+
+      echo $prefix
+      # Check for curl-config
+      AC_PATH_PROG([CURL_CONFIG], [curl-config], none, [$prefix/bin])
+      if test x$CURL_CONFIG = xnone; then
+        AC_MSG_ERROR("curl-config not found")
+      fi
+
+      PKG_CONFIG_PATH={$prefix}/lib/pkgconfig:$PKG_CONFIG_PATH
+      PKG_CHECK_MODULES([CURL], [libcurl],, [AC_MSG_ERROR(curl not found.)])
+      
+      CURL_VERSION=$($CURL_CONFIG --version)
+      AC_MSG_RESULT([curl version: $CURL_VERSION])
+
+      PKG_CHECK_MODULES([ZLIB], [zlib],, [AC_MSG_ERROR(zlib  not found.)])
       BITCOIN_QT_CHECK([PKG_CHECK_MODULES([QR], [libqrencode],,[BITCOIN_QT_FAIL(libqrencode not found)])])
       if test x$use_qtcharts != xno; then
         BITCOIN_QT_CHECK([PKG_CHECK_MODULES([CHARTS], [Qt5Charts],[have_qtcharts=yes], [have_qtcharts=no])])
@@ -1077,6 +1115,7 @@ if test x$use_pkgconfig = xyes; then
       else
           AC_DEFINE_UNQUOTED([ENABLE_ZMQ],[0],[Define to 1 to enable ZMQ functions])
       fi
+
     ]
   )
 else
@@ -1118,6 +1157,20 @@ else
   fi
 
   BITCOIN_QT_CHECK(AC_CHECK_LIB([protobuf] ,[main],[PROTOBUF_LIBS=-lprotobuf], BITCOIN_QT_FAIL(libprotobuf not found)))
+
+  AC_CHECK_HEADER([curl/curl.h],, AC_MSG_ERROR(curl headers missing),)
+  AC_CHECK_LIB([curl] ,[main],[CURL_LIBS=-lcurl], AC_MSG_ERROR(curl not found))
+
+  # Use curl-config to get libcurl flags and add -DCURL_STATICLIB to CURL_CFLAGS
+  if test "x$CURL_CONFIG" != "xnone"; then
+    CURL_CONFIG_CFLAGS=`$CURL_CONFIG --cflags`
+    CURL_CFLAGS="$CURL_CFLAGS -DCURL_STATICLIB $CURL_CONFIG_CFLAGS"
+    CURL_CONFIG_LIBS=`$CURL_CONFIG --libs`
+    CURL_LIBS="$CURL_LIBS $CURL_CONFIG_LIBS"
+  fi
+
+  AC_CHECK_HEADER([zlib.h],, AC_MSG_ERROR(zlib headers missing),)
+  AC_CHECK_LIB([z] ,[main],[ZLIB_LIBS=-lz], AC_MSG_ERROR(zlib not found))
 
   BITCOIN_QT_CHECK([AC_CHECK_LIB([qrencode], [main],[QR_LIBS=-lqrencode], BITCOIN_QT_FAIL(libqrencode not found))])
   BITCOIN_QT_CHECK([AC_CHECK_HEADER([qrencode.h],, BITCOIN_QT_FAIL(libqrencode not found))])
@@ -1228,6 +1281,16 @@ else
   AC_MSG_RESULT(no)
 fi
 
+dnl enable bootstrap
+AC_MSG_CHECKING([if bootstrap should be enabled])
+if test x$enable_bootstrap != xno; then
+  AC_MSG_RESULT(yes)
+  AC_DEFINE_UNQUOTED([ENABLE_BOOTSTRAP],[1],[Define to 1 to enable bootstrap functions])
+
+else
+  AC_MSG_RESULT(no)
+fi
+
 dnl enable upnp support
 AC_MSG_CHECKING([whether to build with support for UPnP])
 if test x$have_miniupnpc = xno; then
@@ -1322,6 +1385,7 @@ AM_CONDITIONAL([TARGET_DARWIN], [test x$TARGET_OS = xdarwin])
 AM_CONDITIONAL([BUILD_DARWIN], [test x$BUILD_OS = xdarwin])
 AM_CONDITIONAL([TARGET_WINDOWS], [test x$TARGET_OS = xwindows])
 AM_CONDITIONAL([ENABLE_WALLET],[test x$enable_wallet = xyes])
+AM_CONDITIONAL([ENABLE_BOOTSTRAP],[test x$enable_bootstrap = xyes])
 AM_CONDITIONAL([ENABLE_TESTS],[test x$BUILD_TEST = xyes])
 AM_CONDITIONAL([ENABLE_QT],[test x$bitcoin_enable_qt = xyes])
 AM_CONDITIONAL([ENABLE_QT_TESTS],[test x$BUILD_TEST_QT = xyes])
@@ -1346,6 +1410,7 @@ AC_DEFINE(CLIENT_VERSION_BUILD, _CLIENT_VERSION_BUILD, [Version Build])
 AC_DEFINE(CLIENT_VERSION_IS_RELEASE, _CLIENT_VERSION_IS_RELEASE, [Version is release])
 AC_DEFINE(COPYRIGHT_YEAR, _COPYRIGHT_YEAR, [Version is release])
 AC_DEFINE_UNQUOTED(PARAMS_DIR, ["$params_path"], [Path to the zk params dir during unit tests on windows])
+AC_DEFINE_UNQUOTED([BOOTSTRAP_URL], ["$BOOTSTRAP_URL"], [URL for bootstrap data])
 AC_SUBST(CLIENT_VERSION_MAJOR, _CLIENT_VERSION_MAJOR)
 AC_SUBST(CLIENT_VERSION_MINOR, _CLIENT_VERSION_MINOR)
 AC_SUBST(CLIENT_VERSION_REVISION, _CLIENT_VERSION_REVISION)
@@ -1391,6 +1456,8 @@ AC_SUBST(EVENT_LIBS)
 AC_SUBST(EVENT_PTHREADS_LIBS)
 AC_SUBST(ZMQ_LIBS)
 AC_SUBST(PROTOBUF_LIBS)
+AC_SUBST(CURL_LIBS)
+AC_SUBST(ZLIB_LIBS)
 AC_SUBST(QR_LIBS)
 AC_SUBST(USE_NUM_GMP)
 AC_SUBST(USE_NUM_OPENSSL)
@@ -1462,37 +1529,39 @@ esac
 
 echo
 echo "Options used to compile and link:"
-echo "  with wallet   = $enable_wallet"
-echo "  with gui / qt = $bitcoin_enable_qt"
+echo "  with wallet    = $enable_wallet"
+echo "  with bootstrap = $enable_bootstrap"
+echo "  bootstrap url  = $BOOTSTRAP_URL"
+echo "  with gui / qt  = $bitcoin_enable_qt"
 if test x$bitcoin_enable_qt != xno; then
     echo "    with qtcharts     = $use_qtcharts"
 fi
-echo "  with zmq      = $use_zmq"
-echo "  with test     = $use_tests"
-echo "  with bench    = $use_bench"
-echo "  with upnp     = $use_upnp"
-echo "  with params   = $params_path"
-echo "  use asm       = $use_asm"
-echo "  sanitizers    = $use_sanitizers"
-echo "  debug enabled = $enable_debug"
-echo "  gprof enabled = $enable_gprof"
-echo "  werror        = $enable_werror"
-echo "  host          = $host"
+echo "  with zmq       = $use_zmq"
+echo "  with test      = $use_tests"
+echo "  with bench     = $use_bench"
+echo "  with upnp      = $use_upnp"
+echo "  with params    = $params_path"
+echo "  use asm        = $use_asm"
+echo "  sanitizers     = $use_sanitizers"
+echo "  debug enabled  = $enable_debug"
+echo "  gprof enabled  = $enable_gprof"
+echo "  werror         = $enable_werror"
+echo "  host           = $host"
 echo
-echo "  target os     = $TARGET_OS"
-echo "  build os      = $BUILD_OS"
+echo "  target os      = $TARGET_OS"
+echo "  build os       = $BUILD_OS"
 echo
-echo "  CC            = $CC"
-echo "  CFLAGS        = $CFLAGS"
-echo "  CPPFLAGS      = $DEBUG_CPPFLAGS $HARDENED_CPPFLAGS $CPPFLAGS"
-echo "  CXX           = $CXX"
-echo "  CXXFLAGS      = $DEBUG_CXXFLAGS $HARDENED_CXXFLAGS $WARN_CXXFLAGS $NOWARN_CXXFLAGS $ERROR_CXXFLAGS $GPROF_CXXFLAGS $CXXFLAGS"
-echo "  LDFLAGS       = $PTHREAD_CFLAGS $HARDENED_LDFLAGS $GPROF_LDFLAGS $LDFLAGS"
-echo "  ARFLAGS       = $ARFLAGS"
-echo "  PIC_FLAGS     = $PIC_FLAGS"
-echo "  QT_PIE_FLAGS  = $QT_PIE_FLAGS"
-echo "  SVG_LIBS      = $QT_SVG_LIBS "
-echo "  SVG_CFLAGS    = $QT_SVG_INCLUDES "
-echo "  CHARTS_LIBS   = $CHARTS_LIBS "
-echo "  CHARTS_CFLAGS = $CHARTS_CFLAGS "
+echo "  CC             = $CC"
+echo "  CFLAGS         = $CFLAGS"
+echo "  CPPFLAGS       = $DEBUG_CPPFLAGS $HARDENED_CPPFLAGS $CPPFLAGS"
+echo "  CXX            = $CXX"
+echo "  CXXFLAGS       = $DEBUG_CXXFLAGS $HARDENED_CXXFLAGS $WARN_CXXFLAGS $NOWARN_CXXFLAGS $ERROR_CXXFLAGS $GPROF_CXXFLAGS $CXXFLAGS"
+echo "  LDFLAGS        = $PTHREAD_CFLAGS $HARDENED_LDFLAGS $GPROF_LDFLAGS $LDFLAGS"
+echo "  ARFLAGS        = $ARFLAGS"
+echo "  PIC_FLAGS      = $PIC_FLAGS"
+echo "  QT_PIE_FLAGS   = $QT_PIE_FLAGS"
+echo "  SVG_LIBS       = $QT_SVG_LIBS "
+echo "  SVG_CFLAGS     = $QT_SVG_INCLUDES "
+echo "  CHARTS_LIBS    = $CHARTS_LIBS "
+echo "  CHARTS_CFLAGS  = $CHARTS_CFLAGS "
 echo

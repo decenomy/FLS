@@ -127,6 +127,7 @@ void OptionsModel::setWalletDefaultOptions(QSettings& settings, bool reset)
     if (reset) {
         setStakeSplitThreshold(CWallet::DEFAULT_STAKE_SPLIT_THRESHOLD);
         setAutoCombineThreshold(CWallet::DEFAULT_AUTO_COMBINE_THRESHOLD);
+        setLoadedRecordsMaxCount(MAX_AMOUNT_LOADED_RECORDS);
         setCombineDust(CWallet::DEFAULT_COMBINE_DUST);
         setUseCustomFee(false);
         refreshDataView();
@@ -275,6 +276,8 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             const CAmount nAutoCombineThreshold = (pwalletMain) ? pwalletMain->nAutoCombineThreshold : CWallet::DEFAULT_AUTO_COMBINE_THRESHOLD;
             return QVariant(static_cast<double>(nAutoCombineThreshold / static_cast<double>(COIN)));
         }
+        case LoadedRecordsMaxCount:
+            return QVariant((pwalletMain) ? pwalletMain->nLoadedRecordsMaxCount : MAX_AMOUNT_LOADED_RECORDS);
         case fUseCustomFee:
             return QVariant((pwalletMain) ? pwalletMain->fUseCustomFee : false);
         case nCustomFee:
@@ -396,6 +399,8 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
             setAutoCombineThreshold(static_cast<CAmount>(value.toDouble() * COIN));
             //setACTChanged(true);
             break;
+        case LoadedRecordsMaxCount:
+            setLoadedRecordsMaxCount(value.toInt());
         case DisplayUnit:
             setDisplayUnit(value);
             break;
@@ -520,6 +525,20 @@ void OptionsModel::setAutoCombineThreshold(const CAmount nAutoCombineThreshold)
             pwalletMain->nAutoCombineThreshold = nAutoCombineThreshold;
             if (pwalletMain->fFileBacked)
                 walletdb.WriteAutoCombineSettings(pwalletMain->fCombineDust, nAutoCombineThreshold);
+        }
+    }
+}
+
+/* Update LoadedRecordsMaxCount value in wallet */
+void OptionsModel::setLoadedRecordsMaxCount(const int nLoadedRecordsMaxCount)
+{
+    if (pwalletMain && pwalletMain->nLoadedRecordsMaxCount != nLoadedRecordsMaxCount) {
+        CWalletDB walletdb(pwalletMain->strWalletFile);
+        LOCK(pwalletMain->cs_wallet);
+        {
+            pwalletMain->nLoadedRecordsMaxCount = nLoadedRecordsMaxCount;
+            if (pwalletMain->fFileBacked)
+                walletdb.WriteLoadedRecordsMaxCount(pwalletMain->nLoadedRecordsMaxCount);
         }
     }
 }

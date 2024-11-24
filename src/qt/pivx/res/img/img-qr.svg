@@ -1,325 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" width="640" height="640">
-<rect shape-rendering="optimizeSpeed"  x="0" y="0" width="640" height="640" fill="white" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="147" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="32" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="55" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="78" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="101" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="124" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="147" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="147" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="170" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="193" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="193" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="193" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="193" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="193" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="147" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="216" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="193" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="239" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="193" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="262" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="285" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="193" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="308" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="147" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="331" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="193" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="354" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="377" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="400" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="423" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="423" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="423" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="423" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="423" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="423" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="147" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="446" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="469" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="492" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="400" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="515" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="354" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="538" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="262" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="285" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="469" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="492" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="515" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="561" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="32" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="55" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="78" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="101" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="124" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="147" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="170" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="216" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="239" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="308" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="331" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="377" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="423" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="446" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="538" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="561" y="584" width="23" height="23" fill="black" />
-<rect shape-rendering="optimizeSpeed"  x="584" y="584" width="23" height="23" fill="black" /></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="640"
+   width="640"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 640 640"
+   sodipodi:docname="img-qr.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="0.36875"
+     inkscape:cx="-17.627119"
+     inkscape:cy="320"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8"
+     inkscape:pagecheckerboard="false" />
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs12" />
+  <g
+     transform="matrix(26.666667,0,0,26.666667,-4e-6,-4e-6)"
+     id="g6">
+    <path
+       style="fill:none"
+       id="path2"
+       d="M 0,0 H 24 V 24 H 0 Z" />
+    <path
+       id="path4"
+       d="m 15,3 h 6 V 8 H 19 V 5 H 15 Z M 9,3 V 5 H 5 V 8 H 3 V 3 Z m 6,18 v -2 h 4 v -3 h 2 v 5 z M 9,21 H 3 v -5 h 2 v 3 H 9 Z M 3,11 h 18 v 2 H 3 Z" />
+  </g>
+</svg>

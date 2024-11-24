@@ -86,6 +86,12 @@ if(OPENSSL_FOUND)
     endif()
 endif()
 
+find_package(CURL REQUIRED)
+# Add libcurl include directories
+target_include_directories(WALLET_A ${CURL_INCLUDE_DIRS})
+# Link against libcurl
+target_link_libraries(WALLET_A ${CURL_LIBRARIES})
+
 find_package(LibEvent REQUIRED)
 
 find_package(GMP)
@@ -279,6 +285,7 @@ set(WALLET_SOURCES
         ./src/zpiv/zpivmodule.cpp
         ./src/zpiv/zpos.cpp
         ./src/stakeinput.cpp
+        ./src/sqlite3/sqlite3.c
         )
 add_library(WALLET_A STATIC ${BitcoinHeaders} ${WALLET_SOURCES})
 target_include_directories(WALLET_A PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src

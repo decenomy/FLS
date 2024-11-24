@@ -18,6 +18,7 @@
 #include <boost/assign/list_of.hpp>
 
 #include <assert.h>
+#include "timedata.h"
 
 #define DISABLED 0x7FFFFFFE;
 
@@ -278,6 +279,7 @@ public:
         consensus.nTargetTimespanV2 = 2 * 60 * 60;
         consensus.nTargetSpacing = 60;
         consensus.nTimeSlotLength = 15;
+        consensus.nRewardAdjustmentInterval = 7 * DAY_IN_SECONDS / consensus.nTargetSpacing;
 
         // spork keys
         consensus.strSporkPubKey = "036495ceb2a9c576177816d77152880e024ad4d0c6c276e02210ef1ac7559db173";
@@ -288,7 +290,6 @@ public:
         // burn addresses
         consensus.mBurnAddresses = {
             { "FXXXXXXXXXXXXXXXXXXXXXXXXXXXVqtnVL", 0 },
-            { "FrCzb47ToX5hPwvNrssN3KH4g1rcd7RoYQ", 0 }
         };
 
         // Network upgrades
@@ -302,6 +303,21 @@ public:
         consensus.vUpgrades[Consensus::UPGRADE_P2PKH_BLOCK_SIGNATURES].nActivationHeight = 1501;
         consensus.vUpgrades[Consensus::UPGRADE_STAKE_MIN_DEPTH_V2].nActivationHeight     = 1501;
         consensus.vUpgrades[Consensus::UPGRADE_MASTERNODE_RANK_V2].nActivationHeight     = 1501;
+        consensus.vUpgrades[Consensus::UPGRADE_DYNAMIC_REWARDS].nActivationHeight        = Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
+        consensus.vUpgrades[Consensus::UPGRADE_DYNAMIC_COLLATERALS].nActivationHeight    = Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
+        consensus.vUpgrades[Consensus::UPGRADE_POS_V3].nActivationHeight                 = Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
+
+        consensus.vUpgrades[Consensus::UPGRADE_POS].hashActivationBlock                    = uint256S("7e129c233feaa86ae0f70a8eb3be7c2ccadf3fb240a79802afedb88008c4e262");
+        consensus.vUpgrades[Consensus::UPGRADE_POS_V2].hashActivationBlock                 = uint256S("832d879ace72c0f1acf595bd7604ee9789e35cbe0cfc9c991da325cd06a9be84");
+        consensus.vUpgrades[Consensus::UPGRADE_BIP65].hashActivationBlock                  = uint256S("3d7b96d2fe19af9bf64ae24906cd2e67f1fc2d64b92db77a0ad7b37ce8f07cab");
+        consensus.vUpgrades[Consensus::UPGRADE_STAKE_MODIFIER_V2].hashActivationBlock      = uint256S("3c8ea9822aa6a6954356f151d71b78dbee5399adfa2aefe6b41919d984ce48a3");
+        consensus.vUpgrades[Consensus::UPGRADE_TIME_PROTOCOL_V2].hashActivationBlock       = uint256S("e3cb71d2c7f557c6f4dd26d3e859eb1cd8a985526a2476438897bba9f52d91d7");
+        consensus.vUpgrades[Consensus::UPGRADE_P2PKH_BLOCK_SIGNATURES].hashActivationBlock = uint256S("e82dbe2623d9a5895ff9c4eaa138f81261893884ae52367269b927c8f2d2f0d0");
+        consensus.vUpgrades[Consensus::UPGRADE_STAKE_MIN_DEPTH_V2].hashActivationBlock     = uint256S("e82dbe2623d9a5895ff9c4eaa138f81261893884ae52367269b927c8f2d2f0d0");
+        consensus.vUpgrades[Consensus::UPGRADE_MASTERNODE_RANK_V2].hashActivationBlock     = uint256S("e82dbe2623d9a5895ff9c4eaa138f81261893884ae52367269b927c8f2d2f0d0");
+        consensus.vUpgrades[Consensus::UPGRADE_DYNAMIC_REWARDS].hashActivationBlock        = uint256S("0x0");
+        consensus.vUpgrades[Consensus::UPGRADE_DYNAMIC_COLLATERALS].hashActivationBlock    = uint256S("0x0");
+        consensus.vUpgrades[Consensus::UPGRADE_POS_V3].hashActivationBlock                 = uint256S("0x0");
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -376,6 +392,7 @@ public:
         consensus.nTargetTimespanV2 = 30 * 60;
         consensus.nTargetSpacing = 1 * 60;
         consensus.nTimeSlotLength = 15;
+        consensus.nRewardAdjustmentInterval = 60;
 
         // spork keys
         consensus.strSporkPubKey = "04E88BB455E2A04E65FCC41D88CD367E9CCE1F5A409BE94D8C2B4B35D223DED9C8E2F4E061349BA3A38839282508066B6DC4DB72DD432AC4067991E6BF20176127";

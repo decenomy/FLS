@@ -23,7 +23,7 @@ pipeline {
                     rm -rf SDKs
                     mkdir SDKs
                     cd SDKs
-                    wget -c https://github.com/decenomy/depends/raw/main/SDKs/MacOSX10.11.sdk.tar.xz
+                    wget -c https://ipfs.decenomy.net/QmccbpJcugkoV6uVovYsyZ3MPxGTcbUNYXMhLQL2hLzHwH -O MacOSX10.11.sdk.tar.xz
                     tar -xf MacOSX10.11.sdk.tar.xz
                     cd ..
                     make -j $(nproc) HOST=x86_64-apple-darwin14

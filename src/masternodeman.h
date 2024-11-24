@@ -17,6 +17,8 @@
 #include "sync.h"
 #include "util.h"
 
+#include <boost/unordered_map.hpp>
+
 #define MASTERNODES_DUMP_SECONDS (15 * 60)
 #define MASTERNODES_DSEG_SECONDS (3 * 60 * 60)
 
@@ -68,11 +70,11 @@ private:
     // vector to hold all MNs
     std::vector<CMasternode*> vMasternodes;
     // map MNs by CScript
-    std::unordered_map<CScript, CMasternode*, CScriptCheapHasher> mapScriptMasternodes;
+    boost::unordered_map<CScript, CMasternode*, CScriptCheapHasher> mapScriptMasternodes;
     // map MNs by CTxIn
-    std::unordered_map<CTxIn, CMasternode*, CTxInCheapHasher> mapTxInMasternodes;
+    boost::unordered_map<CTxIn, CMasternode*, CTxInCheapHasher> mapTxInMasternodes;
     // map MNs by CTxIn
-    std::unordered_map<CPubKey, CMasternode*, CPubKeyCheapHasher> mapPubKeyMasternodes;
+    boost::unordered_map<CPubKey, CMasternode*, CPubKeyCheapHasher> mapPubKeyMasternodes;
     // who's asked for the Masternode list and the last time
     std::map<CNetAddr, int64_t> mAskedUsForMasternodeList;
     // who we asked for the Masternode list and the last time
@@ -157,7 +159,7 @@ public:
     void AskForMN(CNode* pnode, const CTxIn& vin);
 
     /// Check all Masternodes
-    void Check();
+    void Check(bool forceCheck = false);
 
     /// Check all Masternodes and remove inactive
     void CheckAndRemove(bool forceExpiredRemoval = false);

@@ -24,6 +24,8 @@
 
 #include <iostream>
 
+using namespace boost::placeholders;
+
 Splash::Splash(Qt::WindowFlags f, const NetworkStyle* networkStyle) :
     QWidget(0, f | Qt::SplashScreen), ui(new Ui::Splash)
 {

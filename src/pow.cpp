@@ -17,11 +17,10 @@
 
 #include <math.h>
 
-
-unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader* pblock)
+unsigned int GetNextWorkRequiredPOW(const CBlockIndex* pindexLast)
 {
-    if (Params().IsRegTestNet())
-        return pindexLast->nBits;
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
 
     /* current difficulty formula, flits - DarkGravity v3, written by Evan Duffield - evan@dashpay.io */
     const CBlockIndex* BlockLastSolved = pindexLast;
@@ -33,42 +32,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     int64_t CountBlocks = 0;
     uint256 PastDifficultyAverage;
     uint256 PastDifficultyAveragePrev;
-    const Consensus::Params& consensus = Params().GetConsensus();
 
     if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMin) {
         return consensus.powLimit.GetCompact();
-    }
-
-    if (consensus.NetworkUpgradeActive(pindexLast->nHeight + 1, Consensus::UPGRADE_POS)) {
-        const bool fTimeV2 = !Params().IsRegTestNet() && consensus.IsTimeProtocolV2(pindexLast->nHeight+1);
-        const uint256& bnTargetLimit = consensus.ProofOfStakeLimit(fTimeV2);
-        const int64_t& nTargetTimespan = consensus.TargetTimespan(fTimeV2);
-
-        int64_t nActualSpacing = 0;
-        if (pindexLast->nHeight != 0)
-            nActualSpacing = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
-        if (nActualSpacing < 0)
-            nActualSpacing = 1;
-        if (fTimeV2 && nActualSpacing > consensus.nTargetSpacing*10)
-            nActualSpacing = consensus.nTargetSpacing*10;
-
-        // ppcoin: target change every block
-        // ppcoin: retarget with exponential moving toward target spacing
-        uint256 bnNew;
-        bnNew.SetCompact(pindexLast->nBits);
-
-        // on first block with V2 time protocol, reduce the difficulty by a factor 16
-        if (fTimeV2 && !consensus.IsTimeProtocolV2(pindexLast->nHeight))
-            bnNew <<= 4;
-
-        int64_t nInterval = nTargetTimespan / consensus.nTargetSpacing;
-        bnNew *= ((nInterval - 1) * consensus.nTargetSpacing + nActualSpacing + nActualSpacing);
-        bnNew /= ((nInterval + 1) * consensus.nTargetSpacing);
-
-        if (bnNew <= 0 || bnNew > bnTargetLimit)
-            bnNew = bnTargetLimit;
-
-        return bnNew.GetCompact();
     }
 
     for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
@@ -117,6 +83,169 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     }
 
     return bnNew.GetCompact();
+}
+
+unsigned int GetNextWorkRequiredPOS(const CBlockIndex* pindexLast)
+{
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+
+    const auto nHeight = pindexLast->nHeight + 1;
+    const auto fIsTimeProtocolV2 = consensus.IsTimeProtocolV2(nHeight);
+    const auto nTargetTimespan = consensus.TargetTimespan(nHeight);
+    const auto posLimit = consensus.ProofOfStakeLimit(fIsTimeProtocolV2);
+
+    int64_t nActualSpacing = 0;
+    if (pindexLast->nHeight != 0)
+        nActualSpacing = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
+    if (nActualSpacing < 0)
+        nActualSpacing = 1;
+    if (fIsTimeProtocolV2 && nActualSpacing > consensus.nTargetSpacing * 10)
+        nActualSpacing = consensus.nTargetSpacing * 10;
+
+    // ppcoin: target change every block
+    // ppcoin: retarget with exponential moving toward target spacing
+    uint256 bnNew;
+    bnNew.SetCompact(pindexLast->nBits);
+
+    // On first block with V2 time protocol, reduce the difficulty by a factor 16
+    if (fIsTimeProtocolV2 && !consensus.IsTimeProtocolV2(pindexLast->nHeight))
+        bnNew <<= 4;
+
+    int64_t nInterval = nTargetTimespan / consensus.nTargetSpacing;
+    bnNew *= ((nInterval - 1) * consensus.nTargetSpacing + nActualSpacing + nActualSpacing);
+    bnNew /= ((nInterval + 1) * consensus.nTargetSpacing);
+
+    if (bnNew > posLimit)
+        bnNew = posLimit;
+
+    return bnNew.GetCompact();
+}
+
+unsigned int GetNextWorkRequiredPOSV2(const CBlockIndex* pIndexLast)
+{
+    // Retrieve the parameters and consensus rules
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+
+    // Get the current block height
+    const auto nPrevHeight = pIndexLast->nHeight;
+    const auto nHeight = nPrevHeight + 1;
+
+    // Get additional parameters
+    const auto fIsTimeProtocolV2 = consensus.IsTimeProtocolV2(nHeight);
+    const auto posLimit = consensus.ProofOfStakeLimit(fIsTimeProtocolV2);
+ 
+    // Fetch the target block spacing time and timespan
+    int64_t nTargetSpacing = consensus.nTargetSpacing;
+
+    const int nTargetBlocksPerDay = DAY_IN_SECONDS / nTargetSpacing;
+    const int nTargetBlocksPerWeek = WEEK_IN_SECONDS / nTargetSpacing;
+    const int nTargetBlocksPerMonth = MONTH_IN_SECONDS / nTargetSpacing;
+
+    // Calculates the actual spacing using the previous block and the block before it
+    int64_t nActualSpacing = nHeight > 1 ? pIndexLast->GetBlockTime() - pIndexLast->pprev->GetBlockTime() : nTargetSpacing;
+
+    int64_t nDayAccumulatedTargetSpacing = DAY_IN_SECONDS;
+    int64_t nDayAccumulatedSpacing = nHeight > nTargetBlocksPerDay ?
+        pIndexLast->GetBlockTime() - chainActive[nPrevHeight - nTargetBlocksPerDay]->GetBlockTime() :
+        nDayAccumulatedTargetSpacing;
+
+    int64_t nWeekAccumulatedTargetSpacing = WEEK_IN_SECONDS;
+    int64_t nWeekAccumulatedSpacing = nHeight > nTargetBlocksPerWeek ?
+        pIndexLast->GetBlockTime() - chainActive[nPrevHeight - nTargetBlocksPerWeek]->GetBlockTime() :
+        nWeekAccumulatedTargetSpacing;
+
+    int64_t nBiWeekAccumulatedTargetSpacing = 2 * WEEK_IN_SECONDS;
+    int64_t nBiWeekAccumulatedSpacing = nHeight > 2 * nTargetBlocksPerWeek ?
+        pIndexLast->GetBlockTime() - chainActive[nPrevHeight - 2 * nTargetBlocksPerWeek]->GetBlockTime() :
+        nBiWeekAccumulatedTargetSpacing;
+
+    int64_t nMonthAccumulatedTargetSpacing = MONTH_IN_SECONDS;
+    int64_t nMonthAccumulatedSpacing = nHeight > nTargetBlocksPerMonth ?
+        pIndexLast->GetBlockTime() - chainActive[nPrevHeight - nTargetBlocksPerMonth]->GetBlockTime() :
+        nMonthAccumulatedTargetSpacing;
+
+    int64_t nMultiplier = 1000; // increase the adjustemnt resolution to the millisecond level
+
+    nActualSpacing = nActualSpacing * nMultiplier;
+
+    // 24h target adjustment
+    int64_t nDayTargetSpacing = (nDayAccumulatedTargetSpacing * nTargetSpacing * nMultiplier) / nDayAccumulatedSpacing; // ^1
+    nDayTargetSpacing = nDayAccumulatedTargetSpacing * nDayTargetSpacing / nDayAccumulatedSpacing;                      // ^2
+    nDayTargetSpacing = nDayAccumulatedTargetSpacing * nDayTargetSpacing / nDayAccumulatedSpacing;                      // ^3
+    nDayTargetSpacing = nDayAccumulatedTargetSpacing * nDayTargetSpacing / nDayAccumulatedSpacing;                      // ^4
+
+    // 7 days target adjustment
+    int64_t nWeekTargetSpacing = (nWeekAccumulatedTargetSpacing * nTargetSpacing * nMultiplier) / nWeekAccumulatedSpacing;  // ^1
+    nWeekTargetSpacing = nWeekAccumulatedTargetSpacing * nWeekTargetSpacing / nWeekAccumulatedSpacing;                      // ^2
+    nWeekTargetSpacing = nWeekAccumulatedTargetSpacing * nWeekTargetSpacing / nWeekAccumulatedSpacing;                      // ^3
+    nWeekTargetSpacing = nWeekAccumulatedTargetSpacing * nWeekTargetSpacing / nWeekAccumulatedSpacing;                      // ^4
+
+    // 14 days target adjustment
+    int64_t nBiWeekTargetSpacing = (nBiWeekAccumulatedTargetSpacing * nTargetSpacing * nMultiplier) / nBiWeekAccumulatedSpacing;    // ^1
+    nBiWeekTargetSpacing = nBiWeekAccumulatedTargetSpacing * nBiWeekTargetSpacing / nBiWeekAccumulatedSpacing;                      // ^2
+    nBiWeekTargetSpacing = nBiWeekAccumulatedTargetSpacing * nBiWeekTargetSpacing / nBiWeekAccumulatedSpacing;                      // ^3
+    nBiWeekTargetSpacing = nBiWeekAccumulatedTargetSpacing * nBiWeekTargetSpacing / nBiWeekAccumulatedSpacing;                      // ^4
+
+    // 30 days target adjustment
+    int64_t nMonthTargetSpacing = (nMonthAccumulatedTargetSpacing * nTargetSpacing * nMultiplier) / nMonthAccumulatedSpacing;  // ^1
+    nMonthTargetSpacing = nMonthAccumulatedTargetSpacing * nMonthTargetSpacing / nMonthAccumulatedSpacing;                      // ^2
+    nMonthTargetSpacing = nMonthAccumulatedTargetSpacing * nMonthTargetSpacing / nMonthAccumulatedSpacing;                      // ^3
+    nMonthTargetSpacing = nMonthAccumulatedTargetSpacing * nMonthTargetSpacing / nMonthAccumulatedSpacing;                      // ^4
+
+    int64_t nK = 60; // adjustments in 1/60th steps from the target
+
+    int64_t nKd  = 60; // 60/40 rule from level to level
+    int64_t nKw  = 24; // 40 * 60%
+    int64_t nK2w = 10; // 16 * 60% rounded
+    int64_t nKm  =  6; // remainder
+
+    int64_t nFinalTargetSpacing = 
+        (
+            (nDayTargetSpacing * nKd) + 
+            (nWeekTargetSpacing * nKw) + 
+            (nBiWeekTargetSpacing * nK2w) + 
+            (nMonthTargetSpacing * nKm)
+        ) / 100;
+    int64_t nMaxTargetSpacing = (nTargetSpacing * nMultiplier * 110) / 100;
+    int64_t nMinTargetSpacing = (nTargetSpacing * nMultiplier * 90) / 100;
+
+    // limit nFinalTargetSpacing to +-10% of the nTargetSpacing
+    nFinalTargetSpacing = std::min(nFinalTargetSpacing, nMaxTargetSpacing);
+    nFinalTargetSpacing = std::max(nFinalTargetSpacing, nMinTargetSpacing);
+
+    uint256 bnNew;
+    bnNew.SetCompact(pIndexLast->nBits);
+
+    bnNew *= nActualSpacing + ((nK - 1) * nFinalTargetSpacing);
+    bnNew /= nK * nFinalTargetSpacing;
+
+    // Ensure the new difficulty does not exceed the minimum allowed by consensus
+    if (bnNew > posLimit)
+        bnNew = posLimit;
+
+    // Return the new difficulty in compact format
+    return bnNew.GetCompact();
+}
+
+unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader* pblock)
+{
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto nHeight = pindexLast->nHeight + 1;
+
+    if (params.IsRegTestNet()) return pindexLast->nBits;
+
+    if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_POS_V3)) {
+        return GetNextWorkRequiredPOSV2(pindexLast);
+    }
+
+    if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_POS)) {
+        return GetNextWorkRequiredPOS(pindexLast);
+    }
+
+    return GetNextWorkRequiredPOW(pindexLast);
 }
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits)

@@ -12,6 +12,7 @@
 #include "masternode-sync.h"
 #include "masternodeman.h"
 #include "netbase.h"
+#include "rewards.h"
 #include "spork.h"
 #include "sync.h"
 #include "util.h"
@@ -188,17 +189,11 @@ void CMasternode::Check(bool forceCheck)
 {
     if (ShutdownRequested()) return;
 
-    const Consensus::Params& consensus = Params().GetConsensus();
-
-    // todo: add LOCK(cs) but be careful with the AcceptableInputs() below that requires cs_main.
-
-    if (!forceCheck && (GetTime() - lastTimeChecked < MASTERNODE_CHECK_SECONDS)) return;
-    lastTimeChecked = GetTime();
-
-
     //once spent, stop doing the checks
     if (activeState == MASTERNODE_VIN_SPENT) return;
 
+    if (!forceCheck && (GetTime() - lastTimeChecked < MASTERNODE_CHECK_SECONDS)) return;
+    lastTimeChecked = GetTime();
 
     if (!IsPingedWithin(MASTERNODE_REMOVAL_SECONDS)) {
         activeState = MASTERNODE_REMOVE;
@@ -215,7 +210,10 @@ void CMasternode::Check(bool forceCheck)
         return;
     }
 
-    if (!unitTest && lastTimeChecked - lastTimeCollateralChecked > MINUTE_IN_SECONDS) {
+    if (!unitTest && 
+        forceCheck && 
+        lastTimeChecked - lastTimeCollateralChecked > MINUTE_IN_SECONDS
+    ) {
         lastTimeCollateralChecked = lastTimeChecked;
         CValidationState state;
         CMutableTransaction tx = CMutableTransaction();
@@ -233,6 +231,8 @@ void CMasternode::Check(bool forceCheck)
                 return;
             }
         }
+
+        const auto& consensus = Params().GetConsensus();
 
         // ----------- burn address scanning -----------
         if (!consensus.mBurnAddresses.empty()) {
@@ -409,96 +409,11 @@ CAmount CMasternode::GetMasternodeNodeCollateral(int nHeight)
     return 40000 * COIN;
 }
 
-CAmount CMasternode::GetBlockValue(int nHeight)
-{
-    CAmount nSubsidy = 0;
-
-    if (nHeight >= 1 && nHeight < 100001)
-        nSubsidy = 45 * COIN;
-    else if (nHeight >= 100001 && nHeight < 200001)
-        nSubsidy = 40 * COIN;
-    else if (nHeight >= 200001 && nHeight < 300001)
-        nSubsidy = 40 * COIN;
-    else if (nHeight >= 300001 && nHeight < 400001)
-        nSubsidy = 40 * COIN;
-    else if (nHeight >= 400001 && nHeight < 500001)
-        nSubsidy = 40 * COIN;
-    else if (nHeight >= 500001 && nHeight < 600001)
-        nSubsidy = 35 * COIN;
-    else if (nHeight >= 600001 && nHeight < 700001)
-        nSubsidy = 35 * COIN;
-    else if (nHeight >= 700001 && nHeight < 800001)
-        nSubsidy = 35 * COIN;
-    else if (nHeight >= 800001 && nHeight < 900001)
-        nSubsidy = 30 * COIN;
-    else if (nHeight >= 900001 && nHeight < 1000001)
-        nSubsidy = 30 * COIN;
-    else if (nHeight >= 1000001 && nHeight < 1100001)
-        nSubsidy = 25 * COIN;
-    else if (nHeight >= 1100001 && nHeight < 1200001)
-        nSubsidy = 25 * COIN;
-    else if (nHeight >= 1200001 && nHeight < 1300001)
-        nSubsidy = 25 * COIN;
-    else if (nHeight >= 1300001 && nHeight < 1400001)
-        nSubsidy = 20 * COIN;
-    else if (nHeight >= 1400001 && nHeight < 1500001)
-        nSubsidy = 20 * COIN;
-    else if (nHeight >= 1500001 && nHeight < 1600001)
-        nSubsidy = 20 * COIN;
-    else if (nHeight >= 1600001 && nHeight < 1700001)
-        nSubsidy = 15 * COIN;
-    else if (nHeight >= 1700001 && nHeight < 1800001)
-        nSubsidy = 15 * COIN;
-    else if (nHeight >= 1800001 && nHeight < 1900001)
-        nSubsidy = 15 * COIN;
-    else if (nHeight >= 1900001 && nHeight < 2000001)
-        nSubsidy = 15 * COIN;
-    else if (nHeight >= 2000001 && nHeight < 2100001)
-        nSubsidy = 10 * COIN;
-    else if (nHeight >= 2100001 && nHeight < 2200001)
-        nSubsidy = 10 * COIN;
-    else if (nHeight >= 2200001 && nHeight < 2300001)
-        nSubsidy = 10 * COIN;
-    else if (nHeight >= 2300001 && nHeight < 2400001)
-        nSubsidy = 8 * COIN;
-    else if (nHeight >= 2400001 && nHeight < 2500001)
-        nSubsidy = 8 * COIN;
-    else if (nHeight >= 2500001 && nHeight < 2600001)
-        nSubsidy = 8 * COIN;
-    else if (nHeight >= 2600001 && nHeight < 2700001)
-        nSubsidy = 6 * COIN;
-    else if (nHeight >= 2700001 && nHeight < 2800001)
-        nSubsidy = 6 * COIN;
-    else if (nHeight >= 2800001 && nHeight < 2900001)
-        nSubsidy = 6 * COIN;
-    else if (nHeight >= 2900001 && nHeight < 3000001)
-        nSubsidy = 4 * COIN;
-    else if (nHeight >= 3000001 && nHeight < 3100001)
-        nSubsidy = 4 * COIN;
-    else if (nHeight >= 3100001 && nHeight < 3200001)
-        nSubsidy = 4 * COIN;
-    else if (nHeight >= 3200001 && nHeight < 3300001)
-        nSubsidy = 4 * COIN;
-    else if (nHeight >= 3300001 && nHeight < 3400001)
-        nSubsidy = 3 * COIN;
-    else if (nHeight >= 3400001 && nHeight < 3500001)
-        nSubsidy = 3 * COIN;
-    else if (nHeight >= 3500001 && nHeight < 3600001)
-        nSubsidy = 3 * COIN;
-    else
-        nSubsidy = 2 * COIN;
-
-    // loose the verification to allow the initial swap emission
-    if (nHeight <= 15) nSubsidy = 13000000 * COIN;
-
-    return nSubsidy;
-}
-
 CAmount CMasternode::GetMasternodePayment(int nHeight)
 {
     if(nHeight < 2000) return 0;
 
-    return CMasternode::GetBlockValue(nHeight) * 65 / 100;
+    return CRewards::GetBlockValue(nHeight) * 65 / 100;
 }
 
 void CMasternode::InitMasternodeCollateralList() {
@@ -794,7 +709,7 @@ bool CMasternodeBroadcast::CheckAndUpdate(int& nDos)
         //take the newest entry
         LogPrint(BCLog::MASTERNODE, "mnb - Got updated entry for %s\n", vin.prevout.ToStringShort());
         if (pmn->UpdateFromNewBroadcast((*this))) {
-            pmn->Check();
+            pmn->Check(true);
             if (pmn->IsEnabled()) Relay();
         }
         masternodeSync.AddedMasternodeList(GetHash());

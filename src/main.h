@@ -143,7 +143,7 @@ struct BlockHasher {
 extern CScript COINBASE_FLAGS;
 extern RecursiveMutex cs_main;
 extern CTxMemPool mempool;
-typedef std::unordered_map<uint256, CBlockIndex*, BlockHasher> BlockMap;
+typedef boost::unordered_map<uint256, CBlockIndex*, BlockHasher> BlockMap;
 extern BlockMap mapBlockIndex;
 extern uint64_t nLastBlockTx;
 extern uint64_t nLastBlockSize;
@@ -396,6 +396,9 @@ public:
     ~CVerifyDB();
     bool VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth);
 };
+
+// Resync the supply with the txout set
+void ResyncSupply();
 
 /** Rewind chain.
  *  param can contain a number of blocks to rewind or a block hash to rewind to */

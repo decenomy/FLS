@@ -1,0 +1,102 @@
+# Use a base image (Ubuntu 18.04)
+# FROM ubuntu:18.04
+FROM ubuntu@sha256:dca176c9663a7ba4c1f0e710986f5a25e672842963d95b960191e2d9f7185ebe
+
+# Set arguments
+ARG CPU_CORES=1
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+ENV QT_RCC_TEST=1
+ENV QT_RCC_SOURCE_DATE_OVERRIDE=1
+ENV WRAP_DIR=/wrapped
+ENV ZERO_AR_DATE=1
+
+# Update and install necessary packages
+RUN apt-get update && \
+    apt-get install -y \
+        curl=7.58.0-2ubuntu3.24 \
+        git=1:2.17.1-1ubuntu0.18 \
+        pkg-config=0.29.1-0ubuntu2 \
+        autoconf=2.69-11 \
+        librsvg2-bin=2.40.20-2ubuntu0.2 \
+        libtiff-tools=4.0.9-5ubuntu0.10 \
+        libtool=2.4.6-2 \
+        automake=1:1.15.1-3ubuntu2 \
+        faketime=0.9.7-2 \
+        bsdmainutils=11.1.2ubuntu1 \
+        cmake=3.10.2-1ubuntu2.18.04.2 \
+        imagemagick=8:6.9.7.4+dfsg-16ubuntu6.15 \
+        libcap-dev=1:2.25-1.2 \
+        libz-dev \
+        libbz2-dev=1.0.6-8.1ubuntu0.2 \
+        python3=3.6.7-1~18.04 \
+        python3-dev=3.6.7-1~18.04 \
+        python3-setuptools=39.0.1-2ubuntu0.1 \
+        fonts-tuffy=20120614-2 \
+        zip=3.0-11build1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# use a fixed date
+RUN echo -n "2000-01-01 12:00:00" > /git_timestamp
+RUN echo -n "200001011200.00" > /git_timestamp_touch
+
+# Compile the depends folder using a deterministic timestamp
+ENV WRAP_DIR=/wrapped
+ENV HOSTS="x86_64-apple-darwin14"
+ENV FAKETIME_HOST_PROGS="ar ranlib nm strip objcopy gcc g++"
+ENV FAKETIME_PROGS="ar ranlib nm strip objcopy gcc g++ date zip dmg genisoimage tar"
+
+RUN mkdir -p ${WRAP_DIR}
+
+RUN for prog in ${FAKETIME_PROGS}; \
+    do \
+        echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${prog}; \
+        echo -n "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1 " >> ${WRAP_DIR}/${prog}; \
+        echo -n "FAKETIME=\"\$(cat /git_timestamp)\" " >> ${WRAP_DIR}/${prog}; \
+        echo "\$(which -a ${prog} | grep -v ${WRAP_DIR}/${prog} | head -n 1) \"\$@\"" >> ${WRAP_DIR}/${prog}; \
+        chmod +x ${WRAP_DIR}/${prog}; \
+    done
+
+RUN for host in $HOSTS; \
+    do \
+        for prog in ${FAKETIME_HOST_PROGS}; \
+        do \
+            echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${host}-${prog}; \
+            echo -n "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1 " >> ${WRAP_DIR}/${host}-${prog}; \
+            echo -n "FAKETIME=\"\$(cat /git_timestamp)\" " >> ${WRAP_DIR}/${host}-${prog}; \
+            echo "\$(which -a ${host}-${prog} | grep -v ${WRAP_DIR}/${host}-${prog} | head -n 1) \"\$@\"" >> ${WRAP_DIR}/${host}-${prog}; \
+            chmod +x ${WRAP_DIR}/${host}-${prog}; \
+        done \
+    done
+
+# Clone the repository
+RUN git clone https://github.com/decenomy/DSW.git
+
+# Install the MacOS SDK
+RUN mkdir -p /DSW/depends/SDKs
+WORKDIR /DSW/depends/SDKs
+
+RUN curl -LOJ https://ipfs.decenomy.net/QmccbpJcugkoV6uVovYsyZ3MPxGTcbUNYXMhLQL2hLzHwH?filename=MacOSX10.11.sdk.tar.xz
+RUN touch -t $(cat /git_timestamp_touch) /DSW/depends/SDKs/MacOSX10.11.sdk.tar.xz
+RUN PATH=${WRAP_DIR}:${PATH} tar -C /DSW/depends/SDKs -xf /DSW/depends/SDKs/MacOSX10.11.sdk.tar.xz
+RUN rm /DSW/depends/SDKs/MacOSX10.11.sdk.tar.xz
+
+# Switch to the repository directory
+WORKDIR /DSW/depends
+
+RUN PATH=${WRAP_DIR}:${PATH} make -j$(echo $CPU_CORES) HOST=x86_64-apple-darwin14
+
+# Set the work dir to the root folder
+WORKDIR /
+
+# Set the entry point if you want to interact within the container
+ENTRYPOINT ["bash"]
+
+# Build it with:
+# docker build --build-arg CPU_CORES=<num_cores> -t decenomy/dsw-macos-x64-builder -f Dockerfile.dsw-macos-x64-builder .
+# Publish with:
+# docker login
+# docker push decenomy/dsw-macos-x64-builder:latest

@@ -1,7 +1,9 @@
 package=native_libdmg-hfsplus
 $(package)_version=0.1
 # $(package)_download_path=https://github.com/theuni/libdmg-hfsplus/archive
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmcmTs4nvXYGiY4Mkm3QegMYqwAWLgUXH1zm65fu7namC8?filename=libdmg-hfsplus-v0.1.tar.gz
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmcmTs4nvXYGiY4Mkm3QegMYqwAWLgUXH1zm65fu7namC8
 $(package)_file_name=libdmg-hfsplus-v$($(package)_version).tar.gz
 $(package)_sha256_hash=6569a02eb31c2827080d7d59001869ea14484c281efab0ae7f2b86af5c3120b3
 $(package)_build_subdir=build

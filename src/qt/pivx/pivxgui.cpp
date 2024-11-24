@@ -36,6 +36,7 @@
 #define BASE_WINDOW_MIN_HEIGHT 620
 #define BASE_WINDOW_MIN_WIDTH 1100
 
+using namespace boost::placeholders;
 
 const QString PIVXGUI::DEFAULT_WALLET = "~Default";
 

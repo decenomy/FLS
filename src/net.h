@@ -42,6 +42,8 @@ class CBlockIndex;
 class CScheduler;
 class CNode;
 
+extern RecursiveMutex cs_main;
+
 namespace boost
 {
 class thread_group;
@@ -160,7 +162,7 @@ public:
     template<typename Callable>
     bool ForEachNodeContinueIf(Callable&& func)
     {
-        LOCK(cs_vNodes);
+        LOCK2(cs_main, cs_vNodes);
         for (auto&& node : vNodes)
             if (NodeFullyConnected(node)) {
                 if (!func(node))

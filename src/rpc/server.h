@@ -278,6 +278,7 @@ extern UniValue createmultisig(const JSONRPCRequest& request);
 extern UniValue verifymessage(const JSONRPCRequest& request);
 extern UniValue setmocktime(const JSONRPCRequest& request);
 extern UniValue getstakingstatus(const JSONRPCRequest& request);
+extern UniValue getrewardsinfo(const JSONRPCRequest& request);
 
 bool StartRPC();
 void InterruptRPC();

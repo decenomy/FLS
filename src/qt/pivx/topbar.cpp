@@ -80,6 +80,7 @@ TopBar::TopBar(PIVXGUI* _mainWindow, QWidget* parent) : PWidget(_mainWindow, par
 
     ui->pushButtonFAQ->setButtonClassStyle("cssClass", "btn-check-faq");
     ui->pushButtonFAQ->setButtonText(tr("FAQ"));
+    ui->pushButtonFAQ->setVisible(false);
 
     ui->pushButtonHDUpgrade->setButtonClassStyle("cssClass", "btn-check-hd-upgrade");
     ui->pushButtonHDUpgrade->setButtonText(tr("Upgrade to HD Wallet"));
@@ -99,10 +100,12 @@ TopBar::TopBar(PIVXGUI* _mainWindow, QWidget* parent) : PWidget(_mainWindow, par
     ui->pushButtonConf->setButtonClassStyle("cssClass", "btn-check-conf");
     ui->pushButtonConf->setButtonText("flits.conf");
     ui->pushButtonConf->setChecked(false);
+    ui->pushButtonConf->setVisible(false);
 
     ui->pushButtonMasternodes->setButtonClassStyle("cssClass", "btn-check-masternodes");
     ui->pushButtonMasternodes->setButtonText("masternode.conf");
     ui->pushButtonMasternodes->setChecked(false);
+    ui->pushButtonMasternodes->setVisible(false);
 
     ui->pushButtonConsole->setButtonClassStyle("cssClass", "btn-check-console");
     ui->pushButtonConsole->setButtonText("Debug Console");

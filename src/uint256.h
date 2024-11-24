@@ -81,6 +81,12 @@ public:
     }
 };
 
+struct uint256CheapHasher {
+    uint64_t operator()(const uint256& i) const {
+        return i.GetCheapHash();
+    }
+};
+
 /** 512-bit unsigned big integer. */
 class uint512 : public base_uint<512>
 {

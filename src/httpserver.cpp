@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <future>
+#include <deque>
 
 #include <event2/event.h>
 #include <event2/http.h>

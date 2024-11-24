@@ -15,6 +15,7 @@
 #include "masternode-payments.h"
 #include "masternodeconfig.h"
 #include "policy/policy.h"
+#include "rewards.h"
 #include "script/sign.h"
 #include "spork.h"
 #include "util.h"
@@ -91,7 +92,7 @@ bool CWallet::IsHDEnabled() const
 const CWalletTx* CWallet::GetWalletTx(const uint256& hash) const
 {
     LOCK(cs_wallet);
-    std::map<uint256, CWalletTx>::const_iterator it = mapWallet.find(hash);
+    auto it = mapWallet.find(hash);
     if (it == mapWallet.end())
         return NULL;
     return &(it->second);
@@ -459,7 +460,7 @@ std::set<uint256> CWallet::GetConflicts(const uint256& txid) const
     std::set<uint256> result;
     AssertLockHeld(cs_wallet);
 
-    std::map<uint256, CWalletTx>::const_iterator it = mapWallet.find(txid);
+    auto it = mapWallet.find(txid);
     if (it == mapWallet.end())
         return result;
     const CWalletTx& wtx = it->second;
@@ -587,21 +588,24 @@ ScriptPubKeyMan* CWallet::GetScriptPubKeyMan() const
  * Outpoint is spent if any non-conflicted transaction
  * spends it:
  */
-bool CWallet::IsSpent(const uint256& hash, unsigned int n) const
+bool CWallet::IsSpent(const uint256& hash, unsigned int n, int& nSpendDepth) const
 {
     const COutPoint outpoint(hash, n);
+    nSpendDepth = 0;
     std::pair<TxSpends::const_iterator, TxSpends::const_iterator> range;
     range = mapTxSpends.equal_range(outpoint);
     for (TxSpends::const_iterator it = range.first; it != range.second; ++it) {
         const uint256& wtxid = it->second;
-        std::map<uint256, CWalletTx>::const_iterator mit = mapWallet.find(wtxid);
+        auto mit = mapWallet.find(wtxid);
         if (mit != mapWallet.end()) {
             bool fConflicted;
             const int nDepth = mit->second.GetDepthAndMempool(fConflicted);
             // not in mempool txes can spend coins only if not coinstakes
             const bool fConflictedCoinstake = fConflicted && mit->second.IsCoinStake();
-            if (nDepth > 0  || (nDepth == 0 && !mit->second.isAbandoned() && !fConflictedCoinstake) )
+            if (nDepth > 0  || (nDepth == 0 && !mit->second.isAbandoned() && !fConflictedCoinstake)) {
+                nSpendDepth = nDepth;
                 return true; // Spent
+            }
         }
     }
     return false;
@@ -763,7 +767,7 @@ int64_t CWallet::IncOrderPosNext(CWalletDB* pwalletdb)
 bool CWallet::IsKeyUsed(const CPubKey& vchPubKey) {
     if (vchPubKey.IsValid()) {
         CScript scriptPubKey = GetScriptForDestination(vchPubKey.GetID());
-        for (std::map<uint256, CWalletTx>::iterator it = mapWallet.begin();
+        for (auto it = mapWallet.begin();
              it != mapWallet.end() && vchPubKey.IsValid();
              ++it) {
             const CWalletTx& wtx = (*it).second;
@@ -820,8 +824,11 @@ bool CWallet::AddToWallet(const CWalletTx& wtxIn, bool fFlushOnClose)
     uint256 hash = wtxIn.GetHash();
 
     // Inserts only if not already there, returns tx inserted or tx found
-    std::pair<std::map<uint256, CWalletTx>::iterator, bool> ret = mapWallet.insert(std::make_pair(hash, wtxIn));
+    auto ret = mapWallet.insert(std::make_pair(hash, wtxIn));
     CWalletTx& wtx = (*ret.first).second;
+    if(ret.second) { // if it is a newly inserted transaction
+        setWallet.insert(hash);
+    }
     wtx.BindWallet(this);
     bool fInsertedNew = ret.second;
     if (fInsertedNew) {
@@ -885,6 +892,7 @@ bool CWallet::LoadToWallet(const CWalletTx& wtxIn)
 {
     const uint256& hash = wtxIn.GetHash();
     mapWallet[hash] = wtxIn;
+    setWallet.insert(hash);
     CWalletTx& wtx = mapWallet[hash];
     wtx.BindWallet(this);
     wtxOrdered.insert(std::make_pair(wtx.nOrderPos, TxPair(&wtx, (CAccountingEntry*)0)));
@@ -1087,8 +1095,10 @@ void CWallet::EraseFromWallet(const uint256& hash)
         return;
     {
         LOCK(cs_wallet);
-        if (mapWallet.erase(hash))
+        if (mapWallet.erase(hash)) {
+            setWallet.erase(hash);
             CWalletDB(strWalletFile).EraseTx(hash);
+        }
         LogPrintf("%s: Erased wtx %s from wallet\n", __func__, hash.GetHex());
     }
     return;
@@ -1098,7 +1108,7 @@ isminetype CWallet::IsMine(const CTxIn& txin) const
 {
     {
         LOCK(cs_wallet);
-        std::map<uint256, CWalletTx>::const_iterator mi = mapWallet.find(txin.prevout.hash);
+        auto mi = mapWallet.find(txin.prevout.hash);
         if (mi != mapWallet.end()) {
             const CWalletTx& prev = (*mi).second;
             if (txin.prevout.n < prev.vout.size())
@@ -1133,7 +1143,7 @@ CAmount CWallet::GetDebit(const CTxIn& txin, const isminefilter& filter) const
 {
     {
         LOCK(cs_wallet);
-        std::map<uint256, CWalletTx>::const_iterator mi = mapWallet.find(txin.prevout.hash);
+        auto mi = mapWallet.find(txin.prevout.hash);
         if (mi != mapWallet.end()) {
             const CWalletTx& prev = (*mi).second;
             if (txin.prevout.n < prev.vout.size())
@@ -1623,8 +1633,12 @@ CAmount CWallet::loopTxsBalance(std::function<void(const uint256&, const CWallet
     CAmount nTotal = 0;
     {
         LOCK2(cs_main, cs_wallet);
-        for (const auto& it : mapWallet) {
-            method(it.first, it.second, nTotal);
+
+        for (const auto& it : setWallet) {
+            auto it2 = mapWallet.find(it);
+            if(it2 != mapWallet.end()) {
+                method(it, it2->second, nTotal);
+            }
         }
     }
     return nTotal;
@@ -1649,18 +1663,28 @@ CAmount CWallet::GetAvailableBalance(isminefilter& filter, bool useCache, int mi
 
 CAmount CWallet::GetStakingBalance() const
 {
-    return std::max(CAmount(0), loopTxsBalance(
-            [](const uint256& id, const CWalletTx& pcoin, CAmount& nTotal) {
-        if (pcoin.IsTrusted() &&
-            pcoin.GetDepthInMainChain()
-                >=
-            (Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
-                    Params().GetConsensus().nStakeMinDepthV2 : Params().GetConsensus().nStakeMinDepth)
-        ) {
-            nTotal += pcoin.GetAvailableCredit();       // available coins
-            nTotal -= pcoin.GetLockedCredit();          // minus locked coins, if any
-        }
-    }));
+    const auto& nHeight = chainActive.Height();
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto& nStakeMinDepth = 
+        consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
+        consensus.nStakeMinDepthV2 : 
+        consensus.nStakeMinDepth;
+ 
+    return 
+        std::max(
+            CAmount(0), 
+            loopTxsBalance(
+                [nStakeMinDepth](const uint256& id, const CWalletTx& pcoin, CAmount& nTotal) 
+                {
+                    if (pcoin.IsTrusted() && pcoin.GetDepthInMainChain() >= nStakeMinDepth) 
+                    {
+                        nTotal += pcoin.GetAvailableCredit();       // available coins
+                        nTotal -= pcoin.GetLockedCredit();          // minus locked coins, if any
+                    }
+                }
+            )
+        );
 }
 
 CAmount CWallet::GetLockedCoins() const
@@ -1793,7 +1817,7 @@ bool CWallet::GetMasternodeVinAndKeys(CTxIn& txinRet, CPubKey& pubKeyRet, CKey& 
 
     // Find specific vin
     uint256 txHash = uint256S(strTxHash);
-    std::map<uint256, CWalletTx>::const_iterator mi = mapWallet.find(txHash);
+    auto mi = mapWallet.find(txHash);
     if (mi == mapWallet.end()) {
         strError = "collateral tx not found in the wallet";
         return error("%s: %s", __func__, strError);
@@ -1864,11 +1888,26 @@ bool CWallet::AvailableCoins(std::vector<COutput>* pCoins,      // --> populates
     if (pCoins) pCoins->clear();
     const bool fCoinsSelected = (coinControl != nullptr) && coinControl->HasSelected();
 
-    {
-        LOCK2(cs_main, cs_wallet);
-        for (std::map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it) {
-            const uint256& wtxid = it->first;
-            const CWalletTx* pcoin = &(*it).second;
+    const auto nMaxReorgDepth = GetArg("-maxreorg", DEFAULT_MAX_REORG_DEPTH);
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto nHeight = chainActive.Height();
+    const auto nStakeMinDepth = 
+        consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
+        consensus.nStakeMinDepthV2 : 
+        consensus.nStakeMinDepth;
+
+    LOCK2(cs_main, cs_wallet);
+
+    std::vector<uint256> vErase;
+
+    for (auto it = setWallet.begin(); it != setWallet.end(); ++it) {
+
+        const uint256& wtxid = *it;
+
+        auto it2 = mapWallet.find(wtxid);
+        if(it2 != mapWallet.end()) {
+            const CWalletTx* pcoin = &(*it2).second;
 
             // Check if the tx is selectable
             int nDepth;
@@ -1876,38 +1915,44 @@ bool CWallet::AvailableCoins(std::vector<COutput>* pCoins,      // --> populates
                 continue;
 
             // Check min depth requirement for stake inputs
-            if (nCoinType == STAKEABLE_COINS &&
-                nDepth
-                    <
-                (Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
-                    Params().GetConsensus().nStakeMinDepthV2 : Params().GetConsensus().nStakeMinDepth)) continue;
+            if (nCoinType == STAKEABLE_COINS && nDepth < nStakeMinDepth) continue;
+
+            int nMine = 0;
+            int nMineSpent = 0;
 
             for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
 
-                // Check for only 10k utxo
-                if (nCoinType == ONLY_10000 && !CMasternode::CheckMasternodeCollateral(pcoin->vout[i].nValue)) continue;
-
-                // Check if the utxo was spent.
-                if (IsSpent(wtxid, i)) continue;
-
+                int nSpendDepth;
+                bool spent = IsSpent(wtxid, i, nSpendDepth);
                 isminetype mine = IsMine(pcoin->vout[i]);
 
                 // Check If not mine
                 if (mine == ISMINE_NO) continue;
 
+                nMine++;
+
+                // Check if the utxo was spent.
+                if (spent) {
+                    if(nSpendDepth > nMaxReorgDepth) nMineSpent++;
+                    continue;
+                }
+
+                // Check for only 10k utxo
+                if (nCoinType == ONLY_10000 && !CMasternode::CheckMasternodeCollateral(pcoin->vout[i].nValue)) continue;
+
                 // Check if watch only utxo are allowed
                 if (mine == ISMINE_WATCH_ONLY && coinControl && !coinControl->fAllowWatchOnly) continue;
 
                 // Skip locked utxo
-                if (IsLockedCoin((*it).first, i) && nCoinType != ONLY_10000) continue;
+                if (IsLockedCoin(wtxid, i) && nCoinType != ONLY_10000) continue;
 
                 // Skip configured masternode collaterals
-                if (masternodeConfig.contains(COutPoint((*it).first, i)) && nCoinType != ONLY_10000) continue;
+                if (masternodeConfig.contains(COutPoint(wtxid, i)) && nCoinType != ONLY_10000) continue;
 
                 // Check if we should include zero value utxo
                 if (pcoin->vout[i].nValue <= 0) continue;
 
-                if (fCoinsSelected && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(COutPoint((*it).first, i)))
+                if (fCoinsSelected && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(COutPoint(wtxid, i)))
                     continue;
 
                 bool solvable = IsSolvable(*this, pcoin->vout[i].scriptPubKey);
@@ -1919,9 +1964,21 @@ bool CWallet::AvailableCoins(std::vector<COutput>* pCoins,      // --> populates
                 if (!pCoins) return true;
                 pCoins->emplace_back(COutput(pcoin, i, nDepth, spendable, solvable));
             }
+
+            if(nDepth > 0 && nMine > 0 && nMine == nMineSpent) {
+                vErase.push_back(wtxid);
+            }
         }
-        return (pCoins && pCoins->size() > 0);
     }
+
+    if(vErase.size() > 0) {
+        for (auto& h : vErase) {
+            setWallet.erase(h);
+        }
+        setWallet.rehash(0);
+    }
+
+    return (pCoins && pCoins->size() > 0);
 }
 
 std::map<CTxDestination , std::vector<COutput> > CWallet::AvailableCoinsByAddress(bool fConfirmed, CAmount maxCoinValue)
@@ -2106,7 +2163,7 @@ bool CWallet::SelectCoinsToSpend(const std::vector<COutput>& vAvailableCoins, co
     if (coinControl)
         coinControl->ListSelected(vPresetInputs);
     for (const COutPoint& outpoint : vPresetInputs) {
-        std::map<uint256, CWalletTx>::const_iterator it = mapWallet.find(outpoint.hash);
+        auto it = mapWallet.find(outpoint.hash);
         if (it != mapWallet.end()) {
             const CWalletTx* pcoin = &it->second;
             // Clearly invalid input, fail
@@ -2521,7 +2578,7 @@ bool CWallet::CreateCoinStake(
         nCredit += stakeInput.GetValue();
 
         // Add block reward to the credit
-        nCredit += CMasternode::GetBlockValue(pindexPrev->nHeight + 1);
+        nCredit += CRewards::GetBlockValue(pindexPrev->nHeight + 1);
         CAmount nMasternodeCredit = CMasternode::GetMasternodePayment(pindexPrev->nHeight + 1);
 
         // Create the output transaction(s)
@@ -3060,7 +3117,7 @@ bool CWallet::UpdatedTransaction(const uint256& hashTx)
     {
         LOCK(cs_wallet);
         // Only notify UI if this transaction is in this wallet
-        std::map<uint256, CWalletTx>::const_iterator mi = mapWallet.find(hashTx);
+        auto mi = mapWallet.find(hashTx);
         if (mi != mapWallet.end()) {
             NotifyTransactionChanged(this, hashTx, CT_UPDATED);
             return true;
@@ -3182,7 +3239,7 @@ void CWallet::GetKeyBirthTimes(std::map<CKeyID, int64_t>& mapKeyBirth) const
 
     // find first block that affects those keys, if there are any left
     std::vector<CKeyID> vAffected;
-    for (std::map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); it++) {
+    for (auto it = mapWallet.begin(); it != mapWallet.end(); it++) {
         // iterate over all wallet transactions...
         const CWalletTx& wtx = (*it).second;
         BlockMap::const_iterator blit = mapBlockIndex.find(wtx.hashBlock);
@@ -3237,7 +3294,7 @@ bool CWallet::LoadDestData(const CTxDestination& dest, const std::string& key, c
 void CWallet::AutoCombineDust(CConnman* connman)
 {
     LOCK2(cs_main, cs_wallet);
-    const CBlockIndex* tip = chainActive.Tip();
+    const auto tip = chainActive.Tip();
     if (tip->nTime < (GetAdjustedTime() - 300) || IsLocked()) {
         return;
     }
@@ -3251,7 +3308,7 @@ void CWallet::AutoCombineDust(CConnman* connman)
     std::map<CTxDestination, std::vector<COutput> > mapCoinsByAddress = AvailableCoinsByAddress(true, adjustedAutoCombineThreshold);
 
     //coins are sectioned by address. This combination code only wants to combine inputs that belong to the same address
-    for (std::map<CTxDestination, std::vector<COutput> >::iterator it = mapCoinsByAddress.begin(); it != mapCoinsByAddress.end(); it++) {
+    for (auto it = mapCoinsByAddress.begin(); it != mapCoinsByAddress.end(); it++) {
         std::vector<COutput> vCoins, vRewardCoins;
         vCoins = it->second;
 
@@ -3656,7 +3713,7 @@ CWallet* CWallet::CreateWalletFromFile(const std::string walletFile)
             CWalletDB walletdb(walletFile);
             for (const CWalletTx& wtxOld : vWtx) {
                 uint256 hash = wtxOld.GetHash();
-                std::map<uint256, CWalletTx>::iterator mi = walletInstance->mapWallet.find(hash);
+                auto mi = walletInstance->mapWallet.find(hash);
                 if (mi != walletInstance->mapWallet.end()) {
                     const CWalletTx* copyFrom = &wtxOld;
                     CWalletTx* copyTo = &mi->second;
@@ -3849,7 +3906,7 @@ void CWallet::SetNull()
     fUseCustomFee = false;
     nCustomFee = CWallet::minTxFee.GetFeePerK();
 
-    //MultiSend
+    // MultiSend
     vMultiSend.clear();
     fMultiSendStake = false;
     fMultiSendMasternodeReward = false;
@@ -3858,9 +3915,12 @@ void CWallet::SetNull()
     nLastMultiSendHeight = 0;
     vDisabledAddresses.clear();
 
-    //Auto Combine Dust
+    // Auto Combine Dust
     fCombineDust = false;
     nAutoCombineThreshold = 0;
+
+    // Max record in the UI
+    nLoadedRecordsMaxCount = MAX_AMOUNT_LOADED_RECORDS;
 }
 
 bool CWallet::isMultiSendEnabled()

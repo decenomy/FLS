@@ -1,7 +1,9 @@
 package=freetype
 $(package)_version=2.7.1
 # $(package)_download_path=https://download.savannah.gnu.org/releases/$(package)
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/Qmf95bu3dNKtDx2oF5aULCL9wN9Heuo4yMScEwjrzDs34f?filename=freetype-2.7.1.tar.bz2
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=Qmf95bu3dNKtDx2oF5aULCL9wN9Heuo4yMScEwjrzDs34f
 $(package)_file_name=$(package)-$($(package)_version).tar.bz2
 $(package)_sha256_hash=3a3bb2c4e15ffb433f2032f50a5b5a92558206822e22bfe8cbe339af4aa82f88
 

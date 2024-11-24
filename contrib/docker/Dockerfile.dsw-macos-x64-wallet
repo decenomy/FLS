@@ -1,0 +1,98 @@
+#FROM decenomy/dsw-macos-x64-builder:latest
+FROM decenomy/dsw-macos-x64-builder@sha256:ff118694a4892abc89384bae52362aee9048499e6c39f62147fa9fe370dc97fb
+
+# ARG for specifying the number of cores
+ARG CPU_CORES=1
+
+# ARG for specifying the coin parameters
+ARG TICKER=FLS
+ARG NAME=Flits
+ARG BASE_NAME=flits
+ARG TARGET=master
+ARG GITHUB_USER=decenomy
+
+RUN sleep 30
+
+RUN mkdir -p ${GITHUB_USER}
+# Switch to the github user directory
+WORKDIR /$GITHUB_USER
+
+# Clone the repository
+RUN if [ ! -d $TICKER ]; then \
+    git clone https://github.com/${GITHUB_USER}/${TICKER}.git; \
+fi
+
+# Switch to the repository directory
+WORKDIR /${GITHUB_USER}/${TICKER}
+
+# Check out the $TARGET
+RUN git stash --include-untracked && \
+    git fetch --all && \
+    (git checkout $TARGET || git checkout -B $TARGET) && \
+    (git reset --hard origin/$TARGET || git reset --hard $TARGET)
+
+RUN git log -1 --format="%at" | xargs -I{} date -d @{} "+%Y-%m-%d %H:%M:%S" > /git_timestamp
+RUN git log -1 --format="%at" | xargs -I{} date -d @{} "+%Y%m%d%H%M.%S" > /git_timestamp_touch
+
+# Run the configuration script
+RUN PATH=${WRAP_DIR}:${PATH} ./autogen.sh && \
+    PATH=${WRAP_DIR}:${PATH} ./configure \
+        --prefix=/DSW/depends/x86_64-apple-darwin14 \
+        --enable-cxx \
+        --enable-static \
+        --disable-shared \
+        --disable-debug \
+        --disable-bench \
+        --disable-tests \
+        --disable-man \
+        --enable-zmq \
+        --with-gui \
+        --enable-upnp-default \
+        --enable-reduce-exports \
+        --disable-gui-tests \
+        GENISOIMAGE=$WRAP_DIR/genisoimage
+
+# Compile the binaries
+RUN PATH=${WRAP_DIR}:${PATH} make -j$CPU_CORES HOST=x86_64-apple-darwin14
+
+# Extract the wallet version
+RUN grep "define(_CLIENT_VERSION_MAJOR" configure.ac | awk -F"[ ,)]" '{print $3}' | tr -d '\n' > /wallet_version
+RUN echo -n "." >> /wallet_version
+RUN grep "define(_CLIENT_VERSION_MINOR" configure.ac | awk -F"[ ,)]" '{print $3}' | tr -d '\n' >> /wallet_version
+RUN echo -n "." >> /wallet_version
+RUN grep "define(_CLIENT_VERSION_REVISION" configure.ac | awk -F"[ ,)]" '{print $3}' | tr -d '\n' >> /wallet_version
+RUN echo -n "." >> /wallet_version
+RUN grep "define(_CLIENT_VERSION_BUILD" configure.ac | awk -F"[ ,)]" '{print $3}' | tr -d '\n' >> /wallet_version
+
+# Make the dmg file
+RUN PATH=${WRAP_DIR}:/DSW/depends/x86_64-apple-darwin14/native/bin/:${PATH} \
+    make deploy HOST=x86_64-apple-darwin14
+
+# Create deploy files
+RUN mkdir -p deploy/macos-x64
+RUN cp src/$(echo $BASE_NAME)d src/$(echo $BASE_NAME)-cli src/$(echo $BASE_NAME)-tx src/qt/$(echo $BASE_NAME)-qt $(echo $NAME)-Core.dmg /${GITHUB_USER}/${TICKER}/deploy/macos-x64
+RUN find /${GITHUB_USER}/${TICKER}/deploy/macos-x64 -type f -exec touch -t $(cat /git_timestamp_touch) {} +
+WORKDIR /${GITHUB_USER}/${TICKER}/deploy/macos-x64
+RUN PATH=${WRAP_DIR}:${PATH} zip -X $TICKER-$(cat /wallet_version)-MacOS-x64.zip $(echo $BASE_NAME)d $(echo $BASE_NAME)-cli $(echo $BASE_NAME)-tx $(echo $BASE_NAME)-qt $(echo $NAME)-Core.dmg
+RUN echo "$(git rev-parse HEAD)                          commit" >> SHA256SUMS-MacOS-x64.ASC
+RUN sha256sum $(echo $BASE_NAME)d >> SHA256SUMS-MacOS-x64.ASC
+RUN sha256sum $(echo $BASE_NAME)-cli >> SHA256SUMS-MacOS-x64.ASC
+RUN sha256sum $(echo $BASE_NAME)-tx >> SHA256SUMS-MacOS-x64.ASC
+RUN sha256sum $(echo $BASE_NAME)-qt >> SHA256SUMS-MacOS-x64.ASC
+RUN sha256sum $(echo $NAME)-Core.dmg >> SHA256SUMS-MacOS-x64.ASC
+RUN sha256sum $TICKER-$(cat /wallet_version)-MacOS-x64.zip >> SHA256SUMS-MacOS-x64.ASC
+
+# To compile and build the container execute docker in this way:
+# docker build \
+#   --build-arg CPU_CORES=<num_cores> \
+#   --build-arg TICKER=<ticker> \
+#   --build-arg NAME=<coin_name> \
+#   --build-arg BASE_NAME=<base_name> \
+#   --build-arg TARGET=<branch|commit|tag> \
+#   -f Dockerfile.dsw-macos-x64-wallet .
+
+# To run the container use:
+# docker run -it <image_id>
+
+# Set the entry point if you want to interact within the container
+ENTRYPOINT ["bash"]

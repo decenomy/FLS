@@ -20,7 +20,7 @@ LIBUNIVALUE = $(UNIVALUE_LIBS)
 endif
 
 BITCOIN_CONFIG_INCLUDES=-I$(builddir)/config
-BITCOIN_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
+BITCOIN_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BDB_CPPFLAGS) $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS) $(CURL_CFLAGS)
 
 BITCOIN_INCLUDES += -I$(srcdir)/secp256k1/include
 BITCOIN_INCLUDES += $(UNIVALUE_CFLAGS)
@@ -87,6 +87,9 @@ BITCOIN_CORE_H = \
   bip38.h \
   bloom.h \
   blocksignature.h \
+  bootstrap.h \
+  minizip/ioapi.h \
+  minizip/unzip.h \
   chain.h \
   chainparams.h \
   chainparamsbase.h \
@@ -126,6 +129,7 @@ BITCOIN_CORE_H = \
   key.h \
   key_io.h \
   keystore.h \
+  curl.h \
   dbwrapper.h \
   limitedmap.h \
   logging.h \
@@ -154,6 +158,7 @@ BITCOIN_CORE_H = \
   random.h \
   reverselock.h \
   reverse_iterate.h \
+  rewards.h \
   rpc/client.h \
   rpc/protocol.h \
   rpc/server.h \
@@ -169,6 +174,7 @@ BITCOIN_CORE_H = \
   spork.h \
   sporkdb.h \
   sporkid.h \
+  sqlite3/sqlite3.h \
   stakeinput.h \
   script/ismine.h \
   streams.h \
@@ -196,6 +202,7 @@ BITCOIN_CORE_H = \
   utiltime.h \
   validationinterface.h \
   version.h \
+  zip.h \
   wallet/hdchain.h \
   wallet/rpcwallet.h \
   wallet/scriptpubkeyman.h \
@@ -227,6 +234,7 @@ libbitcoin_server_a_SOURCES = \
   httprpc.cpp \
   httpserver.cpp \
   init.cpp \
+  curl.cpp \
   dbwrapper.cpp \
   main.cpp \
   merkleblock.cpp \
@@ -237,6 +245,7 @@ libbitcoin_server_a_SOURCES = \
   policy/policy.cpp \
   pow.cpp \
   rest.cpp \
+  rewards.cpp \
   rpc/blockchain.cpp \
   rpc/masternode.cpp \
   rpc/mining.cpp \
@@ -252,6 +261,11 @@ libbitcoin_server_a_SOURCES = \
   txdb.cpp \
   txmempool.cpp \
   validationinterface.cpp \
+  zip.cpp \
+  bootstrap.cpp \
+  minizip/ioapi.c \
+  minizip/unzip.c \
+  sqlite3/sqlite3.c \
   $(BITCOIN_CORE_H)
 
 if ENABLE_ZMQ
@@ -459,7 +473,7 @@ flitsd_LDADD = \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-flitsd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
+flitsd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(CURL_LIBS) $(ZLIB_LIBS)
 
 # flits-cli binary #
 flits_cli_SOURCES = pivx-cli.cpp

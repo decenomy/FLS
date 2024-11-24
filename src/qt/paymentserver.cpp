@@ -30,13 +30,13 @@
 #include <QList>
 #include <QLocalServer>
 #include <QLocalSocket>
-#include <QNetworkAccessManager>
-#include <QNetworkProxy>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QSslCertificate>
-#include <QSslConfiguration>
-#include <QSslError>
+//#include <QNetworkAccessManager>
+//#include <QNetworkProxy>
+//#include <QNetworkReply>
+//#include <QNetworkRequest>
+//#include <QSslCertificate>
+//#include <QSslConfiguration>
+//#include <QSslError>
 #include <QStringList>
 #include <QTextDocument>
 #include <QUrlQuery>
@@ -45,15 +45,15 @@
 const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
 const QString BITCOIN_IPC_PREFIX("pivx:");
 // BIP70 payment protocol messages
-const char* BIP70_MESSAGE_PAYMENTACK = "PaymentACK";
-const char* BIP70_MESSAGE_PAYMENTREQUEST = "PaymentRequest";
+//const char* BIP70_MESSAGE_PAYMENTACK = "PaymentACK";
+//const char* BIP70_MESSAGE_PAYMENTREQUEST = "PaymentRequest";
 // BIP71 payment protocol media types
-const char* BIP71_MIMETYPE_PAYMENT = "application/pivx-payment";
-const char* BIP71_MIMETYPE_PAYMENTACK = "application/pivx-paymentack";
-const char* BIP71_MIMETYPE_PAYMENTREQUEST = "application/pivx-paymentrequest";
+//const char* BIP71_MIMETYPE_PAYMENT = "application/pivx-payment";
+//const char* BIP71_MIMETYPE_PAYMENTACK = "application/pivx-paymentack";
+//const char* BIP71_MIMETYPE_PAYMENTREQUEST = "application/pivx-paymentrequest";
 // BIP70 max payment request size in bytes (DoS protection)
-const qint64 BIP70_MAX_PAYMENTREQUEST_SIZE = 50000;
-
+//const qint64 BIP70_MAX_PAYMENTREQUEST_SIZE = 50000;
+/*
 struct X509StoreDeleter {
       void operator()(X509_STORE* b) {
           X509_STORE_free(b);
@@ -69,7 +69,7 @@ namespace // Anon namespace
 
     std::unique_ptr<X509_STORE, X509StoreDeleter> certStore;
 }
-
+*/
 //
 // Create a name that is unique for:
 //  testnet / non-testnet
@@ -94,7 +94,7 @@ static QString ipcServerName()
 // to send payment.
 
 static QList<QString> savedPaymentRequests;
-
+/*
 static void ReportInvalidCertificate(const QSslCertificate& cert)
 {
     qDebug() << QString("%1: Payment server found an invalid certificate: ").arg(__func__) << cert.serialNumber() << cert.subjectInfo(QSslCertificate::CommonName) << cert.subjectInfo(QSslCertificate::DistinguishedNameQualifier) << cert.subjectInfo(QSslCertificate::OrganizationalUnitName);
@@ -167,7 +167,7 @@ void PaymentServer::LoadRootCAs(X509_STORE* _store)
     //    or use Qt's blacklist?
     //   "certificate stapling" with server-side caching is more efficient
 }
-
+*/
 //
 // Sending to the server is done synchronously, at startup.
 // If the server isn't already running, startup continues,
@@ -200,22 +200,6 @@ void PaymentServer::ipcParseCommandLine(int argc, char* argv[])
                     SelectParams(CBaseChainParams::TESTNET);
                 }
             }
-        } else if (QFile::exists(arg)) // Filename
-        {
-            savedPaymentRequests.append(arg);
-
-            PaymentRequestPlus request;
-            if (readPaymentRequestFromFile(arg, request)) {
-                if (request.getDetails().network() == "main") {
-                    SelectParams(CBaseChainParams::MAIN);
-                } else if (request.getDetails().network() == "test") {
-                    SelectParams(CBaseChainParams::TESTNET);
-                }
-            }
-        } else {
-            // Printing to debug.log is about the best we can do here, the
-            // GUI hasn't started yet so we can't pop up a message box.
-            qWarning() << "PaymentServer::ipcSendCommandLine : Payment request file does not exist: " << arg;
         }
     }
 }
@@ -260,12 +244,8 @@ bool PaymentServer::ipcSendCommandLine()
 PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) : QObject(parent),
                                                                        saveURIs(true),
                                                                        uriServer(0),
-                                                                       netManager(0),
                                                                        optionsModel(0)
 {
-    // Verify that the version of the library that we linked against is
-    // compatible with the version of the headers we compiled against.
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     // Install global event filter to catch QFileOpenEvents
     // on Mac: sent when you click flits: links
@@ -287,14 +267,13 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) : QObject(p
                 tr("Cannot start flits: click-to-pay handler"));
         } else {
             connect(uriServer, &QLocalServer::newConnection, this, &PaymentServer::handleURIConnection);
-            connect(this, &PaymentServer::receivedPaymentACK, this, &PaymentServer::handlePaymentACK);
+            //connect(this, &PaymentServer::receivedPaymentACK, this, &PaymentServer::handlePaymentACK);
         }
     }
 }
 
 PaymentServer::~PaymentServer()
 {
-    google::protobuf::ShutdownProtobufLibrary();
 }
 
 //
@@ -316,7 +295,7 @@ bool PaymentServer::eventFilter(QObject* object, QEvent* event)
 
     return QObject::eventFilter(object, event);
 }
-
+/*
 void PaymentServer::initNetManager()
 {
     if (!optionsModel)
@@ -338,12 +317,12 @@ void PaymentServer::initNetManager()
         qDebug() << "PaymentServer::initNetManager : No active proxy server found.";
 
     connect(netManager, &QNetworkAccessManager::finished, this, &PaymentServer::netRequestFinished);
-    connect(netManager, &QNetworkAccessManager::sslErrors, this, &PaymentServer::reportSslErrors);
+    //connect(netManager, &QNetworkAccessManager::sslErrors, this, &PaymentServer::reportSslErrors);
 }
-
+*/
 void PaymentServer::uiReady()
 {
-    initNetManager();
+    //initNetManager();
 
     saveURIs = false;
     Q_FOREACH (const QString& s, savedPaymentRequests) {
@@ -362,25 +341,6 @@ void PaymentServer::handleURIOrFile(const QString& s)
     if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // flits: URI
     {
         QUrlQuery uri((QUrl(s)));
-        if (uri.hasQueryItem("r")) // payment request URI
-        {
-            QByteArray temp;
-            temp.append(uri.queryItemValue("r"));
-            QString decoded = QUrl::fromPercentEncoding(temp);
-            QUrl fetchUrl(decoded, QUrl::StrictMode);
-
-            if (fetchUrl.isValid()) {
-                qDebug() << "PaymentServer::handleURIOrFile : fetchRequest(" << fetchUrl << ")";
-                fetchRequest(fetchUrl);
-            } else {
-                qWarning() << "PaymentServer::handleURIOrFile : Invalid URL: " << fetchUrl;
-                Q_EMIT message(tr("URI handling"),
-                    tr("Payment request fetch URL is invalid: %1").arg(fetchUrl.toString()),
-                    CClientUIInterface::ICON_WARNING);
-            }
-
-            return;
-        } else // normal URI
         {
             SendCoinsRecipient recipient;
             if (GUIUtil::parseBitcoinURI(s, &recipient)) {
@@ -396,20 +356,6 @@ void PaymentServer::handleURIOrFile(const QString& s)
 
             return;
         }
-    }
-
-    if (QFile::exists(s)) // payment request file
-    {
-        PaymentRequestPlus request;
-        SendCoinsRecipient recipient;
-        if (!readPaymentRequestFromFile(s, request)) {
-            Q_EMIT message(tr("Payment request file handling"),
-                tr("Payment request file cannot be read! This can be caused by an invalid payment request file."),
-                CClientUIInterface::ICON_WARNING);
-        } else if (processPaymentRequest(request, recipient))
-            Q_EMIT receivedPaymentRequest(recipient);
-
-        return;
     }
 }
 
@@ -437,6 +383,7 @@ void PaymentServer::handleURIConnection()
 // Warning: readPaymentRequestFromFile() is used in ipcSendCommandLine()
 // so don't use "emit message()", but "QMessageBox::"!
 //
+/*
 bool PaymentServer::readPaymentRequestFromFile(const QString& filename, PaymentRequestPlus& request)
 {
     QFile f(filename);
@@ -459,7 +406,8 @@ bool PaymentServer::readPaymentRequestFromFile(const QString& filename, PaymentR
 
     return request.parse(data);
 }
-
+*/
+/*
 bool PaymentServer::processPaymentRequest(PaymentRequestPlus& request, SendCoinsRecipient& recipient)
 {
     if (!optionsModel)
@@ -536,17 +484,9 @@ bool PaymentServer::processPaymentRequest(PaymentRequestPlus& request, SendCoins
 
     return true;
 }
+*/
 
-void PaymentServer::fetchRequest(const QUrl& url)
-{
-    QNetworkRequest netRequest;
-    netRequest.setAttribute(QNetworkRequest::User, BIP70_MESSAGE_PAYMENTREQUEST);
-    netRequest.setUrl(url);
-    netRequest.setRawHeader("User-Agent", CLIENT_NAME.c_str());
-    netRequest.setRawHeader("Accept", BIP71_MIMETYPE_PAYMENTREQUEST);
-    netManager->get(netRequest);
-}
-
+/*
 void PaymentServer::fetchPaymentACK(CWallet* wallet, SendCoinsRecipient recipient, QByteArray transaction)
 {
     const payments::PaymentDetails& details = recipient.paymentRequest.getDetails();
@@ -589,7 +529,8 @@ void PaymentServer::fetchPaymentACK(CWallet* wallet, SendCoinsRecipient recipien
         qWarning() << "PaymentServer::fetchPaymentACK : Error serializing payment message";
     }
 }
-
+*/
+/*
 void PaymentServer::netRequestFinished(QNetworkReply* reply)
 {
     reply->deleteLater();
@@ -644,7 +585,8 @@ void PaymentServer::netRequestFinished(QNetworkReply* reply)
         }
     }
 }
-
+*/
+/*
 void PaymentServer::reportSslErrors(QNetworkReply* reply, const QList<QSslError>& errs)
 {
     Q_UNUSED(reply);
@@ -656,19 +598,21 @@ void PaymentServer::reportSslErrors(QNetworkReply* reply, const QList<QSslError>
     }
     Q_EMIT message(tr("Network request error"), errString, CClientUIInterface::MSG_ERROR);
 }
-
+*/
 void PaymentServer::setOptionsModel(OptionsModel* optionsModel)
 {
     this->optionsModel = optionsModel;
 }
-
+/*
 void PaymentServer::handlePaymentACK(const QString& paymentACKMsg)
 {
     // currently we don't futher process or store the paymentACK message
     Q_EMIT message(tr("Payment acknowledged"), paymentACKMsg, CClientUIInterface::ICON_INFORMATION | CClientUIInterface::MODAL);
 }
-
+*/
+/* unused
 X509_STORE* PaymentServer::getCertStore()
 {
     return certStore.get();
 }
+*/

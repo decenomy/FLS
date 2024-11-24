@@ -30,6 +30,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QFuture>
 
+using namespace boost::placeholders;
+
 // Amount column is right-aligned it contains numbers
 static int column_alignments[] = {
     Qt::AlignLeft | Qt::AlignVCenter, /* status */
@@ -106,7 +108,7 @@ public:
         if (txesSize > SINGLE_THREAD_MAX_TXES_SIZE) {
 
             // First check if the amount of txs exceeds the UI limit
-            if (txesSize > MAX_AMOUNT_LOADED_RECORDS) {
+            if (txesSize > wallet->nLoadedRecordsMaxCount) {
                 // Sort the txs by date just to be really really sure that them are ordered.
                 // (this extra calculation should be removed in the future if can ensure that
                 // txs are stored in order in the db, which is what should be happening)
@@ -116,7 +118,7 @@ public:
                      });
 
                 // Only latest ones.
-                walletTxes = std::vector<CWalletTx>(walletTxes.begin(), walletTxes.begin() + MAX_AMOUNT_LOADED_RECORDS);
+                walletTxes = std::vector<CWalletTx>(walletTxes.begin(), walletTxes.begin() + wallet->nLoadedRecordsMaxCount);
                 txesSize = walletTxes.size();
             };
 
@@ -263,7 +265,7 @@ public:
                            
                         // As old transactions are still getting updated (+20k range),
                         // do not add them if we deliberately didn't load them at startup.
-                        if (cachedWallet.size() >= MAX_AMOUNT_LOADED_RECORDS && wtx.GetTxTime() < nFirstLoadedTxTime) {
+                        if (cachedWallet.size() >= wallet->nLoadedRecordsMaxCount && wtx.GetTxTime() < nFirstLoadedTxTime) {
                             return;
                         }
                     }
@@ -338,7 +340,7 @@ public:
             if (lockMain) {
                 TRY_LOCK(wallet->cs_wallet, lockWallet);
                 if (lockWallet && rec->statusUpdateNeeded()) {
-                    std::map<uint256, CWalletTx>::iterator mi = wallet->mapWallet.find(rec->hash);
+                    auto mi = wallet->mapWallet.find(rec->hash);
 
                     if (mi != wallet->mapWallet.end()) {
                         rec->updateStatus(mi->second);

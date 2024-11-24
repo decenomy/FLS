@@ -14,6 +14,9 @@
 #include "peertablemodel.h"
 
 #include "chainparams.h"
+#include "masternodeman.h"
+#include "masternodeconfig.h"
+#include "masternode-sync.h"
 #include "netbase.h"
 #include "rpc/client.h"
 #include "rpc/server.h"
@@ -37,6 +40,11 @@
 #include <QTimer>
 #include <QStringList>
 
+#include <QDateTime>
+#include <QPalette>
+#include <QColor>
+#include <QColorDialog>
+
 // TODO: add a scrollback limit, as there is currently none
 // TODO: make it possible to filter out categories (esp debug messages when implemented)
 // TODO: receive errors and debug messages through ClientModel
@@ -55,6 +63,7 @@ const QString UPGRADEWALLET("-upgradewallet");
 const QString REINDEX("-reindex");
 const QString RESYNC("-resync");
 const QString REWIND("-rewindblockindex");
+const QString BOOTSTRAP("-bootstrap");
 
 const struct {
     const char* url;
@@ -283,6 +292,10 @@ RPCConsole::RPCConsole(QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHi
     connect(ui->btn_upgradewallet, &QPushButton::clicked, this, &RPCConsole::walletUpgrade);
     connect(ui->btn_reindex, &QPushButton::clicked, this, &RPCConsole::walletReindex);
     connect(ui->btn_resync, &QPushButton::clicked, this, &RPCConsole::walletResync);
+    connect(ui->btn_bootstrap, &QPushButton::clicked, this, &RPCConsole::walletBootstrap);
+
+    // Blockchain Status Refresh Button
+    connect(ui->btn_refresh,  &QPushButton::clicked, this, &RPCConsole::updateBlockchainStats);
 
     // set library version labels
 #ifdef ENABLE_WALLET
@@ -567,6 +580,27 @@ void RPCConsole::walletResync()
     buildParameterlist(RESYNC);
 }
 
+/** Restart wallet with "-bootstrap" */
+void RPCConsole::walletBootstrap()
+{
+    QString bootstrapWarning = tr("This will delete your local blockchain folders and the wallet will load blockchain from source.<br /><br />");
+        bootstrapWarning +=   tr("This needs a few minutes to download all data.<br /><br />");
+        bootstrapWarning +=   tr("Your transactions and funds will be visible again after the download has completed.<br /><br />");
+        bootstrapWarning +=   tr("Do you want to continue?.<br />");
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm bootstrap Blockchain"),
+        bootstrapWarning,
+        QMessageBox::Yes | QMessageBox::Cancel,
+        QMessageBox::Cancel);
+
+    if (retval != QMessageBox::Yes) {
+        // Resync canceled
+        return;
+    }
+
+    // Restart and bootstrap
+    buildParameterlist(BOOTSTRAP);
+}
+
 /** Build command-line parameter list for restart */
 void RPCConsole::buildParameterlist(QString arg)
 {
@@ -583,6 +617,7 @@ void RPCConsole::buildParameterlist(QString arg)
     args.removeAll(REINDEX);
     args.removeAll(RESYNC);
     args.removeAll(REWIND);
+    args.removeAll(BOOTSTRAP);
 
     // Append repair parameter to command line.
     args.append(arg);
@@ -745,6 +780,8 @@ void RPCConsole::on_tabWidget_currentChanged(int index)
 {
     if (ui->tabWidget->widget(index) == ui->tab_console) {
         ui->lineEdit->setFocus();
+    } else if (ui->tabWidget->widget(index) == ui->tab_status) {
+        updateBlockchainStats();
     } else if (ui->tabWidget->widget(index) != ui->tab_peers) {
         clearSelectedNode();
     }
@@ -819,6 +856,12 @@ void RPCConsole::showPeers()
 void RPCConsole::showRepair()
 {
     ui->tabWidget->setCurrentIndex(4);
+    show();
+}
+
+void RPCConsole::showBlockchainStatus()
+{
+    ui->tabWidget->setCurrentIndex(5);
     show();
 }
 
@@ -1056,3 +1099,100 @@ void RPCConsole::showOrHideBanTableIfRequired()
     ui->banHeading->setVisible(visible);
 }
 
+void RPCConsole::setroi(CBlockchainStatus& cbs)
+{
+    ui->stkroi->setText(QString::fromStdString(strprintf("%4.2f%%", cbs.nSmoothStakingROI * 100)));
+    ui->ssroi->setText(QString::fromStdString(strprintf("%4.2f%%", cbs.nStakingROI * 100)));
+    ui->stkcoins->setText(QString::fromStdString(cbs.coin2prettyText((CAmount)(cbs.nSmoothStakedCoins/COIN))));
+    const auto nMasternodingYearlyRewardsROI = cbs.nMNReward * cbs.nBlocksPerDay * 365 / cbs.nMNCoins;
+    ui->mnroi->setText(QString::fromStdString(strprintf("%4.2f%%", nMasternodingYearlyRewardsROI * 100)));
+    ui->mncoins->setText(QString::fromStdString(cbs.coin2prettyText((CAmount)(cbs.nMNCoins/COIN))));
+}
+
+void RPCConsole::setchainmasternodes(CBlockchainStatus& cbs)
+{
+    int ipv4 = 0, ipv6 = 0, onion = 0;
+    int nCount = mnodeman.GetNextMasternodeInQueueCount(cbs.nHeight);
+    mnodeman.CountNetworks(ipv4, ipv6, onion);
+    int totalmn = mnodeman.size();
+    int stablemn = mnodeman.stable_size();
+
+    ui->totalmn->setText(QString::number(totalmn));
+    ui->stablemn->setText(QString::number(stablemn));
+    ui->enabledmn->setText(QString::number(cbs.nMNEnabled));
+    ui->inqmn->setText(QString::number(nCount));
+    ui->ipv4mn->setText(QString::number(ipv4));
+    ui->ipv6mn->setText(QString::number(ipv6));
+    ui->onionmn->setText(QString::number(onion));
+}
+
+void RPCConsole::setmymasternodes()
+{
+    // Masternodes
+    int nMNCount = 0;
+    int nMNActive = 0;
+    bool isSynced = masternodeSync.IsSynced();
+
+    for (auto mne : masternodeConfig.getEntries()) {
+        nMNCount++;
+
+        if (isSynced) {
+            int nIndex;
+            if (!mne.castOutputIndex(nIndex))
+                continue;
+
+            uint256 txHash(mne.getTxHash());
+            CTxIn txIn(txHash, uint32_t(nIndex));
+            auto pmn = mnodeman.Find(txIn);
+
+            if (!pmn) continue;
+
+            int activeState = pmn->activeState;
+
+            if (activeState == CMasternode::MASTERNODE_PRE_ENABLED || activeState == CMasternode::MASTERNODE_ENABLED) {
+                nMNActive++;
+            }
+        }
+    }
+
+    QString sMNActive = isSynced ? std::to_string(nMNActive).c_str() : "--";
+    
+    ui->mytotalmn->setText(sMNActive);
+    ui->myactivemn->setText(QString::number(nMNCount));
+}
+
+void RPCConsole::setbstamp()
+{
+    QDateTime timestamp = QDateTime::currentDateTime();
+    QString timestring = timestamp.toString();
+    ui->bststamp->setText(timestring);
+}
+
+// color text helper
+void applyColor2Text(QLabel * label, QColor color)
+{
+    QPalette palette = label->palette();
+    palette.setColor(QPalette::WindowText, color);
+    label->setPalette(palette);
+}
+
+void RPCConsole::updateBlockchainStats()
+{
+    CBlockchainStatus cbs;
+    int cbserror = cbs.getblockchainstatus();
+    if (cbserror > 0) {
+        applyColor2Text(ui->bststamp, Qt::red);
+        ui->bststamp->setText(QStringLiteral("Try again after the active chain is loaded"));
+        return;
+    } else 
+    if (cbserror < 0) {
+        applyColor2Text(ui->bststamp, Qt::red);
+        ui->bststamp->setText(QStringLiteral("Try again after the chain is fully synced"));
+        return;
+    }
+    setroi(cbs);
+    setchainmasternodes(cbs);
+    setmymasternodes();
+    applyColor2Text(ui->bststamp, Qt::black);
+    setbstamp();
+}

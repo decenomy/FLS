@@ -268,6 +268,12 @@ bool CWalletDB::WriteAutoCombineSettings(bool fEnable, CAmount nCombineThreshold
     return Write(std::string("autocombinesettings"), pSettings, true);
 }
 
+bool CWalletDB::WriteLoadedRecordsMaxCount(int nLoadedRecordsMaxCount)
+{
+    nWalletDBUpdateCounter++;
+    return Write(std::string("loadedrecordsmaxcount"), nLoadedRecordsMaxCount, true);
+}
+
 bool CWalletDB::ReadPool(int64_t nPool, CKeyPool& keypool)
 {
     return Read(std::make_pair(std::string("pool"), nPool), keypool);
@@ -387,7 +393,7 @@ DBErrors CWalletDB::ReorderTransactions(CWallet* pwallet)
     typedef std::multimap<int64_t, TxPair> TxItems;
     TxItems txByTime;
 
-    for (std::map<uint256, CWalletTx>::iterator it = pwallet->mapWallet.begin(); it != pwallet->mapWallet.end(); ++it) {
+    for (auto it = pwallet->mapWallet.begin(); it != pwallet->mapWallet.end(); ++it) {
         CWalletTx* wtx = &((*it).second);
         txByTime.insert(std::make_pair(wtx->nTimeReceived, TxPair(wtx, (CAccountingEntry*)0)));
     }
@@ -689,6 +695,8 @@ bool ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue, CW
             // originally saved as integer
             if (pwallet->nAutoCombineThreshold < COIN)
                 pwallet->nAutoCombineThreshold *= COIN;
+        } else if (strType == "loadedrecordsmaxcount") {
+            ssValue >> pwallet->nLoadedRecordsMaxCount;
         } else if (strType == "destdata") {
             std::string strAddress, strKey, strValue;
             ssKey >> strAddress;
@@ -1069,7 +1077,9 @@ bool AttemptBackupWallet(const CWallet& wallet, const fs::path& pathSrc, const f
             LogPrintf("cannot backup to wallet source file %s\n", pathDest.string());
             return false;
         }
-#if BOOST_VERSION >= 105800 /* BOOST_LIB_VERSION 1_58 */
+#if BOOST_VERSION >= 107400 /* BOOST_LIB_VERSION 1_74 */
+        fs::copy_file(pathSrc.c_str(), pathDest, fs::copy_options::overwrite_existing);
+#elif BOOST_VERSION >= 105800 /* BOOST_LIB_VERSION 1_58 */
         fs::copy_file(pathSrc.c_str(), pathDest, fs::copy_option::overwrite_if_exists);
 #else
         std::ifstream src(pathSrc.c_str(),  std::ios::binary | std::ios::in);

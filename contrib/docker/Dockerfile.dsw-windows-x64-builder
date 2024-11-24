@@ -1,0 +1,105 @@
+# Use a base image (Ubuntu 18.04)
+# FROM ubuntu:18.04
+FROM ubuntu@sha256:dca176c9663a7ba4c1f0e710986f5a25e672842963d95b960191e2d9f7185ebe
+
+# Set arguments
+ARG CPU_CORES=1
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+ENV QT_RCC_TEST=1
+ENV QT_RCC_SOURCE_DATE_OVERRIDE=1
+
+# Update and install necessary packages
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
+        curl=7.58.0-2ubuntu3.24 \ 
+        git=1:2.17.1-1ubuntu0.18 \
+        zip=3.0-11build1 \
+        faketime=0.9.7-2 \
+        build-essential=12.4ubuntu1 \ 
+        libtool=2.4.6-2 \
+        bsdmainutils=11.1.2ubuntu1 \
+        autotools-dev=20180224.1 \ 
+        autoconf=2.69-11 \
+        pkg-config=0.29.1-0ubuntu2 \
+        automake=1:1.15.1-3ubuntu2 \
+        python3=3.6.7-1~18.04 \
+        mingw-w64=5.0.3-1 \
+        xvfb=2:1.19.6-1ubuntu4.15 \
+        wine32=3.0-1ubuntu1 \
+        wine64=3.0-1ubuntu1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set POSIX for x86_64-w64-mingw32-g++ alternatives config 
+RUN echo "1" | update-alternatives --config x86_64-w64-mingw32-g++
+
+# use a fixed date
+RUN echo -n "2000-01-01 12:00:00" > /git_timestamp
+
+# Compile the depends folder using a deterministic timestamp
+ENV WRAP_DIR=/wrapped
+ENV HOSTS="x86_64-w64-mingw32"
+ENV FAKETIME_HOST_PROGS="ar ranlib nm windres strip objcopy gcc g++"
+ENV FAKETIME_PROGS="ar ranlib nm strip objcopy gcc g++ date zip wine wine64"
+
+RUN mkdir -p ${WRAP_DIR}
+
+RUN for prog in ${FAKETIME_PROGS}; \
+    do \
+        echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${prog}; \
+        echo -n "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1 " >> ${WRAP_DIR}/${prog}; \
+        echo -n "FAKETIME=\"\$(cat /git_timestamp)\" " >> ${WRAP_DIR}/${prog}; \
+        echo "\$(which -a ${prog} | grep -v ${WRAP_DIR}/${prog} | head -n 1) \"\$@\"" >> ${WRAP_DIR}/${prog}; \
+        chmod +x ${WRAP_DIR}/${prog}; \
+    done
+
+RUN for host in $HOSTS; \
+    do \
+        for prog in ${FAKETIME_HOST_PROGS}; \
+        do \
+            echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${host}-${prog}; \
+            echo -n "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1 " >> ${WRAP_DIR}/${host}-${prog}; \
+            echo -n "FAKETIME=\"\$(cat /git_timestamp)\" " >> ${WRAP_DIR}/${host}-${prog}; \
+            echo "\$(which -a ${host}-${prog} | grep -v ${WRAP_DIR}/${host}-${prog} | head -n 1) \"\$@\"" >> ${WRAP_DIR}/${host}-${prog}; \
+            chmod +x ${WRAP_DIR}/${host}-${prog}; \
+        done \
+    done
+
+RUN ln -s ${WRAP_DIR}/x86_64-w64-mingw32-windres ${WRAP_DIR}/windres
+
+# Clone the repository
+RUN git clone https://github.com/decenomy/DSW.git
+
+# Set the Inno Setup compiler
+WORKDIR /DSW/contrib/innosetup
+
+ENV DISPLAY=:99
+RUN Xvfb :99 -screen 0 1024x768x16 -nolisten tcp &
+
+RUN Xvfb :99 -screen 0 1024x768x16 -nolisten tcp & \
+    wine innosetup-6.1.2.exe /VERYSILENT /NORESTART /ALLUSERS /SUPPRESSMSGBOXES /SP /LOG=setup.log && \
+    wine idpsetup-1.5.1.exe /VERYSILENT /NORESTART /ALLUSERS /SUPPRESSMSGBOXES /SP /LOG=setup.log
+
+RUN rm /tmp/.X99-lock
+
+# Switch to the repository directory
+WORKDIR /DSW/depends
+
+# Builds the dependencies in the depends folder
+RUN PATH=${WRAP_DIR}:${PATH} make -j$(echo $CPU_CORES) HOST=x86_64-w64-mingw32
+
+# Set the work dir to the root folder
+WORKDIR /
+
+# Set the entry point if you want to interact within the container
+ENTRYPOINT ["bash"]
+
+# Build it with:
+# docker build --build-arg CPU_CORES=<num_cores> -t decenomy/dsw-windows-x64-builder -f Dockerfile.dsw-windows-x64-builder .
+# Publish with:
+# docker login
+# docker push decenomy/dsw-windows-x64-builder:latest

@@ -139,7 +139,8 @@ public:
     bool WriteMSDisabledAddresses(std::vector<std::string> vDisabledAddresses);
     bool EraseMSDisabledAddresses(std::vector<std::string> vDisabledAddresses);
     bool WriteAutoCombineSettings(bool fEnable, CAmount nCombineThreshold);
-
+    bool WriteLoadedRecordsMaxCount(int nLoadedRecordsMaxCount);
+    
     bool ReadPool(int64_t nPool, CKeyPool& keypool);
     bool WritePool(int64_t nPool, const CKeyPool& keypool);
     bool ErasePool(int64_t nPool);

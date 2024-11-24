@@ -1,25 +1,35 @@
 PACKAGE=qt
 $(package)_version=5.9.9
 # $(package)_download_path=https://download.qt.io/archive/qt/5.9/$($(package)_version)/submodules
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmWS1cnwY74rbuHes91FvNNX8XXDHu1Unqzg5Wjta4Wcpt?filename=qtbase-opensource-src-5.9.9.tar.xz
 $(package)_suffix=opensource-src-$($(package)_version).tar.xz
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmWS1cnwY74rbuHes91FvNNX8XXDHu1Unqzg5Wjta4Wcpt
 $(package)_file_name=qtbase-$($(package)_suffix)
 $(package)_sha256_hash=d5a97381b9339c0fbaf13f0c05d599a5c999dcf94145044058198987183fed65
-$(package)_dependencies=openssl zlib
+$(package)_dependencies=zlib
 $(package)_linux_dependencies=freetype fontconfig libxcb libX11 xproto libXext
 $(package)_build_subdir=qtbase
 $(package)_qt_libs=corelib network widgets gui plugins testlib concurrent
 $(package)_patches=fix_qt_pkgconfig.patch mac-qmake.conf fix_configure_mac.patch fix_no_printer.patch fix_rcc_determinism.patch fix_riscv64_arch.patch fix_s390x_powerpc_mips_mipsel_architectures.patch xkb-default.patch fix_gcc_11_3_compile.patch
 
+# https://ipfs.decenomy.net/QmaBqkWqYQeyvqK3djYy3AXguyswZGY8nbrHaMHrfM6jD1?filename=qttranslations-opensource-src-5.9.9.tar.xz
+$(package)_qttranslations_download_file=QmaBqkWqYQeyvqK3djYy3AXguyswZGY8nbrHaMHrfM6jD1
 $(package)_qttranslations_file_name=qttranslations-$($(package)_suffix)
 $(package)_qttranslations_sha256_hash=f7474f260a1382549720081bf2359a3d425ec3bf7d31976c512834303d30d73b
 
+# https://ipfs.decenomy.net/QmQ7eQYaySNp7NSVpJXyT9oBsf7yRxHyd53Cm1z3u7JSG6?filename=qttools-opensource-src-5.9.9.tar.xz
+$(package)_qttools_download_file=QmQ7eQYaySNp7NSVpJXyT9oBsf7yRxHyd53Cm1z3u7JSG6
 $(package)_qttools_file_name=qttools-$($(package)_suffix)
 $(package)_qttools_sha256_hash=fce6e0fd39a40bcef880c669080087dba94af1ec442296222210472e0852bf98
 
+# https://ipfs.decenomy.net/QmUWDvGG5wT26cmE8wkz5dZkjFWNuTHq1bBY6nudLUQ3Xa?filename=qtsvg-opensource-src-5.9.9.tar.xz
+$(package)_qtsvg_download_file=QmUWDvGG5wT26cmE8wkz5dZkjFWNuTHq1bBY6nudLUQ3Xa
 $(package)_qtsvg_file_name=qtsvg-$($(package)_suffix)
 $(package)_qtsvg_sha256_hash=0d2759178c0c1ec8c7ea0d05b7bf57787c09d8059ca9b9518607a8e97933e888
 
+# https://ipfs.decenomy.net/QmT5BgG9nYmUs6aZArYHWL878vYHjBzrtkNfQ2Vt6sgXY2?filename=qtcharts-opensource-src-5.9.9.tar.xz
+$(package)_qtcharts_download_file=QmT5BgG9nYmUs6aZArYHWL878vYHjBzrtkNfQ2Vt6sgXY2
 $(package)_qtcharts_file_name=qtcharts-$($(package)_suffix)
 $(package)_qtcharts_sha256_hash=a503e9f1504c41a6a7850ca2e0e4e786fce45345c94eb81a6abd352d15b7d95c
 
@@ -65,7 +75,7 @@ $(package)_config_opts += -no-xinput2
 $(package)_config_opts += -nomake examples
 $(package)_config_opts += -nomake tests
 $(package)_config_opts += -opensource
-$(package)_config_opts += -openssl-linked
+$(package)_config_opts += -no-openssl
 $(package)_config_opts += -optimized-qmake
 $(package)_config_opts += -pkg-config
 $(package)_config_opts += -prefix $(host_prefix)
@@ -128,10 +138,10 @@ endef
 
 define $(package)_fetch_cmds
 $(call fetch_file,$(package),$($(package)_download_path),$($(package)_download_file),$($(package)_file_name),$($(package)_sha256_hash)) && \
-$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qttranslations_file_name),$($(package)_qttranslations_file_name),$($(package)_qttranslations_sha256_hash)) && \
-$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qttools_file_name),$($(package)_qttools_file_name),$($(package)_qttools_sha256_hash)) && \
-$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qtsvg_file_name),$($(package)_qtsvg_file_name),$($(package)_qtsvg_sha256_hash)) && \
-$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qtcharts_file_name),$($(package)_qtcharts_file_name),$($(package)_qtcharts_sha256_hash))
+$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qttranslations_download_file),$($(package)_qttranslations_file_name),$($(package)_qttranslations_sha256_hash)) && \
+$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qttools_download_file),$($(package)_qttools_file_name),$($(package)_qttools_sha256_hash)) && \
+$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qtsvg_download_file),$($(package)_qtsvg_file_name),$($(package)_qtsvg_sha256_hash)) && \
+$(call fetch_file,$(package),$($(package)_download_path),$($(package)_qtcharts_download_file),$($(package)_qtcharts_file_name),$($(package)_qtcharts_sha256_hash))
 endef
 
 define $(package)_extract_cmds

@@ -22,7 +22,7 @@
 #include "wallet/wallet.h"
 #endif // ENABLE_WALLET
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/iostreams/concepts.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/shared_ptr.hpp>
@@ -32,6 +32,7 @@
 
 #include <univalue.h>
 
+using namespace boost::placeholders;
 
 static bool fRPCRunning = false;
 static bool fRPCInWarmup = true;
@@ -387,6 +388,7 @@ static const CRPCCommand vRPCCommands[] =
         {"wallet", "bip38decrypt", &bip38decrypt, true },
         {"wallet", "getaddressinfo", &getaddressinfo, true },
         {"wallet", "getstakingstatus", &getstakingstatus, false },
+        {"wallet", "getrewardsinfo", &getrewardsinfo, false },
         {"wallet", "multisend", &multisend, false },
 
 #endif // ENABLE_WALLET

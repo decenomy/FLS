@@ -1,7 +1,9 @@
 package=native_ds_store
 $(package)_version=1.1.2
 # $(package)_download_path=https://github.com/al45tair/ds_store/archive/
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmfTnof5eKf5JxajzXCPra9RdtP5W8jtACcAjBxwFwSva9?filename=v1.1.2.tar.gz
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmfTnof5eKf5JxajzXCPra9RdtP5W8jtACcAjBxwFwSva9
 $(package)_file_name=v$($(package)_version).tar.gz
 $(package)_sha256_hash=3b3ecb7bf0a5157f5b6010bc3af7c141fb0ad3527084e63336220d22744bc20c
 $(package)_install_libdir=$(build_prefix)/lib/python3/dist-packages

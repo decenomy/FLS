@@ -1,7 +1,9 @@
 package=miniupnpc
 $(package)_version=2.0.20180203
 # $(package)_download_path=https://miniupnp.tuxfamily.org/files/
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/Qma4m48h24gWFFPCGhbm61oGYGDWHkgDRQ8FNX42pDoxuC?filename=miniupnpc-2.0.20180203.tar.gz
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=Qma4m48h24gWFFPCGhbm61oGYGDWHkgDRQ8FNX42pDoxuC
 $(package)_file_name=$(package)-$($(package)_version).tar.gz
 $(package)_sha256_hash=90dda8c7563ca6cd4a83e23b3c66dbbea89603a1675bfdb852897c2c9cc220b7
 

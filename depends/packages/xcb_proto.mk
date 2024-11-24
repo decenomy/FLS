@@ -1,7 +1,9 @@
 package=xcb_proto
 $(package)_version=1.10
 # $(package)_download_path=https://xcb.freedesktop.org/dist
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmRzchvXBhLAdZz76GF9ikPVufnKnnnBEyAiDnbuz9TWM2?filename=xcb-proto-1.10.tar.bz2
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmRzchvXBhLAdZz76GF9ikPVufnKnnnBEyAiDnbuz9TWM2
 $(package)_file_name=xcb-proto-$($(package)_version).tar.bz2
 $(package)_sha256_hash=7ef40ddd855b750bc597d2a435da21e55e502a0fefa85b274f2c922800baaf05
 

@@ -7,6 +7,8 @@
 
 #include "validationinterface.h"
 
+using namespace boost::placeholders;
+
 static CMainSignals g_signals;
 
 CMainSignals& GetMainSignals()

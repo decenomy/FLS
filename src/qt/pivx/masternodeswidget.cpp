@@ -108,6 +108,10 @@ MasterNodesWidget::MasterNodesWidget(PIVXGUI *parent) :
     ui->btnAbout->setSubTitleClassAndText("text-subtitle", tr("FAQ explaining what Masternodes are"));
     ui->btnAboutController->setTitleClassAndText("btn-title-grey", tr("What is a Controller?"));
     ui->btnAboutController->setSubTitleClassAndText("text-subtitle", tr("FAQ explaining what is a Masternode Controller"));
+    ui->btnMasternodeConf->setTitleClassAndText("btn-title-grey", tr("masternode.conf"));
+    ui->btnMasternodeConf->setSubTitleClassAndText("text-subtitle", tr("Opens the masternode configuration file for editing"));
+    ui->btnExportActivemasternodeConf->setTitleClassAndText("btn-title-grey", tr("Export activemasternode.conf"));
+    ui->btnExportActivemasternodeConf->setSubTitleClassAndText("text-subtitle", tr("Exports the masternode list as a activemasternode.conf file"));
 
     setCssProperty(ui->listMn, "container");
     ui->listMn->setItemDelegate(delegate);
@@ -131,6 +135,29 @@ MasterNodesWidget::MasterNodesWidget(PIVXGUI *parent) :
     connect(ui->listMn, &QListView::clicked, this, &MasterNodesWidget::onMNClicked);
     connect(ui->btnAbout, &OptionButton::clicked, [this](){window->openFAQ(5);});
     connect(ui->btnAboutController, &OptionButton::clicked, [this](){window->openFAQ(6);});
+    connect(ui->btnMasternodeConf, &OptionButton::clicked, [this](){
+        if(!GUIUtil::openMNConfigfile()) {
+            inform(tr("Unable to open masternode.conf with default application"));
+        }
+    });
+    connect(ui->btnExportActivemasternodeConf, &OptionButton::clicked, [this](){
+        QString filename = 
+            GUIUtil::getSaveFileName(
+                this, 
+                tr("Export activemasternode.conf"), 
+                tr("activemasternode.conf"),
+                tr("activemasternode.conf (*.conf)"),
+                NULL
+            );
+
+        if (!filename.isEmpty()) { 
+            if(masternodeConfig.exportActiveMasternodes(filename.toStdString())) {
+                inform(tr("activemasternode.conf file exported to file: ") + filename);
+            } else {
+                inform(tr("Error exporting activemasternode.conf file"));
+            }
+        }
+    });
 }
 
 void MasterNodesWidget::showEvent(QShowEvent *event)

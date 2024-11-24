@@ -1,7 +1,9 @@
 package=bdb
 $(package)_version=4.8.30
 # $(package)_download_path=https://download.oracle.com/berkeley-db
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmRL4ExmYkCBH3UpZGjunodVozjwshhRojwVvbj3nTAPay?filename=db-4.8.30.NC.tar.gz
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmRL4ExmYkCBH3UpZGjunodVozjwshhRojwVvbj3nTAPay
 $(package)_file_name=db-$($(package)_version).NC.tar.gz
 $(package)_sha256_hash=12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364ef
 $(package)_build_subdir=build_unix

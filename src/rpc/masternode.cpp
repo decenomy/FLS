@@ -677,7 +677,6 @@ UniValue getactivemasternodecount (const JSONRPCRequest& request)
     return obj;
 }
 
-
 UniValue getmasternodestatus(const JSONRPCRequest& request)
 {
     if (request.fHelp || (request.params.size() != 0))
@@ -904,6 +903,7 @@ bool DecodeHexMnb(CMasternodeBroadcast& mnb, std::string strHexMnb) {
 
     return true;
 }
+
 UniValue createmasternodebroadcast(const JSONRPCRequest& request)
 {
     // wait for reindex and/or import to finish

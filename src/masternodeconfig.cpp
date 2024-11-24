@@ -111,3 +111,28 @@ bool CMasternodeConfig::CMasternodeEntry::castOutputIndex(int &n) const
 
     return true;
 }
+
+bool CMasternodeConfig::exportActiveMasternodes(std::string filename) 
+{
+    try {
+        std::ofstream file(filename);
+
+        if (!file.is_open()) {
+            return false;
+        }
+
+        // Iterate through entries and write to the file
+        for (const auto& mne : entries) {
+            std::string line = mne.getAlias() + " " + mne.getPrivKey() + "\n";
+            file << line;
+
+            if (file.fail()) {
+                return false;
+            }
+        }
+    } catch (const std::exception& e) {
+        return false;
+    }
+
+    return true;
+}

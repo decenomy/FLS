@@ -1,7 +1,9 @@
 package=fontconfig
 $(package)_version=2.12.1
 # $(package)_download_path=https://www.freedesktop.org/software/fontconfig/release/
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmbR5DvNpNKWe3sTTE5VZvjkSrzM2wrTqguXKMABCpi4ga?filename=fontconfig-2.12.1.tar.bz2
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmbR5DvNpNKWe3sTTE5VZvjkSrzM2wrTqguXKMABCpi4ga
 $(package)_file_name=$(package)-$($(package)_version).tar.bz2
 $(package)_sha256_hash=b449a3e10c47e1d1c7a6ec6e2016cca73d3bd68fbbd4f0ae5cc6b573f7d6c7f3
 $(package)_dependencies=freetype expat

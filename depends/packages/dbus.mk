@@ -1,7 +1,9 @@
 package=dbus
 $(package)_version=1.10.18
 # $(package)_download_path=https://dbus.freedesktop.org/releases/dbus
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmXoHHNbkFZCjzj3cNTcqTEejEd5QEcB2nXixvm43xPc7d?filename=dbus-1.10.18.tar.gz
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmXoHHNbkFZCjzj3cNTcqTEejEd5QEcB2nXixvm43xPc7d
 $(package)_file_name=$(package)-$($(package)_version).tar.gz
 $(package)_sha256_hash=6049ddd5f3f3e2618f615f1faeda0a115104423a7996b7aa73e2f36e38cc514a
 $(package)_dependencies=expat

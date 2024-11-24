@@ -7,6 +7,7 @@
 #ifndef BITCOIN_QT_RPCCONSOLE_H
 #define BITCOIN_QT_RPCCONSOLE_H
 
+#include "rewards.h"
 #include "guiutil.h"
 #include "peertablemodel.h"
 
@@ -82,6 +83,10 @@ public Q_SLOTS:
     void walletUpgrade();
     void walletReindex();
     void walletResync();
+    void walletBootstrap();
+
+    /** update blockchainstats */
+    void updateBlockchainStats();
 
     void reject();
     void message(int category, const QString &msg) { message(category, msg, false); }
@@ -106,6 +111,8 @@ public Q_SLOTS:
     void showPeers();
     /** Switch to wallet-repair tab and show */
     void showRepair();
+    /** Switch to blockchain status tab and show */
+    void showBlockchainStatus();
     /** Open external (default) editor with flits.conf */
     void showConfEditor();
     /** Open external (default) editor with masternode.conf */
@@ -138,6 +145,14 @@ private:
     void buildParameterlist(QString arg);
     /** show detailed information on ui about selected node */
     void updateNodeDetail(const CNodeCombinedStats* stats);
+    /** show detailed blockchain ROI statistics */
+    void setroi(CBlockchainStatus& cbs);
+    /** show blockchain masternode count numbers */
+    void setchainmasternodes(CBlockchainStatus& cbs);
+    /** show my masternode status */
+    void setmymasternodes();
+    /** show the timestamp when the status snapshot was taken */
+    void setbstamp();
 
     enum ColumnWidths {
         ADDRESS_COLUMN_WIDTH = 170,

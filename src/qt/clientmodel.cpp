@@ -29,6 +29,8 @@
 #include <QDebug>
 #include <QTimer>
 
+using namespace boost::placeholders;
+
 static const int64_t nClientStartupTime = GetTime();
 // Last tip update notification
 static int64_t nLastBlockTipUpdateNotification = 0;

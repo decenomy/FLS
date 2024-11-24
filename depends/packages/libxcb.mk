@@ -1,7 +1,9 @@
 package=libxcb
 $(package)_version=1.10
 # $(package)_download_path=https://xcb.freedesktop.org/dist
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmUvHYqASGDGn8eszh8E3T8amux53BWLKup4N6SCLGFzLe?filename=libxcb-1.10.tar.bz2
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmUvHYqASGDGn8eszh8E3T8amux53BWLKup4N6SCLGFzLe
 $(package)_file_name=$(package)-$($(package)_version).tar.bz2
 $(package)_sha256_hash=98d9ab05b636dd088603b64229dd1ab2d2cc02ab807892e107d674f9c3f2d5b5
 $(package)_dependencies=xcb_proto libXau xproto

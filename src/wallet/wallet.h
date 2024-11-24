@@ -39,6 +39,9 @@
 #include <utility>
 #include <vector>
 
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
 extern CWallet* pwalletMain;
 
 /**
@@ -81,6 +84,11 @@ static const unsigned int DEFAULT_CREATEWALLETBACKUPS = 10;
 static const bool DEFAULT_DISABLE_WALLET = false;
 
 extern const char * DEFAULT_WALLET_DAT;
+
+// Maximum amount of loaded records in ram in the first load.
+// If the user has more and want to load them:
+// TODO, add load on demand in pages (not every tx loaded all the time into the records list).
+#define MAX_AMOUNT_LOADED_RECORDS 100000
 
 class CAccountingEntry;
 class CCoinControl;
@@ -313,7 +321,7 @@ public:
     bool fUseCustomFee;
     CAmount nCustomFee;
 
-    //MultiSend
+    // MultiSend
     std::vector<std::pair<std::string, int> > vMultiSend;
     bool fMultiSendStake;
     bool fMultiSendMasternodeReward;
@@ -322,9 +330,12 @@ public:
     int nLastMultiSendHeight;
     std::vector<std::string> vDisabledAddresses;
 
-    //Auto Combine Inputs
+    // Auto Combine Inputs
     bool fCombineDust;
     CAmount nAutoCombineThreshold;
+
+    // MAX_AMOUNT_LOADED_RECORDS
+    int nLoadedRecordsMaxCount;
 
     CWallet();
     CWallet(std::string strWalletFileIn);
@@ -333,7 +344,9 @@ public:
     bool isMultiSendEnabled();
     void setMultiSendDisabled();
 
-    std::map<uint256, CWalletTx> mapWallet;
+    boost::unordered_map<uint256, CWalletTx, uint256CheapHasher> mapWallet;
+    mutable boost::unordered_set<uint256, uint256CheapHasher> setWallet;
+
     std::list<CAccountingEntry> laccentries;
 
     typedef std::pair<CWalletTx*, CAccountingEntry*> TxPair;
@@ -376,7 +389,11 @@ public:
     /// Extract txin information and keys from output
     bool GetVinAndKeysFromOutput(COutput out, CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet);
 
-    bool IsSpent(const uint256& hash, unsigned int n) const;
+    bool IsSpent(const uint256& hash, unsigned int n, int& nSpendDepth) const;
+    bool IsSpent(const uint256& hash, unsigned int n) const {
+        int nSpendDepth;
+        return IsSpent(hash, n, nSpendDepth);
+    };
 
     bool IsLockedCoin(const uint256& hash, unsigned int n) const;
     void LockCoin(const COutPoint& output);

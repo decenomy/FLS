@@ -1,0 +1,33 @@
+services:
+  flits:
+    image: ubuntu:24.04
+    container_name: flits-ctn
+    restart: always
+    ports:
+      - "__PORT_MAINNET__:__PORT_MAINNET__"  # TCP mainnet port
+      - "__RPCPORT_MAINNET__:__RPCPORT_MAINNET__"  # RPC mainnet port
+    volumes:
+      - ${HOME}/.flits:/root/.flits:shared
+    command:
+      - bash
+      - -c
+      - |
+        if [ ! -f /usr/local/bin/flitsd ]; then
+          echo "Flits binary not found, setting up environment..."
+          apt-get update && \
+          apt-get install -y wget curl unzip && \
+          rm -rf /var/lib/apt/lists/* && \
+          echo $(curl -s https://api.github.com/repos/decenomy/FLS/releases/latest | grep "browser_download_url" | grep -E "Linux(-x64)?\.zip" | cut -d '"' -f 4) > latest_release_url && \
+          echo "Latest release URL: $(cat latest_release_url)" && \
+          echo $(basename "$(cat latest_release_url)") > latest_filename && \
+          echo "Latest filename: $(cat latest_filename)" && \
+          wget "$(cat latest_release_url)" && \
+          unzip -q "$(cat latest_filename)" && \
+          rm "$(cat latest_filename)" && \
+          rm latest_filename && \
+          rm latest_release_url && \
+          mv flits* /usr/local/bin;
+        else
+          echo "Flits binary already installed, skipping setup."
+        fi
+        flitsd

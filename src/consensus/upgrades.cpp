@@ -53,8 +53,12 @@ const struct NUInfo NetworkUpgradeInfo[Consensus::MAX_NETWORK_UPGRADES] = {
                 /*.strInfo =*/ "new masternode ranking system",
         },
         {
-                /*.strName =*/ "dynamic_collateral_v2",
-                /*.strInfo =*/ "new dynamic collateral system",
+                /*.strName =*/ "dynamic_rewards",
+                /*.strInfo =*/ "dynamic reward system",
+        },
+        {
+                /*.strName =*/ "dynamic_collaterals",
+                /*.strInfo =*/ "dynamic collateral system",
         },
         {
                 /*.strName =*/ "Test_dummy",

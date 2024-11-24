@@ -454,6 +454,14 @@ bool TryCreateDirectory(const fs::path& p)
     return false;
 }
 
+bool IsDirectory(const std::string& path) {
+    // Check if the last character in the path is a slash
+    if (!path.empty() && (path.back() == '/' || path.back() == '\\')) {
+        return true;
+    }
+    return false;
+}
+
 void FileCommit(FILE* fileout)
 {
     fflush(fileout); // harmless if redundantly called

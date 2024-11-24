@@ -8,6 +8,11 @@
 
 #include "qt/pivx/pivxgui.h"
 
+#pragma GCC diagnostic push
+#if defined(__GNUC__) && (__GNUC__ >= 9)
+#pragma GCC diagnostic ignored "-Winit-list-lifetime"
+#endif
+
 #include <QAbstractAnimation>
 #include <QColor>
 #include <QComboBox>
@@ -20,6 +25,8 @@
 #include <QString>
 #include <QWidget>
 
+#pragma GCC diagnostic pop
+
 #include <initializer_list>
 
 // Repair parameters
@@ -31,6 +38,7 @@ const QString UPGRADEWALLET("-upgradewallet");
 const QString REINDEX("-reindex");
 const QString RESYNC("-resync");
 const QString REWIND("-rewindblockindex=");
+const QString BOOTSTRAP("-bootstrap");
 
 extern Qt::Modifier SHORT_KEY;
 

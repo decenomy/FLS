@@ -14,11 +14,6 @@
 
 #define SINGLE_THREAD_MAX_TXES_SIZE 4000
 
-// Maximum amount of loaded records in ram in the first load.
-// If the user has more and want to load them:
-// TODO, add load on demand in pages (not every tx loaded all the time into the records list).
-#define MAX_AMOUNT_LOADED_RECORDS 100000
-
 class TransactionRecord;
 class TransactionTablePriv;
 class WalletModel;

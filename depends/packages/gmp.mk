@@ -1,7 +1,9 @@
 package=gmp
 $(package)_version=6.1.2
 # $(package)_download_path=https://gmplib.org/download/gmp
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/Qmcyxsgz7xTcEHcTUP1UVrYcVe6Krk4Rph9iX9RkgCea1p?filename=gmp-6.1.2.tar.bz2
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=Qmcyxsgz7xTcEHcTUP1UVrYcVe6Krk4Rph9iX9RkgCea1p
 $(package)_file_name=$(package)-$($(package)_version).tar.bz2
 $(package)_sha256_hash=5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
 

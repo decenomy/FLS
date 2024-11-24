@@ -1,7 +1,9 @@
 package=xtrans
 $(package)_version=1.3.4
 # $(package)_download_path=https://xorg.freedesktop.org/releases/individual/lib/
-$(package)_download_path=https://github.com/decenomy/depends/raw/main/
+# https://ipfs.decenomy.net/QmXRZpfJG4cwwu3UvZLzB2ZAf4zTPQGMEToqzehKiLRn3C?filename=xtrans-1.3.4.tar.bz2
+$(package)_download_path=https://ipfs.decenomy.net
+$(package)_download_file=QmXRZpfJG4cwwu3UvZLzB2ZAf4zTPQGMEToqzehKiLRn3C
 $(package)_file_name=$(package)-$($(package)_version).tar.bz2
 $(package)_sha256_hash=054d4ee3efd52508c753e9f7bc655ef185a29bd2850dd9e2fc2ccc33544f583a
 $(package)_dependencies=

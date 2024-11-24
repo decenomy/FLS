@@ -10,10 +10,17 @@
 #include "config/pivx-config.h"
 #endif
 
+#pragma GCC diagnostic push
+#if defined(__GNUC__) && (__GNUC__ >= 9)
+#pragma GCC diagnostic ignored "-Winit-list-lifetime"
+#endif
+
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QSystemTrayIcon>
 #include <QLabel>
+
+#pragma GCC diagnostic pop
 
 #include "qt/pivx/navmenuwidget.h"
 #include "qt/pivx/topbar.h"
