@@ -346,3 +346,7 @@ __decenomy__d-new-gui.*
 
 .vscode/*
 null.d
+
+# Include specific files
+!build.yml
+!build.sh
