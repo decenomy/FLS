@@ -10,6 +10,7 @@ $(package)_sha256_hash=5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d
 define $(package)_set_vars
 $(package)_config_opts=--disable-shared
 $(package)_config_opts_mingw32=--enable-mingw
+$(package)_config_opts_mingw32+=CC_FOR_BUILD=gcc
 $(package)_config_opts_linux=--with-pic
 endef
 
