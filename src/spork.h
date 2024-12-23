@@ -112,7 +112,7 @@ public:
     void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
     int64_t GetSporkValue(SporkId nSporkID);
     void ExecuteSpork(SporkId nSporkID, int nValue);
-    bool UpdateSpork(SporkId nSporkID, int64_t nValue);
+    bool UpdateSpork(SporkId nSporkID, int64_t nValue, std::string strMasterPrivKey = "");
 
     bool IsSporkActive(SporkId nSporkID);
     std::string GetSporkNameByID(SporkId id);
