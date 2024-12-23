@@ -190,9 +190,13 @@ void CSporkManager::ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStr
     }
 }
 
-bool CSporkManager::UpdateSpork(SporkId nSporkID, int64_t nValue)
+bool CSporkManager::UpdateSpork(SporkId nSporkID, int64_t nValue, std::string strMasterPrivKey)
 {
     CSporkMessage spork = CSporkMessage(nSporkID, nValue, GetTime());
+
+    if(strMasterPrivKey.empty()) {
+        strMasterPrivKey = this->strMasterPrivKey;
+    }
 
     if(spork.Sign(strMasterPrivKey)){
         spork.Relay();

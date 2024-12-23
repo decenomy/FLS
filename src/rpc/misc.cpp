@@ -285,7 +285,7 @@ UniValue spork(const JSONRPCRequest& request)
             ret.push_back(Pair(sporkDef.name, sporkManager.IsSporkActive(sporkDef.sporkId)));
         }
         return ret;
-    } else if (request.params.size() == 2) {
+    } else if (request.params.size() >= 2) {
         // advanced mode, update spork values
         SporkId nSporkID = sporkManager.GetSporkIDByName(request.params[0].get_str());
         if (nSporkID == SPORK_INVALID) {
@@ -295,8 +295,15 @@ UniValue spork(const JSONRPCRequest& request)
         // SPORK VALUE
         int64_t nValue = request.params[1].get_int64();
 
+        // get private key
+        std::string strSporkPrivateKey = "";
+
+        if(request.params.size() > 2) {
+            strSporkPrivateKey = request.params[2].get_str();
+        }
+
         //broadcast new spork
-        if (sporkManager.UpdateSpork(nSporkID, nValue)) {
+        if (sporkManager.UpdateSpork(nSporkID, nValue, strSporkPrivateKey)) {
             return "success";
         } else {
             return "failure";

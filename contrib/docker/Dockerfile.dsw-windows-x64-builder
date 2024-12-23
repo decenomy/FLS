@@ -69,8 +69,6 @@ RUN for host in $HOSTS; \
         done \
     done
 
-RUN ln -s ${WRAP_DIR}/x86_64-w64-mingw32-windres ${WRAP_DIR}/windres
-
 # Clone the repository
 RUN git clone https://github.com/decenomy/DSW.git
 
