@@ -164,8 +164,6 @@ void CRewards::Shutdown()
     if(insertStmt != nullptr) sqlite3_finalize(insertStmt);
     if(deleteStmt != nullptr) sqlite3_finalize(deleteStmt);
     if(db != nullptr) sqlite3_close(db);
-
-    return;
 }
 
 int CRewards::GetDynamicRewardsEpoch(int nHeight)
@@ -219,7 +217,7 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCac
             // calculate the current circulating supply
             CAmount nCirculatingSupply = 0;
             FlushStateToDisk();
-            std::unique_ptr<CCoinsViewCursor> pcursor(coins.Cursor());
+            std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
 
             while (pcursor->Valid()) {
                 COutPoint key;
