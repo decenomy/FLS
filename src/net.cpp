@@ -408,6 +408,11 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char* pszDest, bool fCo
         }
     }
 
+    if (addrConnect.IsIPv6()) { // avoid IPv6 connections
+        LogPrintf("%s: cannot connect to a IPv6 node\n", __func__);
+        return nullptr;
+    }
+
     /// debug print
     LogPrint(BCLog::NET, "trying connection %s lastseen=%.1fhrs\n",
         pszDest ? pszDest : addrConnect.ToString(),
@@ -1604,23 +1609,26 @@ void CConnman::ThreadDNSAddressSeed()
  
     std::shuffle(vMasternodes.begin(), vMasternodes.end(), g);
     
-    int ipV4Count = 0;
-    int ipV6Count = 0;   
+    int ipV4Count = 0; 
+
+    boost::unordered_set<std::string> masternodeIPs;  
 
     for(const CMasternode& mn : vMasternodes) {
 
-        if(mn.addr.IsIPv4() && ipV4Count < MAX_MASTERNODES_SEEDED_AT_ONCE) {
-            vPeers.push_back(CDNSSeedData(mn.addr.ToStringIP(), mn.addr.ToStringIP()));
+        if(ipV4Count >= MAX_MASTERNODES_SEEDED_AT_ONCE) break;
+
+        if(mn.addr.IsIPv4() && 
+           ipV4Count < MAX_MASTERNODES_SEEDED_AT_ONCE && 
+           masternodeIPs.find(mn.addr.ToStringIP()) == masternodeIPs.end()
+        ) {
+            const auto& addr = mn.addr.ToStringIP();
+            vPeers.push_back(CDNSSeedData(addr, addr));
+            masternodeIPs.insert(addr);
             ipV4Count++;
         }
-
-        if(mn.addr.IsIPv6() && ipV6Count < MAX_MASTERNODES_SEEDED_AT_ONCE) {
-            vPeers.push_back(CDNSSeedData(mn.addr.ToStringIP(), mn.addr.ToStringIP()));
-            ipV6Count++;
-        }
-
-        if(ipV4Count >= ipV6Count >= MAX_MASTERNODES_SEEDED_AT_ONCE) break;
     }
+
+    masternodeIPs.clear();
 
     LogPrintf("Loading addresses from DNS seeds (could take a while)\n");
 
@@ -1923,6 +1931,9 @@ bool CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFai
     //
     // Initiate outbound network connection
     //
+    if (addrConnect.IsIPv6()) { // avoid IPv6 connections
+        return false;
+    }
     if (interruptNet) {
         return false;
     }
