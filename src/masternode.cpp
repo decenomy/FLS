@@ -80,8 +80,6 @@ CMasternode::CMasternode() :
     nLastDsq = 0;
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
-    lastTimeChecked = 0;
-    lastTimeCollateralChecked = 0;
 }
 
 CMasternode::CMasternode(const CMasternode& other) :
@@ -101,8 +99,6 @@ CMasternode::CMasternode(const CMasternode& other) :
     nLastDsq = other.nLastDsq;
     nScanningErrorCount = other.nScanningErrorCount;
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
-    lastTimeChecked = 0;
-    lastTimeCollateralChecked = 0;
 }
 
 uint256 CMasternode::GetSignatureHash() const
@@ -139,8 +135,6 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
         vchSig = mnb.vchSig;
         protocolVersion = mnb.protocolVersion;
         addr = mnb.addr;
-        lastTimeChecked = 0;
-        lastTimeCollateralChecked = 0;
         int nDoS = 0;
         if (mnb.lastPing.IsNull() || (!mnb.lastPing.IsNull() && mnb.lastPing.CheckAndUpdate(nDoS, false))) {
             lastPing = mnb.lastPing;
@@ -189,11 +183,10 @@ void CMasternode::Check(bool forceCheck)
 {
     if (ShutdownRequested()) return;
 
+    LOCK(cs);
+
     //once spent, stop doing the checks
     if (activeState == MASTERNODE_VIN_SPENT) return;
-
-    if (!forceCheck && (GetTime() - lastTimeChecked < MASTERNODE_CHECK_SECONDS)) return;
-    lastTimeChecked = GetTime();
 
     if (!IsPingedWithin(MASTERNODE_REMOVAL_SECONDS)) {
         activeState = MASTERNODE_REMOVE;
@@ -210,52 +203,14 @@ void CMasternode::Check(bool forceCheck)
         return;
     }
 
-    if (!unitTest && 
-        forceCheck && 
-        lastTimeChecked - lastTimeCollateralChecked > MINUTE_IN_SECONDS
-    ) {
-        lastTimeCollateralChecked = lastTimeChecked;
-        CValidationState state;
-        CMutableTransaction tx = CMutableTransaction();
-        CScript dummyScript;
-        dummyScript << ToByteVector(pubKeyCollateralAddress) << OP_CHECKSIG;
-        CTxOut vout = CTxOut((CMasternode::GetMinMasternodeCollateral() - 0.01 * COIN), dummyScript);
-        tx.vin.push_back(vin);
-        tx.vout.push_back(vout);
-        {
-            TRY_LOCK(cs_main, lockMain);
-            if (!lockMain) return;
-
-            if (!AcceptableInputs(mempool, state, CTransaction(tx), false, NULL)) {
-                activeState = MASTERNODE_VIN_SPENT;
-                return;
-            }
-        }
-
-        const auto& consensus = Params().GetConsensus();
-
-        // ----------- burn address scanning -----------
-        if (!consensus.mBurnAddresses.empty()) {
-
-            std::string addr = EncodeDestination(pubKeyCollateralAddress.GetID());
-
-            if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
-                consensus.mBurnAddresses.at(addr) < chainActive.Height()
-            ) {
-                activeState = MASTERNODE_VIN_SPENT;
-                return;
-            }
-        }
-    }
-
     activeState = MASTERNODE_ENABLED; // OK
 }
 
-int64_t CMasternode::SecondsSincePayment(CBlockIndex* pblockindex)
+int64_t CMasternode::SecondsSincePayment()
 {
-    auto lp = GetLastPaid(pblockindex);
+    auto lp = GetLastPaid();
 
-    if(sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) && lp == 0) {
+    if(lp == 0) {
         lp = sigTime;
     }
 
@@ -272,80 +227,13 @@ int64_t CMasternode::SecondsSincePayment(CBlockIndex* pblockindex)
     return month + hash.GetCompact(false);
 }
 
-int64_t CMasternode::GetLastPaidV1(CBlockIndex* pblockindex, const CScript& mnpayee)
+int64_t CMasternode::GetLastPaid()
 {
-    CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-    ss << vin;
-    ss << sigTime;
-    uint256 hash = ss.GetHash();
-
-    // use a deterministic offset to break a tie -- 2.5 minutes
-    int64_t nOffset = hash.GetCompact(false) % 150;
-
-    int max_depth = mnodeman.CountEnabled() * 1.25;
-    for (int n = 0; n < max_depth; n++) {
-        {
-            LOCK(cs_mapMasternodeBlocks);
-
-            const auto& it = masternodePayments.mapMasternodeBlocks.find(pblockindex->nHeight);
-            if (it != masternodePayments.mapMasternodeBlocks.end()) {
-                // Search for this payee, with at least 2 votes. This will aid in consensus
-                // allowing the network to converge on the same payees quickly, then keep the same schedule.
-                if (it->second.HasPayeeWithVotes(mnpayee, 2)) {
-                    return pblockindex->nTime + nOffset;
-                }
-            }
-        }
-
-        pblockindex = pblockindex->pprev;
-
-        if (pblockindex == nullptr || pblockindex->nHeight <= 0) {
-            break;
-        }
-    }
-
-    return 0;
-}
-
-int64_t CMasternode::GetLastPaidV2(CBlockIndex* pblockindex, const CScript& mnpayee)
-{
-    if(lastPaid != INT64_MAX) return lastPaid;
-
-    int max_depth = mnodeman.CountEnabled() * 2;
-    int n = 0;
-
-    do
-    {
-        auto paidpayee = pblockindex->GetPaidPayee();
-        if(paidpayee && mnpayee == *paidpayee) {
-            lastPaid = pblockindex->nTime;
-            return lastPaid;
-        }
-
-        pblockindex = pblockindex->pprev;
-
-        if (pblockindex == nullptr || pblockindex->nHeight <= 0) {
-            break;
-        }
-
-        n++;
-    }
-    while(pblockindex->GetBlockTime() > sigTime && n <= max_depth);
-
-    lastPaid = 0;
-    return lastPaid;
-}
-
-int64_t CMasternode::GetLastPaid(CBlockIndex* pblockindex)
-{
-    if (pblockindex == nullptr) return false;
-
     const CScript& mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 
-    return
-        !sporkManager.IsSporkActive(SPORK_112_MASTERNODE_LAST_PAID_V2) ?
-        GetLastPaidV1(pblockindex, mnpayee) :
-        GetLastPaidV2(pblockindex, mnpayee);
+    const auto lastPaid = mnodeman.GetLastPaid(mnpayee);
+
+    return lastPaid < sigTime ? sigTime : lastPaid;
 }
 
 bool CMasternode::IsValidNetAddr()
@@ -614,7 +502,7 @@ bool CMasternodeBroadcast::CheckAndUpdate(int& nDos)
     // make sure signature isn't in the future (past is OK)
     if (sigTime > GetAdjustedTime() + 60 * 60) {
         LogPrint(BCLog::MASTERNODE, "mnb - Signature rejected, too far into the future %s\n", vin.prevout.ToStringShort());
-        nDos = 1;
+        // nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
     }
 
@@ -755,15 +643,15 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
     }
 
     // verify that sig time is legit in past
-    // should be at least not earlier than block when 1000 __DSW__ tx got MASTERNODE_MIN_CONFIRMATIONS
+    // should be at least not earlier than block when txin got MASTERNODE_MIN_CONFIRMATIONS
     uint256 hashBlock = UINT256_ZERO;
     CTransaction tx2;
     GetTransaction(vin.prevout.hash, tx2, hashBlock, true);
     BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
     if (mi != mapBlockIndex.end() && (*mi).second) {
-        CBlockIndex* pMNIndex = (*mi).second;                                   // block for 1000 __DSW__ tx -> 1 confirmation
+        CBlockIndex* pMNIndex = (*mi).second;                                   // block for txin -> 1 confirmation
         int nConfHeight = pMNIndex->nHeight + MASTERNODE_MIN_CONFIRMATIONS - 1;
-        CBlockIndex* pConfIndex = chainActive[nConfHeight];                     // block where tx got MASTERNODE_MIN_CONFIRMATIONS
+        CBlockIndex* pConfIndex = chainActive[nConfHeight];                     // block where txin got MASTERNODE_MIN_CONFIRMATIONS
         if (pConfIndex->GetBlockTime() > sigTime) {
             LogPrint(BCLog::MASTERNODE,"mnb - Bad sigTime %d for Masternode %s (%i conf block is at %d)\n",
                 sigTime, vin.prevout.hash.ToString(), MASTERNODE_MIN_CONFIRMATIONS, pConfIndex->GetBlockTime());
@@ -860,13 +748,13 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fChec
 {
     if (sigTime > GetAdjustedTime() + 60 * 60) {
         LogPrint(BCLog::MNPING, "%s: Signature rejected, too far into the future %s\n", __func__, vin.prevout.ToStringShort());
-        nDos = 1;
+        // nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
     }
 
     if (sigTime <= GetAdjustedTime() - 60 * 60) {
         LogPrint(BCLog::MNPING, "%s: Signature rejected, too far into the past %s - %d %d \n", __func__, vin.prevout.ToStringShort(), sigTime, GetAdjustedTime());
-        nDos = 1;
+        // nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
     }
 

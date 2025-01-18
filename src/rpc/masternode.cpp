@@ -126,9 +126,9 @@ UniValue listmasternodes(const JSONRPCRequest& request)
         obj.push_back(Pair("addr", EncodeDestination(mn.pubKeyCollateralAddress.GetID())));
         obj.push_back(Pair("ip", mn.addr.ToString()));
         obj.push_back(Pair("version", mn.protocolVersion));
-        obj.push_back(Pair("lastseen", (int64_t)mn.lastPing.sigTime));
-        obj.push_back(Pair("activetime", (int64_t)(mn.lastPing.sigTime - mn.sigTime)));
-        obj.push_back(Pair("lastpaid", (int64_t)mn.GetLastPaid(chainActive.Tip())));
+        obj.push_back(Pair("lastseen", mn.lastPing.sigTime));
+        obj.push_back(Pair("activetime", mn.lastPing.sigTime - mn.sigTime));
+        obj.push_back(Pair("lastpaid", mn.GetLastPaid()));
 
         ret.push_back(obj);
     }
@@ -157,16 +157,22 @@ UniValue getmasternodecount (const JSONRPCRequest& request)
     UniValue obj(UniValue::VOBJ);
     int ipv4 = 0, ipv6 = 0, onion = 0;
 
-    int nChainHeight = WITH_LOCK(cs_main, return chainActive.Height());
+    const auto tipIndex = WITH_LOCK(cs_main, return chainActive.Tip());
+    const auto nChainHeight = tipIndex->nHeight;
     if (nChainHeight < 0) return "unknown";
 
-    int nCount = mnodeman.GetNextMasternodeInQueueCount(nChainHeight);
     mnodeman.CountNetworks(ipv4, ipv6, onion);
 
     obj.push_back(Pair("total", mnodeman.size()));
-    obj.push_back(Pair("stable", mnodeman.stable_size()));
-    obj.push_back(Pair("enabled", mnodeman.CountEnabled()));
-    obj.push_back(Pair("inqueue", nCount));
+
+    if (masternodeSync.IsSynced()) {
+        int nCount = mnodeman.GetNextMasternodeInQueueCount(tipIndex);
+
+        obj.push_back(Pair("stable", mnodeman.stable_size()));
+        obj.push_back(Pair("enabled", mnodeman.CountEnabled()));
+        obj.push_back(Pair("inqueue", nCount));
+    }
+
     obj.push_back(Pair("ipv4", ipv4));
     obj.push_back(Pair("ipv6", ipv6));
     obj.push_back(Pair("onion", onion));
@@ -193,8 +199,8 @@ UniValue masternodecurrent (const JSONRPCRequest& request)
             "\nExamples:\n" +
             HelpExampleCli("masternodecurrent", "") + HelpExampleRpc("masternodecurrent", ""));
 
-    const int nHeight = WITH_LOCK(cs_main, return chainActive.Height() + 1);
-    CMasternode* winner = mnodeman.GetNextMasternodeInQueueForPayment(nHeight);
+    const auto tipIndex = WITH_LOCK(cs_main, return chainActive.Tip());
+    CMasternode* winner = mnodeman.GetNextMasternodeInQueueForPayment(tipIndex);
     if (winner) {
         UniValue obj(UniValue::VOBJ);
         obj.push_back(Pair("protocol", (int64_t)winner->protocolVersion));
@@ -736,155 +742,6 @@ UniValue getmasternodestatus(const JSONRPCRequest& request)
     }
 
     return resultsObj;
-}
-
-UniValue getmasternodewinners (const JSONRPCRequest& request)
-{
-    if (request.fHelp || request.params.size() > 3)
-        throw std::runtime_error(
-            "getmasternodewinners ( blocks \"filter\" )\n"
-            "\nPrint the masternode winners for the last n blocks\n"
-
-            "\nArguments:\n"
-            "1. blocks      (numeric, optional) Number of previous blocks to show (default: 10)\n"
-            "2. filter      (string, optional) Search filter matching MN address\n"
-
-            "\nResult (single winner):\n"
-            "[\n"
-            "  {\n"
-            "    \"nHeight\": n,           (numeric) block height\n"
-            "    \"winner\": {\n"
-            "      \"address\": \"xxxx\",    (string) __DSW__ MN Address\n"
-            "      \"nVotes\": n,          (numeric) Number of votes for winner\n"
-            "    }\n"
-            "  }\n"
-            "  ,...\n"
-            "]\n"
-
-            "\nResult (multiple winners):\n"
-            "[\n"
-            "  {\n"
-            "    \"nHeight\": n,           (numeric) block height\n"
-            "    \"winner\": [\n"
-            "      {\n"
-            "        \"address\": \"xxxx\",  (string) __DSW__ MN Address\n"
-            "        \"nVotes\": n,        (numeric) Number of votes for winner\n"
-            "      }\n"
-            "      ,...\n"
-            "    ]\n"
-            "  }\n"
-            "  ,...\n"
-            "]\n"
-
-            "\nExamples:\n" +
-            HelpExampleCli("getmasternodewinners", "") + HelpExampleRpc("getmasternodewinners", ""));
-
-    int nHeight = WITH_LOCK(cs_main, return chainActive.Height());
-    if (nHeight < 0) return "[]";
-    if (sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) return "[]"; // voting is disabled
-
-    int nLast = 10;
-    std::string strFilter = "";
-
-    if (request.params.size() >= 1)
-        nLast = atoi(request.params[0].get_str());
-
-    if (request.params.size() == 2)
-        strFilter = request.params[1].get_str();
-
-    UniValue ret(UniValue::VARR);
-
-    for (int i = nHeight - nLast; i < nHeight + 20; i++) {
-        UniValue obj(UniValue::VOBJ);
-        obj.push_back(Pair("nHeight", i));
-
-        std::string strPayment = GetRequiredPaymentsString(i);
-        if (strFilter != "" && strPayment.find(strFilter) == std::string::npos) continue;
-
-        if (strPayment.find(',') != std::string::npos) {
-            UniValue winner(UniValue::VARR);
-            boost::char_separator<char> sep(",");
-            boost::tokenizer< boost::char_separator<char> > tokens(strPayment, sep);
-            for (const std::string& t : tokens) {
-                UniValue addr(UniValue::VOBJ);
-                std::size_t pos = t.find(":");
-                std::string strAddress = t.substr(0,pos);
-                uint64_t nVotes = atoi(t.substr(pos+1));
-                addr.push_back(Pair("address", strAddress));
-                addr.push_back(Pair("nVotes", nVotes));
-                winner.push_back(addr);
-            }
-            obj.push_back(Pair("winner", winner));
-        } else if (strPayment.find("Unknown") == std::string::npos) {
-            UniValue winner(UniValue::VOBJ);
-            std::size_t pos = strPayment.find(":");
-            std::string strAddress = strPayment.substr(0,pos);
-            uint64_t nVotes = atoi(strPayment.substr(pos+1));
-            winner.push_back(Pair("address", strAddress));
-            winner.push_back(Pair("nVotes", nVotes));
-            obj.push_back(Pair("winner", winner));
-        } else {
-            UniValue winner(UniValue::VOBJ);
-            winner.push_back(Pair("address", strPayment));
-            winner.push_back(Pair("nVotes", 0));
-            obj.push_back(Pair("winner", winner));
-        }
-
-            ret.push_back(obj);
-    }
-
-    return ret;
-}
-
-UniValue getmasternodescores (const JSONRPCRequest& request)
-{
-    if (request.fHelp || request.params.size() > 1)
-        throw std::runtime_error(
-            "getmasternodescores ( blocks )\n"
-            "\nPrint list of winning masternode by score\n"
-
-            "\nArguments:\n"
-            "1. blocks      (numeric, optional) Show the last n blocks (default 10)\n"
-
-            "\nResult:\n"
-            "{\n"
-            "  xxxx: \"xxxx\"   (numeric : string) Block height : Masternode hash\n"
-            "  ,...\n"
-            "}\n"
-
-            "\nExamples:\n" +
-            HelpExampleCli("getmasternodescores", "") + HelpExampleRpc("getmasternodescores", ""));
-
-    int nLast = 10;
-
-    if (request.params.size() == 1) {
-        try {
-            nLast = std::stoi(request.params[0].get_str());
-        } catch (const std::invalid_argument&) {
-            throw std::runtime_error("Exception on param 2");
-        }
-    }
-    int nChainHeight = WITH_LOCK(cs_main, return chainActive.Height());
-    if (nChainHeight < 0) return "{}";
-    if (sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) return "{}"; // voting is disabled
-
-    UniValue obj(UniValue::VOBJ);
-    std::vector<CMasternode> vMasternodes = mnodeman.GetFullMasternodeVector();
-    for (int nHeight = nChainHeight - nLast; nHeight < nChainHeight + 20; nHeight++) {
-        uint256 nHigh;
-        CMasternode* pBestMasternode = NULL;
-        for (CMasternode& mn : vMasternodes) {
-            uint256 n = mn.CalculateScore(1, nHeight - 100);
-            if (n > nHigh) {
-                nHigh = n;
-                pBestMasternode = &mn;
-            }
-        }
-        if (pBestMasternode)
-            obj.push_back(Pair(strprintf("%d", nHeight), pBestMasternode->vin.prevout.hash.ToString().c_str()));
-    }
-
-    return obj;
 }
 
 bool DecodeHexMnb(CMasternodeBroadcast& mnb, std::string strHexMnb) {

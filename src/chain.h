@@ -231,9 +231,6 @@ public:
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     uint32_t nSequenceId{0};
 
-    //! (memory only) paid masternode.
-    CScript* paidPayee{nullptr};
-
     CBlockIndex() {}
     CBlockIndex(const CBlock& block);
 
@@ -263,7 +260,7 @@ public:
     void SetNewStakeModifier(const uint256& prevoutId);     // generates and sets new v2 modifier
     uint64_t GetStakeModifierV1() const;
     uint256 GetStakeModifierV2() const;
-    CScript* GetPaidPayee();
+    CScript GetPaidPayee() const;
 
     //! Check whether this block index entry is valid up to the passed validity level.
     bool IsValid(enum BlockStatus nUpTo = BLOCK_VALID_TRANSACTIONS) const;

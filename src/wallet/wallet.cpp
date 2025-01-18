@@ -1663,10 +1663,10 @@ CAmount CWallet::GetAvailableBalance(isminefilter& filter, bool useCache, int mi
 
 CAmount CWallet::GetStakingBalance() const
 {
-    const auto& nHeight = chainActive.Height();
+    const auto nHeight = chainActive.Height();
     const auto& params = Params();
     const auto& consensus = params.GetConsensus();
-    const auto& nStakeMinDepth = 
+    const auto nStakeMinDepth = 
         consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_STAKE_MIN_DEPTH_V2) ?
         consensus.nStakeMinDepthV2 : 
         consensus.nStakeMinDepth;

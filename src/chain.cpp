@@ -246,21 +246,16 @@ uint256 CBlockIndex::GetStakeModifierV2() const
 
 bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex);
 
-CScript* CBlockIndex::GetPaidPayee()
+CScript CBlockIndex::GetPaidPayee() const
 {
-    if(paidPayee == nullptr || paidPayee->empty()) {
-        CBlock block;
-        if (nHeight <= chainActive.Height() && ReadBlockFromDisk(block, this)) {
-            auto amount = CMasternode::GetMasternodePayment(nHeight);
-            auto mnpayee = block.GetPaidPayee(amount);
-            
-            if(!mnpayee.empty()) {
-                paidPayee = new CScript(mnpayee);
-            }
-        }
+    CBlock block;
+    if (nHeight <= chainActive.Height() && ReadBlockFromDisk(block, this)) {
+        auto amount = CMasternode::GetMasternodePayment(nHeight);
+        auto paidPayee = block.GetPaidPayee(amount);
+        return paidPayee;
     }
 
-    return paidPayee;
+    return CScript();
 }
 
 //! Check whether this block index entry is valid up to the passed validity level.

@@ -19,9 +19,7 @@
 
 #include <boost/unordered_map.hpp>
 
-#define MASTERNODES_DUMP_SECONDS (15 * 60)
-#define MASTERNODES_DSEG_SECONDS (3 * 60 * 60)
-
+#define MASTERNODES_DSEG_SECONDS (5 * 60)
 
 class CMasternodeMan;
 class CActiveMasternode;
@@ -58,6 +56,8 @@ public:
 class CMasternodeMan
 {
 private:
+    int initiatedAt = -1;
+
     // critical section to protect the inner data structures
     mutable RecursiveMutex cs;
     mutable RecursiveMutex cs_script;
@@ -75,6 +75,18 @@ private:
     boost::unordered_map<CTxIn, CMasternode*, CTxInCheapHasher> mapTxInMasternodes;
     // map MNs by CTxIn
     boost::unordered_map<CPubKey, CMasternode*, CPubKeyCheapHasher> mapPubKeyMasternodes;
+    // map collaterals' UTXOs by their CScript 
+    boost::unordered_map<CScript, Coin, CScriptCheapHasher> mapScriptCollaterals;
+    // map collaterals' UTXOs by their COutPoint 
+    boost::unordered_map<COutPoint, Coin, COutPointCheapHasher> mapCOutPointCollaterals;
+    // map collaterals' UTXOs by their CAmount
+    boost::unordered_map<CAmount, boost::unordered_set<COutPoint, COutPointCheapHasher>> mapCAmountCollaterals;
+    // map removed collaterals' UTXOs
+    boost::unordered_map<int, boost::unordered_map<COutPoint, Coin, COutPointCheapHasher>> mapRemovedCollaterals;
+    // map paid payees and block indexes by CScript 
+    boost::unordered_map<CScript, std::vector<CBlockIndex*>, CScriptCheapHasher> mapPaidPayeesBlocks;
+    // map paid payees and block indexes by height 
+    boost::unordered_map<int, CScript> mapPaidPayeesHeight;
     // who's asked for the Masternode list and the last time
     std::map<CNetAddr, int64_t> mAskedUsForMasternodeList;
     // who we asked for the Masternode list and the last time
@@ -84,10 +96,9 @@ private:
 
     // find an entry in the masternode list that is next to be paid (internally)
     CMasternode* GetNextMasternodeInQueueForPayment(
-        int nBlockHeight, bool fFilterSigTime, 
+        const CBlockIndex* pindexPrev, bool fFilterSigTime, 
         int& nCount, std::vector<CTxIn>& vecEligibleTxIns,
-        bool fJustCount = false,
-        bool fCleanLastPaid = true);
+        bool fJustCount);
 
 public:
     // Keep track of all broadcasts I've seen
@@ -159,7 +170,7 @@ public:
     void AskForMN(CNode* pnode, const CTxIn& vin);
 
     /// Check all Masternodes
-    void Check(bool forceCheck = false);
+    void Check();
 
     /// Check all Masternodes and remove inactive
     void CheckAndRemove(bool forceExpiredRemoval = false);
@@ -177,31 +188,30 @@ public:
     CMasternode* Find(const CScript& payee);
     CMasternode* Find(const CTxIn& vin);
     CMasternode* Find(const CPubKey& pubKeyMasternode);
-    CMasternode* Find(const CService &addr);
+
+    bool HasCollateral(const CScript& payee);
+    Coin GetCollateral(const CScript& payee);
 
     // Find an entry in the masternode list that is next to be paid
-    inline CMasternode* GetNextMasternodeInQueueForPayment(int nBlockHeight) {
+    inline CMasternode* GetNextMasternodeInQueueForPayment(const CBlockIndex* pindexPrev) {
         int nCount = 0;
         std::vector<CTxIn> vEligibleTxIns;
-        return GetNextMasternodeInQueueForPayment(nBlockHeight, true, nCount, vEligibleTxIns);
+        return GetNextMasternodeInQueueForPayment(pindexPrev, true, nCount, vEligibleTxIns, false);
     }
 
-    inline int GetNextMasternodeInQueueCount(int nBlockHeight) {
+    inline int GetNextMasternodeInQueueCount(const CBlockIndex* pindexPrev) {
         int nCount = 0;
         std::vector<CTxIn> vEligibleTxIns;
-        GetNextMasternodeInQueueForPayment(nBlockHeight, true, nCount, vEligibleTxIns, true);
+        GetNextMasternodeInQueueForPayment(pindexPrev, true, nCount, vEligibleTxIns, true);
         return nCount;
     }
 
-    inline std::pair<CMasternode*, std::vector<CTxIn>> GetNextMasternodeInQueueEligible(int nBlockHeight) {
+    inline std::pair<CMasternode*, std::vector<CTxIn>> GetNextMasternodeInQueueEligible(const CBlockIndex* pindexPrev) {
         int nCount = 0;
         std::vector<CTxIn> vEligibleTxIns;
-        auto mn = GetNextMasternodeInQueueForPayment(nBlockHeight, true, nCount, vEligibleTxIns);
+        auto mn = GetNextMasternodeInQueueForPayment(pindexPrev, true, nCount, vEligibleTxIns, false);
         return std::pair<CMasternode*, std::vector<CTxIn>>(mn, vEligibleTxIns);
     }
-
-    /// Get the current winner for this block
-    CMasternode* GetCurrentMasterNode(int mod = 1, int64_t nBlockHeight = 0);
 
     std::vector<CMasternode> GetFullMasternodeVector()
     {
@@ -219,9 +229,6 @@ public:
         return result;
     }
 
-    std::vector<std::pair<int, CMasternode> > GetMasternodeRanks(int64_t nBlockHeight);
-    int GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight);
-
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
 
     /// Return the number of (unique) Masternodes
@@ -236,6 +243,14 @@ public:
 
     /// Update masternode list and maps using provided CMasternodeBroadcast
     void UpdateMasternodeList(CMasternodeBroadcast mnb);
+
+    bool Init();
+    void Shutdown();
+    bool ConnectBlock(CBlockIndex* pindex, const CBlock& block);
+    bool DisconnectBlock(CBlockIndex* pindex, const CBlock& block);
+
+    CBlockIndex* GetLastPaidBlock(const CScript& script);
+    int64_t GetLastPaid(const CScript& script);
 };
 
 void ThreadCheckMasternodes();

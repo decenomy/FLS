@@ -382,16 +382,16 @@ enum {
     // MSG_TXLOCK_REQUEST              = 4,
     // MSG_TXLOCK_VOTE                 = 5,
     MSG_SPORK                       = 6,
-    MSG_MASTERNODE_WINNER           = 7,
+    // MSG_MASTERNODE_WINNER           = 7,
     MSG_MASTERNODE_SCANNING_ERROR   = 8,
-    MSG_BUDGET_VOTE                 = 9,
-    MSG_BUDGET_PROPOSAL             = 10,
-    MSG_BUDGET_FINALIZED            = 11,
-    MSG_BUDGET_FINALIZED_VOTE       = 12,
-    MSG_MASTERNODE_QUORUM           = 13,
+    // MSG_BUDGET_VOTE                 = 9,
+    // MSG_BUDGET_PROPOSAL             = 10,
+    // MSG_BUDGET_FINALIZED            = 11,
+    // MSG_BUDGET_FINALIZED_VOTE       = 12,
+    // MSG_MASTERNODE_QUORUM           = 13,
     MSG_MASTERNODE_ANNOUNCE         = 14,
     MSG_MASTERNODE_PING             = 15,
-    MSG_DSTX                        = 16,
+    // MSG_DSTX                        = 16,
 };
 
 #endif // BITCOIN_PROTOCOL_H
