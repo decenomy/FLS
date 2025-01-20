@@ -23,7 +23,7 @@ class CMasternodePayments
 {
 public:
     bool GetBlockPayee(const CBlockIndex* pindexPrev, CScript& payee);
-    bool IsTransactionValid(const CTransaction& txNew, CBlockIndex* pindexPrev);
+    bool IsTransactionValid(const CBlock& block, const CBlockIndex* pindexPrev);
     
     void FillBlockPayee(CMutableTransaction& txNew, const CBlockIndex* pindexPrev, bool fProofOfStake);
 };

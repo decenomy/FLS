@@ -47,8 +47,8 @@ public:
     static int GetDynamicRewardsEpoch(int nHeight);
     static int GetDynamicRewardsEpochHeight(int nHeight);
     static bool IsDynamicRewardsEpochHeight(int nHeight);
-    static bool ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy);
-    static bool DisconnectBlock(CBlockIndex* pindex);
+    static bool ConnectBlock(const CBlockIndex* pindex, CAmount nSubsidy);
+    static bool DisconnectBlock(const CBlockIndex* pindex);
     static CAmount GetBlockValue(int nHeight);
 };
 

@@ -403,6 +403,10 @@ void CMasternodeMan::Clear()
     mapSeenMasternodeBroadcast.clear();
     mapSeenMasternodePing.clear();
     nDsqCount = 0;
+
+    LOCK(cs_collaterals);
+    initiatedAt = -1;
+    Init();
 }
 
 int CMasternodeMan::stable_size ()
@@ -410,7 +414,7 @@ int CMasternodeMan::stable_size ()
     int nStable_size = 0;
     int64_t nMasternode_Age = 0;
 
-    LOCK2(cs_main, cs);
+    LOCK(cs);
 
     for (auto mn : vMasternodes) {
         mn->Check ();
@@ -520,12 +524,12 @@ CMasternode* CMasternodeMan::Find(const CPubKey& pubKeyMasternode)
 }
 
 bool CMasternodeMan::HasCollateral(const CScript& payee) {
-    LOCK(cs);
+    LOCK(cs_collaterals);
     return mapScriptCollaterals.find(payee) != mnodeman.mapScriptCollaterals.end();
 }
 
 Coin CMasternodeMan::GetCollateral(const CScript& payee) {
-    LOCK(cs);
+    LOCK(cs_collaterals);
 
     const auto& it = mapScriptCollaterals.find(payee);
     if(it != mnodeman.mapScriptCollaterals.end()) {
@@ -566,7 +570,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(const CBlockInde
             //make sure it has as many confirmations as there are masternodes
             if (pcoinsTip->GetCoinDepthAtHeight(mn->vin.prevout, nBlockHeight) < nMnCount) continue;
 
-            vecMasternodeLastPaid.push_back(std::make_pair(mn->SecondsSincePayment(), mn->vin));
+            vecMasternodeLastPaid.push_back(std::make_pair(mn->SecondsSincePayment(pindexPrev), mn->vin));
         }
     }
 
@@ -603,19 +607,71 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(const CBlockInde
     return pBestMasternode;
 }
 
-CBlockIndex* CMasternodeMan::GetLastPaidBlock(const CScript& script) {
-    LOCK(cs);
+const CBlockIndex* CMasternodeMan::GetLastPaidBlockSlow(const CScript& script, const CBlockIndex* pindexPrev) 
+{
+    auto pindex = pindexPrev;
+    CBlock block;
+
+    {
+        LOCK(cs_main);
+
+        for(int i = 0; i < DEFAULT_MAX_REORG_DEPTH; i++) 
+        {
+            if(chainActive[pindex->nHeight]->GetBlockHash() == pindex->GetBlockHash()) {
+                return GetLastPaidBlock(script, pindex); // onchain, use a faster alternative
+            }
+
+            if(!ReadBlockFromDisk(block, pindex)) {
+                return nullptr; // should not happen
+            }
+
+            auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
+            auto paidPayee = block.GetPaidPayee(amount);
+
+            if(paidPayee == script) {
+                return pindex;
+            }
+
+            if(block.hashPrevBlock.IsNull()) return nullptr; // should not happen or we reached the genesis block
+
+            pindex = mapBlockIndex[block.hashPrevBlock];
+        }
+    }
+
+    // we reached the limit of reorg lets continue with the faster algorithm
+    return GetLastPaidBlock(script, pindex);
+}
+
+const CBlockIndex* CMasternodeMan::GetLastPaidBlock(const CScript& script, const CBlockIndex* pindex) 
+{
+    LOCK(cs_collaterals);
 
     if(mapPaidPayeesBlocks.find(script) != mapPaidPayeesBlocks.end() &&
        !mapPaidPayeesBlocks[script].empty()
     ) {
-        return mapPaidPayeesBlocks[script].back();
+        const auto& vblocks = mapPaidPayeesBlocks[script];
+        for (auto it = vblocks.rbegin(); it != vblocks.rend(); ++it)
+        {
+            if((*it)->nHeight <= pindex->nHeight) {
+                return *it;
+            }
+        }
     }
     return nullptr;
 }
 
-int64_t CMasternodeMan::GetLastPaid(const CScript& script) {
-    const auto pIndex = GetLastPaidBlock(script);
+int CMasternodeMan::BlocksSincePayment(const CScript& script, const CBlockIndex* pindex) {
+    const auto pLastPaidBlock = GetLastPaidBlockSlow(script, pindex);
+
+    if(pLastPaidBlock) {
+        return pindex->nHeight - pLastPaidBlock->nHeight;
+    }
+
+    return -1;
+}
+
+int64_t CMasternodeMan::GetLastPaid(const CScript& script, const CBlockIndex* pindex) {
+    const auto pIndex = GetLastPaidBlock(script, pindex);
     if(pIndex) {
         return pIndex->GetBlockTime();
     }
@@ -808,9 +864,9 @@ void CMasternodeMan::UpdateMasternodeList(CMasternodeBroadcast mnb)
 
 bool CMasternodeMan::Init()
 {
-    LOCK(cs);
-
     if(initiatedAt > 0) return true;
+
+    LOCK(cs_collaterals);
 
     // cleans up all collections
     mapScriptCollaterals.clear();
@@ -864,7 +920,7 @@ bool CMasternodeMan::Init()
         const auto paidPayee = pBlockIndex->GetPaidPayee();
 
         if(mapPaidPayeesBlocks.find(paidPayee) == mapPaidPayeesBlocks.end()) {
-            mapPaidPayeesBlocks[paidPayee] = std::vector<CBlockIndex*>();
+            mapPaidPayeesBlocks[paidPayee] = std::vector<const CBlockIndex*>();
         }
 
         mapPaidPayeesBlocks[paidPayee].push_back(pBlockIndex);
@@ -880,9 +936,9 @@ void CMasternodeMan::Shutdown()
 {
 }
 
-bool CMasternodeMan::ConnectBlock(CBlockIndex* pindex, const CBlock& block)
+bool CMasternodeMan::ConnectBlock(const CBlockIndex* pindex, const CBlock& block)
 {
-    LOCK(cs);
+    LOCK(cs_collaterals);
 
     if (initiatedAt < 0 && !Init()) return false;
 
@@ -978,7 +1034,7 @@ bool CMasternodeMan::ConnectBlock(CBlockIndex* pindex, const CBlock& block)
 
     if(!paidPayee.empty()) {
         if(mapPaidPayeesBlocks.find(paidPayee) == mapPaidPayeesBlocks.end()) {
-            mapPaidPayeesBlocks[paidPayee] = std::vector<CBlockIndex*>();
+            mapPaidPayeesBlocks[paidPayee] = std::vector<const CBlockIndex*>();
         }
 
         mapPaidPayeesBlocks[paidPayee].push_back(pindex);
@@ -988,9 +1044,9 @@ bool CMasternodeMan::ConnectBlock(CBlockIndex* pindex, const CBlock& block)
     return true;
 }
 
-bool CMasternodeMan::DisconnectBlock(CBlockIndex* pindex, const CBlock& block)
+bool CMasternodeMan::DisconnectBlock(const CBlockIndex* pindex, const CBlock& block)
 {
-    LOCK(cs);
+    LOCK(cs_collaterals);
 
     const auto nHeight = pindex->nHeight;
     const auto& params = Params();

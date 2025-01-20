@@ -206,15 +206,22 @@ void CMasternode::Check(bool forceCheck)
     activeState = MASTERNODE_ENABLED; // OK
 }
 
-int64_t CMasternode::SecondsSincePayment()
+int CMasternode::BlocksSincePayment(const CBlockIndex* pindex)
 {
-    auto lp = GetLastPaid();
+    const CScript& mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
+    
+    return mnodeman.BlocksSincePayment(mnpayee, pindex);
+}
+
+int64_t CMasternode::SecondsSincePayment(const CBlockIndex* pindex)
+{
+    auto lp = GetLastPaid(pindex);
 
     if(lp == 0) {
         lp = sigTime;
     }
 
-    int64_t sec = (GetAdjustedTime() - lp);
+    int64_t sec = pindex->nTime - lp;
     int64_t month = MONTH_IN_SECONDS;
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
@@ -227,11 +234,11 @@ int64_t CMasternode::SecondsSincePayment()
     return month + hash.GetCompact(false);
 }
 
-int64_t CMasternode::GetLastPaid()
+int64_t CMasternode::GetLastPaid(const CBlockIndex* pindex)
 {
     const CScript& mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 
-    const auto lastPaid = mnodeman.GetLastPaid(mnpayee);
+    const auto lastPaid = mnodeman.GetLastPaid(mnpayee, pindex);
 
     return lastPaid < sigTime ? sigTime : lastPaid;
 }

@@ -56,7 +56,7 @@
 
 
 #if defined(NDEBUG)
-#error "__Decenomy__ cannot be compiled without assertions."
+#error "The wallet cannot be compiled without assertions."
 #endif
 
 /**
@@ -97,7 +97,7 @@ size_t nCoinCacheUsage = 5000 * 300;
 /* If the tip is older than this (in seconds), the node is considered to be in initial block download. */
 int64_t nMaxTipAge = DEFAULT_MAX_TIP_AGE;
 
-/** Fees smaller than this (in uCOIN) are considered zero fee (for relaying, mining and transaction creation)
+/** Fees smaller than this (in u777) are considered zero fee (for relaying, mining and transaction creation)
  * We are ~100 times smaller then bitcoin now (2015-06-23), set minRelayTxFee only 10 times higher
  * so it's still 10 times lower comparing to bitcoin.
  */
@@ -3151,7 +3151,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
     if (pindexPrev != nullptr && block.hashPrevBlock != UINT256_ZERO) {
         if (pindexPrev->GetBlockHash() != block.hashPrevBlock) {
             //out of order
-            CBlockIndex* pindexPrev = LookupBlockIndex(block.hashPrevBlock);
+            pindexPrev = LookupBlockIndex(block.hashPrevBlock);
             if (!pindexPrev) {
                 return state.Error("blk-out-of-order");
             }
@@ -3163,9 +3163,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         // but issue an initial reject message.
         // The case also exists that the sending peer could not have enough data to see
         // that this block is invalid, so don't issue an outright ban.
-        if (!IsInitialBlockDownload() && 
-            GetAdjustedTime() - block.GetBlockTime() < DEFAULT_BLOCK_PAYEE_VERIFICATION_TIMEOUT
-        ) {
+        if (!IsInitialBlockDownload()) {
             // check masternode payment
             if (!IsBlockPayeeValid(block, pindexPrev)) {
                 mapRejectedBlocks.insert(std::make_pair(block.GetHash(), GetTime()));

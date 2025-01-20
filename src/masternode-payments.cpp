@@ -36,19 +36,12 @@ bool IsBlockPayeeValid(const CBlock& block, CBlockIndex* pindexPrev)
 
     const auto& params = Params();
     const auto& consensus = params.GetConsensus();
-    const auto nBlockHeight = pindexPrev->nHeight + 1;
-
-    const auto isPoSActive = consensus.NetworkUpgradeActive(nBlockHeight, Consensus::UPGRADE_POS);
-    const auto& txNew = (isPoSActive ? block.vtx[1] : block.vtx[0]);
 
     //check for masternode payee
-    if (masternodePayments.IsTransactionValid(txNew, pindexPrev))
+    if (masternodePayments.IsTransactionValid(block, pindexPrev))
         return true;
 
-    LogPrint(BCLog::MASTERNODE,"Invalid mn payment detected %s\n", txNew.ToString().c_str());
-
-    // fails if spork 8 is enabled and
-    // spork 113 is disabled or current time is outside the reconsider window
+    // fails if spork 8 is enabled
     if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
         return false;
     } else {
@@ -138,7 +131,7 @@ bool CMasternodePayments::GetBlockPayee(const CBlockIndex* pindexPrev, CScript& 
     return false;
 }
 
-bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, CBlockIndex* pindexPrev)
+bool CMasternodePayments::IsTransactionValid(const CBlock& block, const CBlockIndex* pindexPrev)
 {
     // if the blockchain is not synced, then there is no enough data to perform verification
     if (!masternodeSync.IsBlockchainSynced()) {
@@ -146,9 +139,12 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, CBlockIn
         return true;
     }
 
+    assert(block.hashPrevBlock == pindexPrev->GetBlockHash());
+
     const auto nBlockHeight = pindexPrev->nHeight + 1;
     const auto& params = Params();
     const auto& consensus = params.GetConsensus();
+    const auto& txNew = block.vtx[block.IsProofOfStake() ? 1 : 0];
 
     auto requiredMasternodePayment = CMasternode::GetMasternodePayment(nBlockHeight);
     auto found = false;
@@ -186,17 +182,17 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, CBlockIn
         }
 
         // get when this masternode was last paid
-        const auto max_depth = mnodeman.CountEnabled() * 2;
-        auto pIndex = pindexPrev;
-        
         int n = 0;
-        const auto pLastPaidBlock = mnodeman.GetLastPaidBlock(paidPayee);
+        const auto pLastPaidBlock = mnodeman.GetLastPaidBlockSlow(paidPayee, pindexPrev);
         const auto lastPaid = std::max(
             static_cast<uint32_t>(pLastPaidBlock ? pLastPaidBlock->nHeight : 0),
             collateral.nHeight
         );
 
-        const auto lastPaidDepth = nBlockHeight - lastPaid;
+        auto lastPaidDepth = mnodeman.BlocksSincePayment(paidPayee, pindexPrev);
+        if(lastPaidDepth < 0) {
+            lastPaidDepth = pindexPrev->nHeight - collateral.nHeight;
+        }
 
         // get the masternodes choosen on this block from our point of view
         const auto eligible = mnodeman.GetNextMasternodeInQueueEligible(pindexPrev);
@@ -206,7 +202,7 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, CBlockIn
             return true;
         }
 
-        const auto eligibleDepth = (pindexPrev->nTime - eligible.first->GetLastPaid()) / consensus.nTargetSpacing;
+        const auto eligibleDepth = eligible.first->BlocksSincePayment(pindexPrev);
 
         auto minDepth = INT32_MAX;
         auto maxDepth = 0;
@@ -215,8 +211,9 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, CBlockIn
             CMasternode* pmn = mnodeman.Find(txin);
             if (!pmn) continue;
 
-            minDepth = std::min(minDepth, (int)((pindexPrev->nTime - pmn->GetLastPaid()) / consensus.nTargetSpacing));
-            maxDepth = std::max(maxDepth, (int)((pindexPrev->nTime - pmn->GetLastPaid()) / consensus.nTargetSpacing));
+            const auto nDepth = pmn->BlocksSincePayment(pindexPrev);
+            minDepth = std::min(minDepth, nDepth);
+            maxDepth = std::max(maxDepth, nDepth);
         }
 
         if(LogAcceptCategory(BCLog::MASTERNODE)) {
@@ -232,13 +229,26 @@ bool CMasternodePayments::IsTransactionValid(const CTransaction& txNew, CBlockIn
                     pLastPaidBlock->nHeight, 
                     pLastPaidBlock->GetBlockHash().ToString()
                 );
-            }
+            } // nBlockHeight
+            LogPrint(BCLog::MASTERNODE, "%s - Block tested/tip %d/%d\n", __func__, nBlockHeight, chainActive.Height());
             LogPrint(BCLog::MASTERNODE, "%s - Eligible min/max depth %d/%d\n", __func__, minDepth, maxDepth);
             LogPrint(BCLog::MASTERNODE, "%s - Eligible and paid depth %d/%d\n", __func__, maxDepth, lastPaidDepth);
         }
 
         // reject it, if it is being paid faster than the shortest depth elegible MN
         if (lastPaidDepth < minDepth) {
+
+            if(LogAcceptCategory(BCLog::MASTERNODE)) {
+                auto p = pindexPrev;
+                for(int i = 0; i < 5; i++) {
+                    CTxDestination addr;
+                    ExtractDestination(p->GetPaidPayee(), addr);
+                    LogPrint(BCLog::MASTERNODE, "%s - %d %s %s\n", __func__, p->nHeight, p->GetBlockHash().ToString(), EncodeDestination(addr));
+                    p = p->pprev;
+                }
+                LogPrint(BCLog::MASTERNODE,"Invalid mn payment detected %s\n", txNew.ToString().c_str());
+            }
+
             return false;
         }
 

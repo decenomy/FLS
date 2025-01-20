@@ -143,12 +143,10 @@ bool CRewards::Init()
                 const auto nRewardAdjustmentInterval = consensus.nRewardAdjustmentInterval;
 
                 for(
-                    int h = nFeatureStartHeight + nRewardAdjustmentInterval; 
-                    h < nCurrentHeight + nRewardAdjustmentInterval; 
-                    h += nRewardAdjustmentInterval
+                    int nEpochHeight = GetDynamicRewardsEpochHeight(nFeatureStartHeight) + nRewardAdjustmentInterval; 
+                    nEpochHeight <= nCurrentHeight; 
+                    nEpochHeight += nRewardAdjustmentInterval
                 ) {
-                    const auto nEpochHeight = GetDynamicRewardsEpochHeight(h);
-
                     if (mDynamicRewards.find(nEpochHeight) == mDynamicRewards.end()) { // missing entry
                         const auto& pIndex = chainActive[nEpochHeight + 1];            // gets the first block index of that epoch
 
@@ -248,7 +246,7 @@ bool CRewards::IsDynamicRewardsEpochHeight(int nHeight)
     return GetDynamicRewardsEpochHeight(nHeight) == nHeight;
 }
 
-bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy)
+bool CRewards::ConnectBlock(const CBlockIndex* pindex, CAmount nSubsidy)
 {
     if (!initiated && !Init()) return false;
 
@@ -417,7 +415,7 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy)
     return ok;
 }
 
-bool CRewards::DisconnectBlock(CBlockIndex* pindex)
+bool CRewards::DisconnectBlock(const CBlockIndex* pindex)
 {
     auto& consensus = Params().GetConsensus();
     const auto nHeight = pindex->nHeight;

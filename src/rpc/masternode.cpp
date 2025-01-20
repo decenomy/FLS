@@ -96,7 +96,8 @@ UniValue listmasternodes(const JSONRPCRequest& request)
             HelpExampleCli("listmasternodes", "") + HelpExampleRpc("listmasternodes", ""));
 
     UniValue ret(UniValue::VARR);
-    int nHeight = WITH_LOCK(cs_main, return chainActive.Height());
+    const auto pIndex = WITH_LOCK(cs_main, return chainActive.Tip());
+    const auto nHeight = pIndex->nHeight;
     if (nHeight < 0) return "[]";
 
     for (auto& mn : mnodeman.GetFullMasternodeVector()) {
@@ -128,7 +129,7 @@ UniValue listmasternodes(const JSONRPCRequest& request)
         obj.push_back(Pair("version", mn.protocolVersion));
         obj.push_back(Pair("lastseen", mn.lastPing.sigTime));
         obj.push_back(Pair("activetime", mn.lastPing.sigTime - mn.sigTime));
-        obj.push_back(Pair("lastpaid", mn.GetLastPaid()));
+        obj.push_back(Pair("lastpaid", mn.GetLastPaid(pIndex)));
 
         ret.push_back(obj);
     }

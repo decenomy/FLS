@@ -503,7 +503,7 @@ std::string HelpMessage(HelpMessageMode mode)
     }
     strUsage += HelpMessageOpt("-shrinkdebugfile", _("Shrink debug.log file on client startup (default: 1 when no -debug)"));
     strUsage += HelpMessageOpt("-testnet", _("Use the test network"));
-    strUsage += HelpMessageOpt("-litemode=<n>", strprintf(_("Disable all __DSW__ specific functionality (Masternodes) (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-litemode=<n>", strprintf(_("Disable all additional functionalities (Masternodes) (0-1, default: %u)"), 0));
 
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), DEFAULT_MASTERNODE));
@@ -681,7 +681,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)
 }
 
 /** Sanity checks
- *  Ensure that __Decenomy__ is running in a usable environment with all
+ *  Ensure that the wallet is running in a usable environment with all
  *  necessary library support.
  */
 bool InitSanityCheck(void)
@@ -915,7 +915,7 @@ void InitLogging()
     LogPrintf("__Decenomy__ version %s (%s)\n", version_string, CLIENT_DATE);
 }
 
-/** Initialize __decenomy__.
+/** Initialize wallet.
  *  @pre Parameters should be parsed and config file should be read.
  */
 bool AppInit2()
@@ -1076,11 +1076,11 @@ bool AppInit2()
 
     // Sanity check
     if (!InitSanityCheck())
-        return UIError(_("Initialization sanity check failed. __Decenomy__ is shutting down."));
+        return UIError(_("Initialization sanity check failed. Wallet is shutting down."));
 
     std::string strDataDir = GetDataDir().string();
 
-    // Make sure only a single __Decenomy__ process is using the data directory.
+    // Make sure only a single wallet process is using the data directory.
     fs::path pathLockFile = GetDataDir() / ".lock";
     FILE* file = fsbridge::fopen(pathLockFile, "a"); // empty lock file; created if it doesn't exist.
     if (file) fclose(file);
@@ -1088,7 +1088,7 @@ bool AppInit2()
 
     // Wait maximum 10 seconds if an old wallet is still running. Avoids lockup during restart
     if (!lock.timed_lock(boost::get_system_time() + boost::posix_time::seconds(10)))
-        return UIError(strprintf(_("Cannot obtain a lock on data directory %s. __Decenomy__ is probably already running."), strDataDir));
+        return UIError(strprintf(_("Cannot obtain a lock on data directory %s. Wallet is probably already running."), strDataDir));
 
 #ifndef WIN32
     CreatePidFile(GetPidFile(), getpid());
@@ -1459,7 +1459,7 @@ bool AppInit2()
                 delete pblocktree;
                 delete pSporkDB;
 
-                //__Decenomy__ specific: spork DB's
+                //specific: spork DB's
                 pSporkDB = new CSporkDB(0, false, false);
                 pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
                 pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReindex);
@@ -1480,7 +1480,7 @@ bool AppInit2()
                 // End loop if shutdown was requested
                 if (ShutdownRequested()) break;
 
-                // __Decenomy__: load previous sessions sporks if we have them.
+                // load previous sessions sporks if we have them.
                 uiInterface.InitMessage(_("Loading sporks..."));
                 sporkManager.LoadSporksFromDB();
 

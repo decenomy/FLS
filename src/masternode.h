@@ -214,7 +214,8 @@ public:
         READWRITE(nLastScanningErrorBlockHeight);
     }
 
-    int64_t SecondsSincePayment();
+    int64_t SecondsSincePayment(const CBlockIndex* pindex);
+    int BlocksSincePayment(const CBlockIndex* pindex);
 
     bool UpdateFromNewBroadcast(CMasternodeBroadcast& mnb);
 
@@ -259,7 +260,7 @@ public:
         return strStatus;
     }
 
-    int64_t GetLastPaid();
+    int64_t GetLastPaid(const CBlockIndex* pindex);
     bool IsValidNetAddr();
 
     /// Is the input associated with collateral public key? (and there is collateral - checking if valid masternode)

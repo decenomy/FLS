@@ -63,6 +63,7 @@ private:
     mutable RecursiveMutex cs_script;
     mutable RecursiveMutex cs_txin;
     mutable RecursiveMutex cs_pubkey;
+    mutable RecursiveMutex cs_collaterals;
 
     // critical section to protect the inner data structures specifically on messaging
     mutable RecursiveMutex cs_process_message;
@@ -84,7 +85,7 @@ private:
     // map removed collaterals' UTXOs
     boost::unordered_map<int, boost::unordered_map<COutPoint, Coin, COutPointCheapHasher>> mapRemovedCollaterals;
     // map paid payees and block indexes by CScript 
-    boost::unordered_map<CScript, std::vector<CBlockIndex*>, CScriptCheapHasher> mapPaidPayeesBlocks;
+    boost::unordered_map<CScript, std::vector<const CBlockIndex*>, CScriptCheapHasher> mapPaidPayeesBlocks;
     // map paid payees and block indexes by height 
     boost::unordered_map<int, CScript> mapPaidPayeesHeight;
     // who's asked for the Masternode list and the last time
@@ -246,11 +247,13 @@ public:
 
     bool Init();
     void Shutdown();
-    bool ConnectBlock(CBlockIndex* pindex, const CBlock& block);
-    bool DisconnectBlock(CBlockIndex* pindex, const CBlock& block);
+    bool ConnectBlock(const CBlockIndex* pindex, const CBlock& block);
+    bool DisconnectBlock(const CBlockIndex* pindex, const CBlock& block);
 
-    CBlockIndex* GetLastPaidBlock(const CScript& script);
-    int64_t GetLastPaid(const CScript& script);
+    const CBlockIndex* GetLastPaidBlockSlow(const CScript& script, const CBlockIndex* pindexPrev);
+    const CBlockIndex* GetLastPaidBlock(const CScript& script, const CBlockIndex* pindex);
+    int BlocksSincePayment(const CScript& script, const CBlockIndex* pindex);
+    int64_t GetLastPaid(const CScript& script, const CBlockIndex* pindex);
 };
 
 void ThreadCheckMasternodes();
