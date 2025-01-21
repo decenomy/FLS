@@ -391,22 +391,25 @@ void CMasternodeMan::Clear()
         mapPubKeyMasternodes.clear();
     }
 
-    LOCK(cs);
-    auto it = vMasternodes.begin();
-    while (it != vMasternodes.end()) {
-        delete *it;
-        it = vMasternodes.erase(it);
+    {
+        LOCK(cs);
+        auto it = vMasternodes.begin();
+        while (it != vMasternodes.end()) {
+            delete *it;
+            it = vMasternodes.erase(it);
+        }
+        mAskedUsForMasternodeList.clear();
+        mWeAskedForMasternodeList.clear();
+        mWeAskedForMasternodeListEntry.clear();
+        mapSeenMasternodeBroadcast.clear();
+        mapSeenMasternodePing.clear();
+        nDsqCount = 0;
     }
-    mAskedUsForMasternodeList.clear();
-    mWeAskedForMasternodeList.clear();
-    mWeAskedForMasternodeListEntry.clear();
-    mapSeenMasternodeBroadcast.clear();
-    mapSeenMasternodePing.clear();
-    nDsqCount = 0;
 
-    LOCK(cs_collaterals);
-    initiatedAt = -1;
-    Init();
+    {
+        LOCK(cs_collaterals);
+        initiatedAt = -1;
+    }
 }
 
 int CMasternodeMan::stable_size ()
@@ -667,6 +670,12 @@ int CMasternodeMan::BlocksSincePayment(const CScript& script, const CBlockIndex*
         return pindex->nHeight - pLastPaidBlock->nHeight;
     }
 
+    const auto collateral = mnodeman.GetCollateral(script);
+
+    if (collateral.nHeight != 0) {
+        return pindex->nHeight - collateral.nHeight;
+    }
+
     return -1;
 }
 
@@ -866,6 +875,8 @@ bool CMasternodeMan::Init()
 {
     if(initiatedAt > 0) return true;
 
+    FlushStateToDisk();
+
     LOCK(cs_collaterals);
 
     // cleans up all collections
@@ -886,7 +897,6 @@ bool CMasternodeMan::Init()
     auto nNextWeekCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight + nBlocksPerWeek);
 
     if (nCollateralAmount > 0 || nNextWeekCollateralAmount > 0) {
-        FlushStateToDisk();
         std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
 
         while (pcursor->Valid()) {
