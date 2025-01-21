@@ -79,7 +79,11 @@ void CSporkManager::LoadSporksFromDB()
             LogPrintf("%s : no previous value for %s found in database\n", __func__, sporkDef.name);
             continue;
         }
+
+        // add spork to memory
+        mapSporks[spork.GetHash()] = spork;
         mapSporksActive[spork.nSporkID] = spork;
+        std::time_t result = spork.nValue;
         // If SPORK Value is greater than 1,000,000 assume it's actually a Date and then convert to a more readable format
         std::string sporkName = sporkManager.GetSporkNameByID(spork.nSporkID);
         if (spork.nValue > 1000000) {
