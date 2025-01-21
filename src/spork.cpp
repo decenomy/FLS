@@ -69,7 +69,7 @@ void CSporkManager::Clear()
     mapSporksActive.clear();
 }
 
-// Jackpot: on startup load spork values from previous session if they exist in the sporkDB
+// on startup load spork values from previous session if they exist in the sporkDB
 void CSporkManager::LoadSporksFromDB()
 {
     for (const auto& sporkDef : sporkDefs) {
@@ -174,7 +174,7 @@ void CSporkManager::ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStr
         }
         spork.Relay();
 
-        // Jackpot: add to spork database.
+        // add to spork database.
         pSporkDB->WriteSpork(spork.nSporkID, spork);
     }
     if (strCommand == NetMsgType::GETSPORKS) {
