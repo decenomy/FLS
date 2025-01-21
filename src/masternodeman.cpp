@@ -938,6 +938,7 @@ bool CMasternodeMan::Init()
     }
 
     initiatedAt = nHeight;
+    lastProcess = GetTime();
 
     return true;
 }
@@ -949,6 +950,13 @@ void CMasternodeMan::Shutdown()
 bool CMasternodeMan::ConnectBlock(const CBlockIndex* pindex, const CBlock& block)
 {
     LOCK(cs_collaterals);
+
+    int64_t now = GetTime();
+    // if the last call to this function was more than 60 minutes ago (client was in sleep mode) reset data
+    if (now > lastProcess + HOUR_IN_SECONDS) {
+        initiatedAt = -1;
+    }
+    lastProcess = now;
 
     if (initiatedAt < 0 && !Init()) return false;
 
@@ -1057,6 +1065,13 @@ bool CMasternodeMan::ConnectBlock(const CBlockIndex* pindex, const CBlock& block
 bool CMasternodeMan::DisconnectBlock(const CBlockIndex* pindex, const CBlock& block)
 {
     LOCK(cs_collaterals);
+
+    int64_t now = GetTime();
+    // if the last call to this function was more than 60 minutes ago (client was in sleep mode) reset data
+    if (now > lastProcess + HOUR_IN_SECONDS) {
+        initiatedAt = -1;
+    }
+    lastProcess = now;
 
     const auto nHeight = pindex->nHeight;
     const auto& params = Params();

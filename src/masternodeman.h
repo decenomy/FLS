@@ -57,6 +57,7 @@ class CMasternodeMan
 {
 private:
     int initiatedAt = -1;
+    int64_t lastProcess;
 
     // critical section to protect the inner data structures
     mutable RecursiveMutex cs;
