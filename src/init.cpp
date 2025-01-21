@@ -220,7 +220,6 @@ void PrepareShutdown()
     g_connman.reset();
 
     DumpMasternodes();
-    DumpMasternodePayments();
     UnregisterNodeSignals(GetNodeSignals());
 
     // After everything has been shut down, but before things get flushed, stop the
@@ -242,6 +241,7 @@ void PrepareShutdown()
         LOCK(cs_main);
 
         CRewards::Shutdown();
+        mnodeman.Shutdown();
 
         if (pcoinsTip != NULL) {
             FlushStateToDisk();
@@ -503,7 +503,7 @@ std::string HelpMessage(HelpMessageMode mode)
     }
     strUsage += HelpMessageOpt("-shrinkdebugfile", _("Shrink debug.log file on client startup (default: 1 when no -debug)"));
     strUsage += HelpMessageOpt("-testnet", _("Use the test network"));
-    strUsage += HelpMessageOpt("-litemode=<n>", strprintf(_("Disable all FLS specific functionality (Masternodes) (0-1, default: %u)"), 0));
+    strUsage += HelpMessageOpt("-litemode=<n>", strprintf(_("Disable all additional functionalities (Masternodes) (0-1, default: %u)"), 0));
 
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternode=<n>", strprintf(_("Enable the client to act as a masternode (0-1, default: %u)"), DEFAULT_MASTERNODE));
@@ -681,7 +681,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)
 }
 
 /** Sanity checks
- *  Ensure that Flits is running in a usable environment with all
+ *  Ensure that the wallet is running in a usable environment with all
  *  necessary library support.
  */
 bool InitSanityCheck(void)
@@ -915,7 +915,7 @@ void InitLogging()
     LogPrintf("Flits version %s (%s)\n", version_string, CLIENT_DATE);
 }
 
-/** Initialize flits.
+/** Initialize wallet.
  *  @pre Parameters should be parsed and config file should be read.
  */
 bool AppInit2()
@@ -1076,11 +1076,11 @@ bool AppInit2()
 
     // Sanity check
     if (!InitSanityCheck())
-        return UIError(_("Initialization sanity check failed. Flits is shutting down."));
+        return UIError(_("Initialization sanity check failed. Wallet is shutting down."));
 
     std::string strDataDir = GetDataDir().string();
 
-    // Make sure only a single Flits process is using the data directory.
+    // Make sure only a single wallet process is using the data directory.
     fs::path pathLockFile = GetDataDir() / ".lock";
     FILE* file = fsbridge::fopen(pathLockFile, "a"); // empty lock file; created if it doesn't exist.
     if (file) fclose(file);
@@ -1088,7 +1088,7 @@ bool AppInit2()
 
     // Wait maximum 10 seconds if an old wallet is still running. Avoids lockup during restart
     if (!lock.timed_lock(boost::get_system_time() + boost::posix_time::seconds(10)))
-        return UIError(strprintf(_("Cannot obtain a lock on data directory %s. Flits is probably already running."), strDataDir));
+        return UIError(strprintf(_("Cannot obtain a lock on data directory %s. Wallet is probably already running."), strDataDir));
 
 #ifndef WIN32
     CreatePidFile(GetPidFile(), getpid());
@@ -1262,10 +1262,6 @@ bool AppInit2()
 
     }  // (!fDisableWallet)
 #endif // ENABLE_WALLET
-
-    // Initialize dynamic rewards
-    if(!CRewards::Init(fReindex)) 
-        return false;
 
     // ********************************************************* Step 6: network initialization
 
@@ -1463,7 +1459,7 @@ bool AppInit2()
                 delete pblocktree;
                 delete pSporkDB;
 
-                //Flits specific: spork DB's
+                //specific: spork DB's
                 pSporkDB = new CSporkDB(0, false, false);
                 pblocktree = new CBlockTreeDB(nBlockTreeDBCache, false, fReindex);
                 pcoinsdbview = new CCoinsViewDB(nCoinDBCache, false, fReindex);
@@ -1484,7 +1480,7 @@ bool AppInit2()
                 // End loop if shutdown was requested
                 if (ShutdownRequested()) break;
 
-                // Flits: load previous sessions sporks if we have them.
+                // load previous sessions sporks if we have them.
                 uiInterface.InitMessage(_("Loading sporks..."));
                 sporkManager.LoadSporksFromDB();
 
@@ -1671,21 +1667,6 @@ bool AppInit2()
     else if (readResult != CMasternodeDB::Ok) {
         LogPrintf("Error reading mncache.dat: ");
         if (readResult == CMasternodeDB::IncorrectFormat)
-            LogPrintf("magic is ok but data has invalid format, will try to recreate\n");
-        else
-            LogPrintf("file format is unknown or invalid, please fix it manually\n");
-    }
-
-    uiInterface.InitMessage(_("Loading masternode payment cache..."));
-
-    CMasternodePaymentDB mnpayments;
-    CMasternodePaymentDB::ReadResult readResult3 = mnpayments.Read(masternodePayments);
-
-    if (readResult3 == CMasternodePaymentDB::FileError)
-        LogPrintf("Missing masternode payment cache - mnpayments.dat, will try to recreate\n");
-    else if (readResult3 != CMasternodePaymentDB::Ok) {
-        LogPrintf("Error reading mnpayments.dat: ");
-        if (readResult3 == CMasternodePaymentDB::IncorrectFormat)
             LogPrintf("magic is ok but data has invalid format, will try to recreate\n");
         else
             LogPrintf("file format is unknown or invalid, please fix it manually\n");

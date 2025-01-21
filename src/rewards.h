@@ -9,9 +9,6 @@
 
 #include "main.h"
 
-static const int64_t TOT_SPLY_TRGT_EMISSION = 50000;
-static const int64_t CIRC_SPLY_TRGT_EMISSION = 100000;
-
 class CBlockchainStatus
 {
 public:
@@ -40,16 +37,18 @@ public:
 class CRewards 
 {
 private:
-    static const int DB_OPEN_ATTEMPTS       =     3; // number of attempts
-    static const int DB_OPEN_WAITING_TIME   = 10000; // ms
+    static const int64_t    TOT_SPLY_TRGT_EMISSION  = 50000;    // 5% total supply
+    static const int64_t    CIRC_SPLY_TRGT_EMISSION = 100000;   // 10% circulating supply
+    static const int        DB_OPEN_ATTEMPTS        =     3;    // number of attempts
+    static const int        DB_OPEN_WAITING_TIME    = 10000;    // ms
 public:
-    static bool Init(bool fReindex);
+    static bool Init();
     static void Shutdown();
     static int GetDynamicRewardsEpoch(int nHeight);
     static int GetDynamicRewardsEpochHeight(int nHeight);
     static bool IsDynamicRewardsEpochHeight(int nHeight);
-    static bool ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCache& coins);
-    static bool DisconnectBlock(CBlockIndex* pindex);
+    static bool ConnectBlock(const CBlockIndex* pindex, CAmount nSubsidy);
+    static bool DisconnectBlock(const CBlockIndex* pindex);
     static CAmount GetBlockValue(int nHeight);
 };
 

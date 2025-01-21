@@ -162,7 +162,7 @@ public:
     template<typename Callable>
     bool ForEachNodeContinueIf(Callable&& func)
     {
-        LOCK2(cs_main, cs_vNodes);
+        LOCK(cs_vNodes);
         for (auto&& node : vNodes)
             if (NodeFullyConnected(node)) {
                 if (!func(node))

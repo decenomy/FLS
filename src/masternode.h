@@ -23,7 +23,6 @@
 #define MASTERNODE_PING_SECONDS (5 * 60)
 #define MASTERNODE_EXPIRATION_SECONDS (120 * 60)
 #define MASTERNODE_REMOVAL_SECONDS (130 * 60)
-#define MASTERNODE_CHECK_SECONDS 5
 
 class CMasternode;
 class CMasternodeBroadcast;
@@ -113,11 +112,9 @@ class CMasternode : public CSignedMessage
 private:
     // critical section to protect the inner data structures
     mutable RecursiveMutex cs;
-    int64_t lastTimeChecked;
-    int64_t lastTimeCollateralChecked;
 
-    int64_t GetLastPaidV1(CBlockIndex* blockIndex, const CScript& mnpayee);
-    int64_t GetLastPaidV2(CBlockIndex* blockIndex, const CScript& mnpayee);
+    int64_t GetLastPaidV1(const CBlockIndex* blockIndex, const CScript& mnpayee);
+    int64_t GetLastPaidV2(const CBlockIndex* blockIndex, const CScript& mnpayee);
 public:
     enum state {
         MASTERNODE_PRE_ENABLED,
@@ -144,7 +141,6 @@ public:
     int nScanningErrorCount;
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
-    int64_t lastPaid = INT64_MAX;
 
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -171,7 +167,6 @@ public:
         swap(first.activeState, second.activeState);
         swap(first.sigTime, second.sigTime);
         swap(first.lastPing, second.lastPing);
-        swap(first.lastPaid, second.lastPaid);
         swap(first.unitTest, second.unitTest);
         swap(first.allowFreeTx, second.allowFreeTx);
         swap(first.protocolVersion, second.protocolVersion);
@@ -217,13 +212,10 @@ public:
         READWRITE(nLastDsq);
         READWRITE(nScanningErrorCount);
         READWRITE(nLastScanningErrorBlockHeight);
-
-        if (ser_action.ForRead()) {
-            lastPaid = INT64_MAX;
-        }
     }
 
-    int64_t SecondsSincePayment(CBlockIndex* pblockindex);
+    int64_t SecondsSincePayment(const CBlockIndex* pindex);
+    int BlocksSincePayment(const CBlockIndex* pindex);
 
     bool UpdateFromNewBroadcast(CMasternodeBroadcast& mnb);
 
@@ -268,7 +260,7 @@ public:
         return strStatus;
     }
 
-    int64_t GetLastPaid(CBlockIndex* pblockindex);
+    int64_t GetLastPaid(const CBlockIndex* pindex);
     bool IsValidNetAddr();
 
     /// Is the input associated with collateral public key? (and there is collateral - checking if valid masternode)
@@ -283,14 +275,13 @@ public:
 
     static CAmount GetNextWeekMasternodeCollateral()
     {
-        if(sporkManager.IsSporkActive(SPORK_115_MN_COLLATERAL_WINDOW)) {
-            return CMasternode::GetMasternodeNodeCollateral(
-                chainActive.Height() + 
-                (WEEK_IN_SECONDS / Params().GetConsensus().nTargetSpacing)
-            );
-        } else {
-            return GetCurrentMasternodeCollateral();
-        }
+        const auto& params = Params();
+        const auto& consensus = params.GetConsensus();
+
+        return CMasternode::GetMasternodeNodeCollateral(
+            chainActive.Height() + 
+            (WEEK_IN_SECONDS / consensus.nTargetSpacing)
+        );
     }
     
     static CAmount GetMinMasternodeCollateral()

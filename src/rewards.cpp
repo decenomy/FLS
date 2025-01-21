@@ -26,11 +26,17 @@ boost::unordered_map<int, CAmount> mDynamicRewards;
 sqlite3* db = nullptr;
 sqlite3_stmt* insertStmt = nullptr;
 sqlite3_stmt* deleteStmt = nullptr;
+bool initiated = false;
 
-bool CRewards::Init(bool fReindex)
+bool CRewards::Init()
 {
+    if(initiated) return true;
+
     std::ostringstream oss;
     auto ok = true;
+
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
 
     if(db == nullptr) {
         try
@@ -93,7 +99,7 @@ bool CRewards::Init(bool fReindex)
                 auto rc = sqlite3_exec(db, create_table_query, NULL, NULL, NULL);
 
                 if (rc != SQLITE_OK) {
-                    oss << "SQL error: " << sqlite3_errmsg(db) << std::endl;
+                    oss << "SQL error CREATE TABLE: " << sqlite3_errmsg(db) << std::endl;
                     ok = false;
                 }
             }
@@ -102,7 +108,7 @@ bool CRewards::Init(bool fReindex)
                 const std::string insertSql = "INSERT OR REPLACE INTO rewards (height, amount) VALUES (?, ?)";
                 auto rc = sqlite3_prepare_v2(db, insertSql.c_str(), insertSql.length(), &insertStmt, nullptr);
                 if (rc != SQLITE_OK) {
-                    oss << "SQL error: " << sqlite3_errmsg(db) << std::endl;
+                    oss << "SQL error INSERT OR REPLACE: " << sqlite3_errmsg(db) << std::endl;
                     ok = false;
                 }
             }
@@ -111,7 +117,7 @@ bool CRewards::Init(bool fReindex)
                 const std::string deleteSql = "DELETE FROM rewards WHERE height >= ?";
                 auto rc = sqlite3_prepare_v2(db, deleteSql.c_str(), deleteSql.length(), &deleteStmt, nullptr);
                 if (rc != SQLITE_OK) {
-                    oss << "SQL error: " << sqlite3_errmsg(db) << std::endl;
+                    oss << "SQL error DELETE FROM: " << sqlite3_errmsg(db) << std::endl;
                     ok = false;
                 }
             }
@@ -126,14 +132,65 @@ bool CRewards::Init(bool fReindex)
                 }, nullptr, nullptr);
 
                 if (rc != SQLITE_OK) {
-                    oss << "SQL error: " << sqlite3_errmsg(db) << std::endl;
+                    oss << "SQL error SELECT: " << sqlite3_errmsg(db) << std::endl;
                     ok = false;
+                }
+            }
+
+            if(ok) { // Fill any gap that could exist using the blockchain files
+                const auto nFeatureStartHeight = consensus.vUpgrades[Consensus::UPGRADE_DYNAMIC_REWARDS].nActivationHeight;
+                const auto nCurrentHeight = chainActive.Height();
+                const auto nRewardAdjustmentInterval = consensus.nRewardAdjustmentInterval;
+
+                for(
+                    int nEpochHeight = GetDynamicRewardsEpochHeight(nFeatureStartHeight) + nRewardAdjustmentInterval; 
+                    nEpochHeight <= nCurrentHeight; 
+                    nEpochHeight += nRewardAdjustmentInterval
+                ) {
+                    if (mDynamicRewards.find(nEpochHeight) == mDynamicRewards.end()) { // missing entry
+                        const auto& pIndex = chainActive[nEpochHeight + 1];            // gets the first block index of that epoch
+
+                        CBlock block;
+                        if (ReadBlockFromDisk(block, pIndex)) {
+                            const auto& tx = block.vtx[block.IsProofOfWork() ? 0 : 1];
+
+                            CAmount nSubsidy = 0;
+
+                            CBlock inBlock;
+                            for (const CTxIn& in : tx.vin) {
+                                const auto& outpoint = in.prevout;
+
+                                CTransaction tx; uint256 hash;
+                                if(GetTransaction(outpoint.hash, tx, hash, true)) {
+                                    nSubsidy -= tx.vout[outpoint.n].nValue;
+                                }
+                            }
+
+                            nSubsidy += tx.GetValueOut();
+
+                            mDynamicRewards[nEpochHeight] = nSubsidy;
+
+                            sqlite3_bind_int(insertStmt, 1, nEpochHeight); // on the file database
+                            sqlite3_bind_int64(insertStmt, 2, nSubsidy);
+                            auto rc = sqlite3_step(insertStmt);
+                            if (rc != SQLITE_DONE) {
+                                oss << "SQL error INSERT OR REPLACE: " << sqlite3_errmsg(db) << std::endl;
+                                ok = false;
+                            }
+                            sqlite3_reset(insertStmt);
+                        }
+                    }
                 }
             }
 
             if(ok && mDynamicRewards.size() > 0) { // Printing the map
                 oss << "Dynamic Rewards:" << std::endl;
-                for (const auto& pair : mDynamicRewards) {
+
+                // Copy elements to std::map, which is ordered by key
+                std::map<int, CAmount> orderedRewards(mDynamicRewards.begin(), mDynamicRewards.end());
+
+                // Iterate the ordered map
+                for (const auto& pair : orderedRewards) {
                     oss << "Height: " << pair.first << ", Amount: " << FormatMoney(pair.second) << std::endl;
                 }
             }
@@ -155,6 +212,8 @@ bool CRewards::Init(bool fReindex)
             LogPrintf("CRewards::%s: %s\n", __func__, line);
         }
     }
+
+    initiated = ok;
         
     return ok;
 }
@@ -164,20 +223,20 @@ void CRewards::Shutdown()
     if(insertStmt != nullptr) sqlite3_finalize(insertStmt);
     if(deleteStmt != nullptr) sqlite3_finalize(deleteStmt);
     if(db != nullptr) sqlite3_close(db);
-
-    return;
 }
 
 int CRewards::GetDynamicRewardsEpoch(int nHeight)
 {
-    auto& consensus = Params().GetConsensus();
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
     const auto nRewardAdjustmentInterval = consensus.nRewardAdjustmentInterval;
     return nHeight / nRewardAdjustmentInterval;
 }
 
 int CRewards::GetDynamicRewardsEpochHeight(int nHeight)
 {
-    auto& consensus = Params().GetConsensus();
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
     const auto nRewardAdjustmentInterval = consensus.nRewardAdjustmentInterval;
     return GetDynamicRewardsEpoch(nHeight) * nRewardAdjustmentInterval;
 }
@@ -187,10 +246,12 @@ bool CRewards::IsDynamicRewardsEpochHeight(int nHeight)
     return GetDynamicRewardsEpochHeight(nHeight) == nHeight;
 }
 
-bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCache& coins)
+bool CRewards::ConnectBlock(const CBlockIndex* pindex, CAmount nSubsidy)
 {
-    auto& params = Params();
-    auto& consensus = params.GetConsensus();
+    if (!initiated && !Init()) return false;
+
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
     const auto nHeight = pindex->nHeight;
     const auto nEpochHeight = GetDynamicRewardsEpochHeight(nHeight);
     std::ostringstream oss;
@@ -200,10 +261,8 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCac
     {
         CAmount nNewSubsidy = 0;
 
-        if (
-            masternodeSync.IsSynced() &&
-            IsDynamicRewardsEpochHeight(nHeight)  
-        ) {
+        if (IsDynamicRewardsEpochHeight(nHeight)) 
+        {
             auto nBlocksPerDay = DAY_IN_SECONDS / consensus.nTargetSpacing;
             auto nBlocksPerWeek = WEEK_IN_SECONDS / consensus.nTargetSpacing;
             auto nBlocksPerMonth = MONTH_IN_SECONDS / consensus.nTargetSpacing;
@@ -219,7 +278,7 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCac
             // calculate the current circulating supply
             CAmount nCirculatingSupply = 0;
             FlushStateToDisk();
-            std::unique_ptr<CCoinsViewCursor> pcursor(coins.Cursor());
+            std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
 
             while (pcursor->Valid()) {
                 COutPoint key;
@@ -323,8 +382,7 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCac
             oss << "Adjustment at height " << nHeight << ": " << FormatMoney(nSubsidy) << " => " << FormatMoney(nNewSubsidy) << std::endl;
         }
 
-        if ( // if the wallet is syncing get the reward value from the blocks of the epoch
-            !masternodeSync.IsSynced() &&
+        if ( // just in case, if there is no data get the reward value from the blocks of the epoch
             nHeight != nEpochHeight && 
             mDynamicRewards.find(nEpochHeight) == mDynamicRewards.end()
         ) {
@@ -357,7 +415,7 @@ bool CRewards::ConnectBlock(CBlockIndex* pindex, CAmount nSubsidy, CCoinsViewCac
     return ok;
 }
 
-bool CRewards::DisconnectBlock(CBlockIndex* pindex)
+bool CRewards::DisconnectBlock(const CBlockIndex* pindex)
 {
     auto& consensus = Params().GetConsensus();
     const auto nHeight = pindex->nHeight;
@@ -493,9 +551,7 @@ CAmount CRewards::GetBlockValue(int nHeight)
 
     CAmount nSubsidy = GetBlockSubsidy(nHeight);
 
-    if (masternodeSync.IsSynced() &&
-        consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_DYNAMIC_REWARDS)
-    ) {
+    if (consensus.NetworkUpgradeActive(nHeight, Consensus::UPGRADE_DYNAMIC_REWARDS)) {
         // if this is the block where calculations are made on ConnectBlock
         // return the reward value from the previous block
         if(IsDynamicRewardsEpochHeight(nHeight)) 

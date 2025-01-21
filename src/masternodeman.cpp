@@ -18,8 +18,7 @@
 #include "util.h"
 
 #include <boost/thread/thread.hpp>
-
-#define MN_WINNER_MINIMUM_AGE 8000    // Age in seconds. This should be > MASTERNODE_REMOVAL_SECONDS to avoid misconfigured new nodes in the list.
+#include "core_io.h"
 
 /** Masternode manager */
 CMasternodeMan mnodeman;
@@ -210,12 +209,9 @@ bool CMasternodeMan::Add(CMasternode& mn)
 {
     LOCK(cs);
 
-    if (!mn.IsEnabled())
-        return false;
+    if (!mn.IsEnabled()) return false;
 
     CMasternode* pmn = Find(mn.vin);
-    CMasternode* pmnByAddr = Find(mn.addr);
-    bool masternodeRankV2 = Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_MASTERNODE_RANK_V2);
 
     auto mnScript = Find(GetScriptForDestination(mn.pubKeyCollateralAddress.GetID()));
     if(mnScript) {
@@ -225,9 +221,7 @@ bool CMasternodeMan::Add(CMasternode& mn)
         return false;
     }
 
-    if (pmn == NULL && 
-        (sporkManager.IsSporkActive(SPORK_111_ALLOW_DUPLICATE_MN_IPS) || !masternodeRankV2 || pmnByAddr == NULL) 
-    ) {
+    if (pmn == nullptr) {
         LogPrint(BCLog::MASTERNODE, "CMasternodeMan: Adding new Masternode %s - count %i now\n", mn.vin.prevout.ToStringShort(), size() + 1);
         auto m = new CMasternode(mn);
         vMasternodes.push_back(m);
@@ -265,26 +259,18 @@ void CMasternodeMan::AskForMN(CNode* pnode, const CTxIn& vin)
     mWeAskedForMasternodeListEntry[vin.prevout] = askAgain;
 }
 
-void CMasternodeMan::Check(bool forceCheck)
+void CMasternodeMan::Check()
 {
-    if(forceCheck) {
-        LOCK2(cs_main, cs);
+    LOCK(cs);
 
-        for (auto mn : vMasternodes) {
-            mn->Check(forceCheck);
-        }
-    } else {
-        LOCK(cs);
-
-        for (auto mn : vMasternodes) {
-            mn->Check();
-        }
+    for (auto mn : vMasternodes) {
+        mn->Check();
     }
 }
 
 void CMasternodeMan::CheckAndRemove(bool forceExpiredRemoval)
 {
-    Check(true);
+    Check();
 
     LOCK(cs);
 
@@ -405,37 +391,35 @@ void CMasternodeMan::Clear()
         mapPubKeyMasternodes.clear();
     }
 
-    LOCK(cs);
-    auto it = vMasternodes.begin();
-    while (it != vMasternodes.end()) {
-        delete *it;
-        it = vMasternodes.erase(it);
+    {
+        LOCK(cs);
+        auto it = vMasternodes.begin();
+        while (it != vMasternodes.end()) {
+            delete *it;
+            it = vMasternodes.erase(it);
+        }
+        mAskedUsForMasternodeList.clear();
+        mWeAskedForMasternodeList.clear();
+        mWeAskedForMasternodeListEntry.clear();
+        mapSeenMasternodeBroadcast.clear();
+        mapSeenMasternodePing.clear();
+        nDsqCount = 0;
     }
-    mAskedUsForMasternodeList.clear();
-    mWeAskedForMasternodeList.clear();
-    mWeAskedForMasternodeListEntry.clear();
-    mapSeenMasternodeBroadcast.clear();
-    mapSeenMasternodePing.clear();
-    nDsqCount = 0;
+
+    {
+        LOCK(cs_collaterals);
+        initiatedAt = -1;
+    }
 }
 
 int CMasternodeMan::stable_size ()
 {
     int nStable_size = 0;
-    int64_t nMasternode_Min_Age = MN_WINNER_MINIMUM_AGE;
     int64_t nMasternode_Age = 0;
 
-    LOCK2(cs_main, cs);
+    LOCK(cs);
 
     for (auto mn : vMasternodes) {
-        if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT) &&
-            sporkManager.IsSporkActive(SPORK_108_FORCE_MASTERNODE_MIN_AGE)) 
-        {
-            nMasternode_Age = GetAdjustedTime() - mn->sigTime;
-            if ((nMasternode_Age) < nMasternode_Min_Age) {
-                continue; // Skip masternodes younger than (default) 8000 sec (MUST be > MASTERNODE_REMOVAL_SECONDS)
-            }
-        }
         mn->Check ();
         if (!mn->IsEnabled ())
             continue; // Skip not-enabled masternodes
@@ -542,23 +526,30 @@ CMasternode* CMasternodeMan::Find(const CPubKey& pubKeyMasternode)
     return NULL;
 }
 
-CMasternode* CMasternodeMan::Find(const CService &addr)
-{
-    LOCK(cs);
+bool CMasternodeMan::HasCollateral(const CScript& payee) {
+    LOCK(cs_collaterals);
+    return mapScriptCollaterals.find(payee) != mnodeman.mapScriptCollaterals.end();
+}
 
-    for (auto mn : vMasternodes) {
-        if (mn->addr.ToStringIP() == addr.ToStringIP())
-            return mn;
+Coin CMasternodeMan::GetCollateral(const CScript& payee) {
+    LOCK(cs_collaterals);
+
+    const auto& it = mapScriptCollaterals.find(payee);
+    if(it != mnodeman.mapScriptCollaterals.end()) {
+        return (*it).second;
+    } else {
+        return Coin();
     }
-    return NULL;
 }
 
 //
 // Deterministically select the oldest/best masternode to pay on the network
 //
-CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCount, std::vector<CTxIn>& vEligibleTxIns, bool fJustCount, bool fCleanLastPaid)
+CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(const CBlockIndex* pindexPrev, bool fFilterSigTime, int& nCount, std::vector<CTxIn>& vEligibleTxIns, bool fJustCount)
 {
-
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto nBlockHeight = pindexPrev->nHeight + 1;
     CMasternode* pBestMasternode = nullptr;
 
     /*
@@ -576,29 +567,20 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
             mn->Check();
             if (!mn->IsEnabled()) continue;
 
-            //it's in the list (up to 8 entries ahead of current block to allow propagation) -- so let's skip it
-            if (masternodePayments.IsScheduled(*mn, nBlockHeight)) continue;
-
             //it's too new, wait for a cycle
-            if (Params().GetConsensus().NetworkUpgradeActive(chainActive.Tip()->nHeight, Consensus::UPGRADE_STAKE_MODIFIER_V2)) {
-                if (fFilterSigTime && mn->sigTime + (nMnCount * 60) > GetAdjustedTime()) continue;
-            } else {
-                if (fFilterSigTime && mn->sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime()) continue;
-            }
+            if (fFilterSigTime && mn->sigTime + (nMnCount * 60) > GetAdjustedTime()) continue;
 
             //make sure it has as many confirmations as there are masternodes
-            if (!sporkManager.IsSporkActive(SPORK_107_IGNORE_COLLATERAL_CONFIRMATIONS)) {
-                if (pcoinsTip->GetCoinDepthAtHeight(mn->vin.prevout, nBlockHeight) < nMnCount) continue;
-            }
+            if (pcoinsTip->GetCoinDepthAtHeight(mn->vin.prevout, nBlockHeight) < nMnCount) continue;
 
-            vecMasternodeLastPaid.push_back(std::make_pair(mn->SecondsSincePayment(chainActive[nBlockHeight - 1]), mn->vin));
+            vecMasternodeLastPaid.push_back(std::make_pair(mn->SecondsSincePayment(pindexPrev), mn->vin));
         }
     }
 
     nCount = (int)vecMasternodeLastPaid.size();
 
     //when the network is in the process of upgrading, don't penalize nodes that recently restarted
-    if (fFilterSigTime && nCount < nMnCount / 3) return GetNextMasternodeInQueueForPayment(nBlockHeight, false, nCount, vEligibleTxIns, fJustCount, fCleanLastPaid);
+    if (fFilterSigTime && nCount < nMnCount / 3) return GetNextMasternodeInQueueForPayment(pindexPrev, false, nCount, vEligibleTxIns, fJustCount);
 
     if(!fJustCount) {
 
@@ -606,52 +588,21 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         sort(vecMasternodeLastPaid.rbegin(), vecMasternodeLastPaid.rend(), CompareLastPaid());
 
         auto nEnabled = CountEnabled();
-        int nEligibleNetwork = nEnabled / 10; 
-        
-        if(sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) {
-            nEligibleNetwork = std::max(10, nEnabled * 5 / 100); // oldest 5% or the minimal of 10 MNs
-        }
-
-        int n = 0;
-        // clean last paid and recalculate again
-        if(fCleanLastPaid && sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) {
-            for (const auto& s : vecMasternodeLastPaid) {
-                CMasternode* pmn = Find(s.second);
-                if (!pmn) continue;
-
-                pmn->lastPaid = INT64_MAX;
-
-                n++;
-                if (n >= nEligibleNetwork / 3) break;
-            }
-
-            return GetNextMasternodeInQueueForPayment(nBlockHeight, fFilterSigTime, nCount, vEligibleTxIns, fJustCount, false);
-        }
+        auto nEligibleNetwork = std::max(10, nEnabled * 5 / 100); // oldest 5% or the minimal of 10 MNs
 
         uint256 nHigh;
         int nCountEligible = 0;
         for (const auto& s : vecMasternodeLastPaid) {
-            CMasternode* pmn = Find(s.second);
+            auto pmn = Find(s.second);
             if (!pmn) continue;
 
-            if (sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2)) {
-                if (pBestMasternode == nullptr) {
-                    pBestMasternode = pmn; // get the MN that was paid the last
-                }
-            } else {
-                uint256 n = pmn->CalculateScore(1, nBlockHeight - 100);
-                if (n > nHigh) {
-                    nHigh = n;
-                    pBestMasternode = pmn;
-                }
+            if (!pBestMasternode) {
+                pBestMasternode = pmn; // get the MN that was paid the last
             }
 
             vEligibleTxIns.push_back(s.second);
-            if (sporkManager.IsSporkActive(SPORK_114_MN_PAYMENT_V2) && 
-                pmn->GetLastPaid(chainActive[nBlockHeight - 1]) != 0
-            ) {
-                nCountEligible++;
-            }
+            nCountEligible++;
+
             if (nCountEligible >= nEligibleNetwork) break;
         }
     }
@@ -659,126 +610,81 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     return pBestMasternode;
 }
 
-CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight)
+const CBlockIndex* CMasternodeMan::GetLastPaidBlockSlow(const CScript& script, const CBlockIndex* pindexPrev) 
 {
-    int64_t score = 0;
-    CMasternode* winner = NULL;
-
-    LOCK(cs);
-
-    // scan for winner
-    for (auto mn : vMasternodes) {
-        mn->Check();
-        if (!mn->IsEnabled()) continue;
-
-        // calculate the score for each Masternode
-        uint256 n = mn->CalculateScore(mod, nBlockHeight);
-        int64_t n2 = n.GetCompact(false);
-
-        // determine the winner
-        if (n2 > score) {
-            score = n2;
-            winner = mn;
-        }
-    }
-
-    return winner;
-}
-
-int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight)
-{
-    std::vector<std::pair<int64_t, CTxIn>> vecMasternodeScores;
-    int64_t nMasternode_Min_Age = MN_WINNER_MINIMUM_AGE;
-    int64_t nMasternode_Age = 0;
-    bool masternodeRankV2 = Params().GetConsensus().NetworkUpgradeActive(chainActive.Height(), Consensus::UPGRADE_MASTERNODE_RANK_V2);
-    int defaultValue = 
-        masternodeRankV2 ?
-        INT_MAX :
-        -1;
-
-    //make sure we know about this block
-    uint256 hash;
-    if (!GetBlockHash(hash, nBlockHeight)) return defaultValue;
-
-    LOCK(cs);
-
-    // scan for winner
-    for (auto mn : vMasternodes) {
-        if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT) &&
-            sporkManager.IsSporkActive(SPORK_108_FORCE_MASTERNODE_MIN_AGE)) 
-        {
-            nMasternode_Age = GetAdjustedTime() - mn->sigTime;
-            if ((nMasternode_Age) < nMasternode_Min_Age) {
-                LogPrint(BCLog::MASTERNODE,"Skipping just activated Masternode. Age: %ld\n", nMasternode_Age);
-                continue;                                                   // Skip masternodes younger than (default) 1 hour
-            }
-        }
-        
-        mn->Check();
-        if (!mn->IsEnabled()) continue;
-
-        uint256 n = mn->CalculateScore(1, nBlockHeight);
-        int64_t n2 = n.GetCompact(false);
-
-        vecMasternodeScores.push_back(std::make_pair(n2, mn->vin));
-    }
-
-    sort(vecMasternodeScores.rbegin(), vecMasternodeScores.rend(), CompareScoreTxIn());
-
-    int rank = 0;
-    for (PAIRTYPE(int64_t, CTxIn) & s : vecMasternodeScores) {
-        rank++;
-        if (s.second.prevout == vin.prevout) {
-            return rank;
-        }
-    }
-
-    return defaultValue;
-}
-
-std::vector<std::pair<int, CMasternode>> CMasternodeMan::GetMasternodeRanks(int64_t nBlockHeight)
-{
-    std::vector<std::pair<int64_t, CMasternode> > vecMasternodeScores;
-    std::vector<std::pair<int, CMasternode> > vecMasternodeRanks;
-
-    //make sure we know about this block
-    uint256 hash;
-    if (!GetBlockHash(hash, nBlockHeight)) return vecMasternodeRanks;
+    auto pindex = pindexPrev;
+    CBlock block;
 
     {
-        std::vector<CMasternode> vmn;
+        LOCK(cs_main);
+
+        for(int i = 0; i < DEFAULT_MAX_REORG_DEPTH; i++) 
         {
-            LOCK(cs);
-
-            for(auto mn : vMasternodes) { // the below code takes too long, copy and go
-                vmn.push_back(*mn);
-            }
-        }
-
-        // scan for winner
-        for (CMasternode& mn : vmn) {
-
-            if (!mn.IsEnabled()) {
-                vecMasternodeScores.push_back(std::make_pair(INT_MAX, mn));
-                continue;
+            if(chainActive[pindex->nHeight]->GetBlockHash() == pindex->GetBlockHash()) {
+                return GetLastPaidBlock(script, pindex); // onchain, use a faster alternative
             }
 
-            uint256 n = mn.CalculateScore(1, nBlockHeight);
-            int64_t n2 = n.GetCompact(false);
+            if(!ReadBlockFromDisk(block, pindex)) {
+                return nullptr; // should not happen
+            }
 
-            vecMasternodeScores.push_back(std::make_pair(n2, mn));
+            auto amount = CMasternode::GetMasternodePayment(pindex->nHeight);
+            auto paidPayee = block.GetPaidPayee(amount);
+
+            if(paidPayee == script) {
+                return pindex;
+            }
+
+            if(block.hashPrevBlock.IsNull()) return nullptr; // should not happen or we reached the genesis block
+
+            pindex = mapBlockIndex[block.hashPrevBlock];
         }
     }
 
-    sort(vecMasternodeScores.rbegin(), vecMasternodeScores.rend(), CompareScoreMN());
+    // we reached the limit of reorg lets continue with the faster algorithm
+    return GetLastPaidBlock(script, pindex);
+}
 
-    int rank = 0;
-    for (PAIRTYPE(int64_t, CMasternode) & s : vecMasternodeScores) {
-        rank++;
-        vecMasternodeRanks.push_back(std::make_pair(rank, s.second));
+const CBlockIndex* CMasternodeMan::GetLastPaidBlock(const CScript& script, const CBlockIndex* pindex) 
+{
+    LOCK(cs_collaterals);
+
+    if(mapPaidPayeesBlocks.find(script) != mapPaidPayeesBlocks.end() &&
+       !mapPaidPayeesBlocks[script].empty()
+    ) {
+        const auto& vblocks = mapPaidPayeesBlocks[script];
+        for (auto it = vblocks.rbegin(); it != vblocks.rend(); ++it)
+        {
+            if((*it)->nHeight <= pindex->nHeight) {
+                return *it;
+            }
+        }
+    }
+    return nullptr;
+}
+
+int CMasternodeMan::BlocksSincePayment(const CScript& script, const CBlockIndex* pindex) {
+    const auto pLastPaidBlock = GetLastPaidBlockSlow(script, pindex);
+
+    if(pLastPaidBlock) {
+        return pindex->nHeight - pLastPaidBlock->nHeight;
     }
 
-    return vecMasternodeRanks;
+    const auto collateral = mnodeman.GetCollateral(script);
+
+    if (collateral.nHeight != 0) {
+        return pindex->nHeight - collateral.nHeight;
+    }
+
+    return -1;
+}
+
+int64_t CMasternodeMan::GetLastPaid(const CScript& script, const CBlockIndex* pindex) {
+    const auto pIndex = GetLastPaidBlock(script, pindex);
+    if(pIndex) {
+        return pIndex->GetBlockTime();
+    }
+    return 0;
 }
 
 void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
@@ -883,55 +789,39 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             }
         } //else, asking for a specific node which is ok
 
-
-        int nInvCount = 0;
-
-        {
-            if(vin == CTxIn()) { // send all
-                LOCK(cs);
-
-                for (auto mn : vMasternodes) {
-                    if (mn->addr.IsRFC1918()) continue; // local network
-
-                    if (mn->IsEnabled()) {
-                        LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn->vin.prevout.ToStringShort());
-                        
-                        CMasternodeBroadcast mnb = CMasternodeBroadcast(*mn);
-                        uint256 hash = mnb.GetHash();
-                        pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
-                        nInvCount++;
-
-                        if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.insert(std::make_pair(hash, mnb));
-
-                        if (vin == mn->vin) {
-                            LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
-                            return;
-                        }
-                    }
-                }
-            } else { // send specific one
-
-                auto mn = Find(vin);
-
-                if(mn && mn->IsEnabled() && !mn->addr.IsRFC1918()) {
+        if(vin == CTxIn()) { // send all
+            LOCK(cs);
+            int nInvCount = 0;
+            for (const auto& mn : vMasternodes) {
+                if (mn->IsEnabled() && !mn->addr.IsRFC1918()) {
                     LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn->vin.prevout.ToStringShort());
-
+                    
                     CMasternodeBroadcast mnb = CMasternodeBroadcast(*mn);
                     uint256 hash = mnb.GetHash();
                     pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
+                    nInvCount++;
 
                     if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.insert(std::make_pair(hash, mnb));
-
-                    LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
                 }
-
-                return;
             }
-        }
 
-        if (vin == CTxIn()) { // send the total count
             g_connman->PushMessage(pfrom, CNetMsgMaker(pfrom->GetSendVersion()).Make(NetMsgType::SYNCSTATUSCOUNT, MASTERNODE_SYNC_LIST, nInvCount));
             LogPrint(BCLog::MASTERNODE, "dseg - Sent %d Masternode entries to peer %i\n", nInvCount, pfrom->GetId());
+        } else { // send specific one
+
+            const auto mn = Find(vin);
+
+            if(mn && mn->IsEnabled() && !mn->addr.IsRFC1918()) {
+                LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn->vin.prevout.ToStringShort());
+
+                CMasternodeBroadcast mnb = CMasternodeBroadcast(*mn);
+                uint256 hash = mnb.GetHash();
+                pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
+
+                if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.insert(std::make_pair(hash, mnb));
+
+                LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
+            }
         }
     }
 }
@@ -981,6 +871,275 @@ void CMasternodeMan::UpdateMasternodeList(CMasternodeBroadcast mnb)
     }
 }
 
+bool CMasternodeMan::Init()
+{
+    if(initiatedAt > 0) return true;
+
+    FlushStateToDisk();
+
+    LOCK(cs_collaterals);
+
+    // cleans up all collections
+    mapScriptCollaterals.clear();
+    mapCOutPointCollaterals.clear();
+    mapCAmountCollaterals.clear();
+    mapRemovedCollaterals.clear();
+    mapPaidPayeesBlocks.clear();
+    mapPaidPayeesHeight.clear();
+
+    const auto nHeight = chainActive.Height();
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto nBlocksPerWeek = WEEK_IN_SECONDS / consensus.nTargetSpacing;
+
+    // get the current masternode collateral, and the next week collateral
+    auto nCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight);
+    auto nNextWeekCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight + nBlocksPerWeek);
+
+    if (nCollateralAmount > 0 || nNextWeekCollateralAmount > 0) {
+        std::unique_ptr<CCoinsViewCursor> pcursor(pcoinsTip->Cursor());
+
+        while (pcursor->Valid()) {
+            boost::this_thread::interruption_point();
+            COutPoint key;
+            Coin coin;
+            if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {
+                if (!coin.IsSpent() && (coin.out.nValue == nCollateralAmount || coin.out.nValue == nNextWeekCollateralAmount)) {
+                    const auto& out = coin.out;
+                    const auto& nCollateral = out.nValue;
+                    // this is a possible collateral UTXO
+                    mapScriptCollaterals[coin.out.scriptPubKey] = coin;
+                    mapCOutPointCollaterals[key] = coin;
+                    // check if there is no entry for this collateral
+                    if(mapCAmountCollaterals.find(nCollateral) == mapCAmountCollaterals.end()) {
+                        mapCAmountCollaterals[nCollateral] = boost::unordered_set<COutPoint, COutPointCheapHasher>(); // add an empty set
+                    }
+                    mapCAmountCollaterals[nCollateral].insert(key);
+                }
+            }
+            pcursor->Next();
+        }
+    }
+
+    // scan the blockchain for paid payees
+    const auto nCollaterals = mapScriptCollaterals.size();
+    const auto nMaxDepth = nCollaterals * 2;
+
+    for(int h = nHeight - nMaxDepth; h <= nHeight; h++) {
+        const auto pBlockIndex = chainActive[h];
+        const auto paidPayee = pBlockIndex->GetPaidPayee();
+
+        if(mapPaidPayeesBlocks.find(paidPayee) == mapPaidPayeesBlocks.end()) {
+            mapPaidPayeesBlocks[paidPayee] = std::vector<const CBlockIndex*>();
+        }
+
+        mapPaidPayeesBlocks[paidPayee].push_back(pBlockIndex);
+        mapPaidPayeesHeight[h] = paidPayee;
+    }
+
+    initiatedAt = nHeight;
+    lastProcess = GetTime();
+
+    return true;
+}
+
+void CMasternodeMan::Shutdown()
+{
+}
+
+bool CMasternodeMan::ConnectBlock(const CBlockIndex* pindex, const CBlock& block)
+{
+    LOCK(cs_collaterals);
+
+    int64_t now = GetTime();
+    // if the last call to this function was more than 60 minutes ago (client was in sleep mode) reset data
+    if (now > lastProcess + HOUR_IN_SECONDS) {
+        initiatedAt = -1;
+    }
+    lastProcess = now;
+
+    if (initiatedAt < 0 && !Init()) return false;
+
+    const auto nHeight = pindex->nHeight;
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto nBlocksPerWeek = WEEK_IN_SECONDS / consensus.nTargetSpacing;
+
+    // removes old data
+    const auto nRemovalHeight = nHeight - DEFAULT_MAX_REORG_DEPTH;
+    mapRemovedCollaterals.erase(nRemovalHeight);
+    
+    initiatedAt = std::max(initiatedAt, nRemovalHeight);
+
+    // get the current masternode collateral, and the next week collateral
+    auto nCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight);
+    auto nNextWeekCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight + nBlocksPerWeek);
+
+    // remove all UTXOs with old collaterals
+    for(const auto& kv : mapCAmountCollaterals) {
+        const auto& nCollateral = kv.first;
+        if(nCollateral != nCollateralAmount && nCollateralAmount != nNextWeekCollateralAmount) {
+            auto& toRemove = mapCAmountCollaterals[nCollateral];
+            for (const auto& outPoint : toRemove) {
+                const auto& coin = mapCOutPointCollaterals[outPoint];
+
+                if(mapRemovedCollaterals.find(nHeight) == mapRemovedCollaterals.end()) {
+                    mapRemovedCollaterals[nHeight] = boost::unordered_map<COutPoint, Coin, COutPointCheapHasher>();
+                }
+                mapRemovedCollaterals[nHeight][outPoint] = coin;
+
+                mapCOutPointCollaterals.erase(outPoint);
+                mapScriptCollaterals.erase(coin.out.scriptPubKey);
+            }
+            mapCAmountCollaterals.erase(nCollateral);
+        }
+    }
+
+    for (const auto& tx : block.vtx) {
+        // remove the collaterals that were spent
+        for (const auto& in : tx.vin) {
+            if(mapCOutPointCollaterals.find(in.prevout) != mapCOutPointCollaterals.end()) 
+            {
+                const auto& outPoint = in.prevout;
+                const auto& coin = mapCOutPointCollaterals[outPoint];
+                const auto& nCollateral = coin.out.nValue;
+                const auto& scriptPubKey = coin.out.scriptPubKey;
+
+                if(mapRemovedCollaterals.find(nHeight) == mapRemovedCollaterals.end()) {
+                    mapRemovedCollaterals[nHeight] = boost::unordered_map<COutPoint, Coin, COutPointCheapHasher>();
+                }
+                mapRemovedCollaterals[nHeight][outPoint] = coin;
+
+                mapCOutPointCollaterals.erase(outPoint);
+                mapScriptCollaterals.erase(scriptPubKey);
+
+                // check if there is a entry for this collateral
+                if(mapCAmountCollaterals.find(nCollateral) != mapCAmountCollaterals.end()) {
+                    mapCAmountCollaterals[nCollateral].erase(outPoint);    
+                }
+
+                // mark the masternode as vin spent
+                const auto pmn = Find(scriptPubKey);
+                if(pmn) {
+                    pmn->activeState = CMasternode::MASTERNODE_VIN_SPENT;
+                }
+            }
+        }
+
+        // add the collaterals that were created
+        auto n = 0;
+        for (const auto& out : tx.vout) {
+            if (out.nValue == nCollateralAmount || out.nValue == nNextWeekCollateralAmount) {
+                const auto& nCollateral = out.nValue;
+                const auto& outPoint = COutPoint(tx.GetHash(), n);
+                const auto coin = Coin(out, nHeight, n == 0, n == 1);
+                
+                mapScriptCollaterals[out.scriptPubKey] = coin;
+                mapCOutPointCollaterals[outPoint] = coin;
+                
+                if(mapCAmountCollaterals.find(nCollateral) == mapCAmountCollaterals.end()) {
+                    mapCAmountCollaterals[nCollateral] = boost::unordered_set<COutPoint, COutPointCheapHasher>(); // add an empty set
+                }
+                mapCAmountCollaterals[nCollateral].insert(outPoint);
+            }
+            n++;
+        }
+    }
+
+    // register the paid payee for this block
+    const auto amount = CMasternode::GetMasternodePayment(nHeight);
+    const auto paidPayee = block.GetPaidPayee(amount);
+
+    if(!paidPayee.empty()) {
+        if(mapPaidPayeesBlocks.find(paidPayee) == mapPaidPayeesBlocks.end()) {
+            mapPaidPayeesBlocks[paidPayee] = std::vector<const CBlockIndex*>();
+        }
+
+        mapPaidPayeesBlocks[paidPayee].push_back(pindex);
+        mapPaidPayeesHeight[nHeight] = paidPayee;
+    }
+
+    return true;
+}
+
+bool CMasternodeMan::DisconnectBlock(const CBlockIndex* pindex, const CBlock& block)
+{
+    LOCK(cs_collaterals);
+
+    int64_t now = GetTime();
+    // if the last call to this function was more than 60 minutes ago (client was in sleep mode) reset data
+    if (now > lastProcess + HOUR_IN_SECONDS) {
+        initiatedAt = -1;
+    }
+    lastProcess = now;
+
+    const auto nHeight = pindex->nHeight;
+    const auto& params = Params();
+    const auto& consensus = params.GetConsensus();
+    const auto nBlocksPerWeek = WEEK_IN_SECONDS / consensus.nTargetSpacing;
+
+    if(nHeight < initiatedAt) {
+        initiatedAt = -1; // redo all the mappings at next connect block
+        return true;
+    }
+
+    // get the current masternode collateral, and the next week collateral
+    auto nCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight);
+    auto nNextWeekCollateralAmount = CMasternode::GetMasternodeNodeCollateral(nHeight + nBlocksPerWeek);
+
+    for (const auto& tx : block.vtx) {
+        // remove the collaterals that were created
+        auto n = 0;
+        for (const auto& out : tx.vout) {
+            if (out.nValue == nCollateralAmount || out.nValue == nNextWeekCollateralAmount) {
+                const auto& nCollateral = out.nValue;
+                const auto& outPoint = COutPoint(tx.GetHash(), n);
+
+                mapScriptCollaterals.erase(out.scriptPubKey);
+                mapCOutPointCollaterals.erase(outPoint);
+
+                if (mapCAmountCollaterals.find(nCollateral) != mapCAmountCollaterals.end()) {
+                    mapCAmountCollaterals[nCollateral].erase(outPoint);
+                }
+            }
+            n++;
+        }
+    }
+
+    // restore the collaterals that were remove at this height
+    if(mapRemovedCollaterals.find(nHeight) != mapRemovedCollaterals.end()) {
+        for (const auto& kv : mapRemovedCollaterals[nHeight]) {
+            const auto& outPoint = kv.first;
+            const auto& coin = kv.second;
+
+            mapScriptCollaterals[coin.out.scriptPubKey] = coin;
+            mapCOutPointCollaterals[outPoint] = coin;
+
+            const auto& nCollateral = coin.out.nValue;
+            if (mapCAmountCollaterals.find(nCollateral) == mapCAmountCollaterals.end()) {
+                mapCAmountCollaterals[nCollateral] = boost::unordered_set<COutPoint, COutPointCheapHasher>(); // add an empty set
+            }
+            mapCAmountCollaterals[nCollateral].insert(outPoint);
+        }
+        mapRemovedCollaterals.erase(nHeight);
+    }
+
+    // remove the paidpayees that were registered
+    if(mapPaidPayeesHeight.find(nHeight) != mapPaidPayeesHeight.end()) {
+        const auto& script = mapPaidPayeesHeight[nHeight];
+
+        mapPaidPayeesBlocks[script].pop_back();
+
+        if(mapPaidPayeesBlocks[script].empty()) {
+            mapPaidPayeesBlocks.erase(script);
+        }
+
+        mapPaidPayeesHeight.erase(nHeight);
+    }
+
+    return true;
+}
+
 std::string CMasternodeMan::ToString() const
 {
     std::ostringstream info;
@@ -1021,7 +1180,6 @@ void ThreadCheckMasternodes()
 
                 if (c % 60 == 0) {
                     mnodeman.CheckAndRemove();
-                    masternodePayments.CleanPaymentList();
                 }
             }
         }

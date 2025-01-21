@@ -18,22 +18,10 @@ std::vector<CSporkDef> sporkDefs = {
     MAKE_SPORK_DEF(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT,      4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_14_MIN_PROTOCOL_ACCEPTED,              4070908800ULL), // OFF
 
-    MAKE_SPORK_DEF(SPORK_101_SERVICES_ENFORCEMENT,              4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_102_FORCE_ENABLED_MASTERNODE ,         4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_103_PING_MESSAGE_SALT,                          0ULL), // OFF
     MAKE_SPORK_DEF(SPORK_104_MAX_BLOCK_TIME,                    4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_105_MAX_BLOCK_SIZE,                    4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_106_STAKING_SKIP_MN_SYNC,                          1), // ON
-    MAKE_SPORK_DEF(SPORK_107_IGNORE_COLLATERAL_CONFIRMATIONS,   4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_108_FORCE_MASTERNODE_MIN_AGE,                   0ULL), // ON
-    MAKE_SPORK_DEF(SPORK_109_FORCE_ENABLED_VOTED_MASTERNODE,    4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_110_FORCE_ENABLED_MASTERNODE_PAYMENT,  4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_111_ALLOW_DUPLICATE_MN_IPS,            4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_112_MASTERNODE_LAST_PAID_V2,           4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_114_MN_PAYMENT_V2,                     4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_115_MN_COLLATERAL_WINDOW,              4070908800ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_118_MIN_BASE_FEE,                               0ULL), // OFF
-    MAKE_SPORK_DEF(SPORK_119_MIN_ECON_FEE,                               0ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_106_STAKING_SKIP_MN_SYNC,              4070908800ULL), // OFF
 
     MAKE_SPORK_DEF(SPORK_2_NOOP,                                4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_3_NOOP,                                4070908800ULL), // OFF
@@ -49,7 +37,17 @@ std::vector<CSporkDef> sporkDefs = {
     MAKE_SPORK_DEF(SPORK_17_NOOP,                               4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_18_NOOP,                               4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_19_NOOP,                               4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_101_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_102_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_107_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_108_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_109_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_110_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_111_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_112_NOOP,                              4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_113_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_114_NOOP,                              4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_115_NOOP,                              4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_116_NOOP,                              4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_117_NOOP,                              4070908800ULL), // OFF
 };
@@ -71,7 +69,7 @@ void CSporkManager::Clear()
     mapSporksActive.clear();
 }
 
-// Flits: on startup load spork values from previous session if they exist in the sporkDB
+// on startup load spork values from previous session if they exist in the sporkDB
 void CSporkManager::LoadSporksFromDB()
 {
     for (const auto& sporkDef : sporkDefs) {
@@ -81,11 +79,7 @@ void CSporkManager::LoadSporksFromDB()
             LogPrintf("%s : no previous value for %s found in database\n", __func__, sporkDef.name);
             continue;
         }
-
-        // add spork to memory
-        mapSporks[spork.GetHash()] = spork;
         mapSporksActive[spork.nSporkID] = spork;
-        std::time_t result = spork.nValue;
         // If SPORK Value is greater than 1,000,000 assume it's actually a Date and then convert to a more readable format
         std::string sporkName = sporkManager.GetSporkNameByID(spork.nSporkID);
         if (spork.nValue > 1000000) {
@@ -176,7 +170,7 @@ void CSporkManager::ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStr
         }
         spork.Relay();
 
-        // Flits: add to spork database.
+        // add to spork database.
         pSporkDB->WriteSpork(spork.nSporkID, spork);
     }
     if (strCommand == NetMsgType::GETSPORKS) {
@@ -319,4 +313,3 @@ void CSporkMessage::Relay()
     CInv inv(MSG_SPORK, GetHash());
     g_connman->RelayInv(inv);
 }
-

@@ -376,8 +376,6 @@ static const CRPCCommand vRPCCommands[] =
         {"flits", "listmasternodeconf", &listmasternodeconf, true },
         {"flits", "getactivemasternodecount", &getactivemasternodecount, true },
         {"flits", "getmasternodestatus", &getmasternodestatus, true },
-        {"flits", "getmasternodewinners", &getmasternodewinners, true },
-        {"flits", "getmasternodescores", &getmasternodescores, true },
         {"flits", "mnsync", &mnsync, true },
         {"flits", "spork", &spork, true },
         {"flits", "mnping", &mnping, true },

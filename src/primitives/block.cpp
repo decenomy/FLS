@@ -39,8 +39,9 @@ CScript CBlock::GetPaidPayee(CAmount nAmount) const
 {
     const auto& tx = vtx[IsProofOfWork() ? 0 : 1];
 
-    for (const CTxOut& out : tx.vout) {
-        if (out.nValue == nAmount) return out.scriptPubKey;
+    for (auto it = tx.vout.rbegin(); it != tx.vout.rend(); ++it)
+    {
+        if (it->nValue == nAmount) return it->scriptPubKey;
     }
 
     return CScript();

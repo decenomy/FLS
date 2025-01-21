@@ -12,11 +12,10 @@
 #define MASTERNODE_SYNC_INITIAL 0
 #define MASTERNODE_SYNC_SPORKS 1
 #define MASTERNODE_SYNC_LIST 2
-#define MASTERNODE_SYNC_MNW 3
 #define MASTERNODE_SYNC_FAILED 998
 #define MASTERNODE_SYNC_FINISHED 999
 
-#define MASTERNODE_SYNC_TIMEOUT 5
+#define MASTERNODE_SYNC_TIMEOUT 10
 #define MASTERNODE_SYNC_THRESHOLD 2
 
 class CMasternodeSync;
@@ -30,10 +29,8 @@ class CMasternodeSync
 {
 public:
     std::map<uint256, int> mapSeenSyncMNB;
-    std::map<uint256, int> mapSeenSyncMNW;
 
     int64_t lastMasternodeList;
-    int64_t lastMasternodeWinner;
     int64_t lastFailure;
     int nCountFailures;
 
@@ -42,10 +39,8 @@ public:
 
     // sum of all counts
     int sumMasternodeList;
-    int sumMasternodeWinner;
     // peers that reported counts
     int countMasternodeList;
-    int countMasternodeWinner;
 
     // Count peers we've requested the list from
     int RequestedMasternodeAssets;
@@ -57,7 +52,6 @@ public:
     CMasternodeSync();
 
     void AddedMasternodeList(const uint256& hash);
-    void AddedMasternodeWinner(const uint256& hash);
     void GetNextAsset();
     std::string GetSyncStatus();
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);

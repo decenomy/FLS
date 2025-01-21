@@ -406,6 +406,11 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char* pszDest, bool fCo
             LogPrintf("Failed to open new connection, already connected\n");
             return nullptr;
         }
+
+        if (addrConnect.IsIPv6()) {
+            LogPrintf("%s: cannot connect to a IPv6 node\n", __func__);
+            return nullptr;
+        }
     }
 
     /// debug print
@@ -728,7 +733,7 @@ void CNode::copyStats(CNodeStats& stats)
         nPingUsecWait = GetTimeMicros() - nPingUsecStart;
     }
 
-    // Raw ping time is in microseconds, but show it to user as whole seconds (Flits users should be well used to small numbers with many decimal places by now :)
+    // Raw ping time is in microseconds, but show it to user as whole seconds (users should be well used to small numbers with many decimal places by now :)
     stats.dPingTime = (((double)nPingUsecTime) / 1e6);
     stats.dPingWait = (((double)nPingUsecWait) / 1e6);
 
@@ -934,7 +939,7 @@ void CheckOffsetDisconnectedPeers(const CNetAddr& ip)
         setOffsetDisconnectedPeers.clear();
         // Trigger the warning
         std::string strWarn1 = _("Peers are being disconnected due time differences.");
-        std::string strWarn2 = _("Please check that your computer's date and time are correct! If your clock is wrong Flits will not work properly.");
+        std::string strWarn2 = _("Please check that your computer's date and time are correct! If your clock is wrong the wallet will not work properly.");
 
         LogPrintf("*** Warning: %s %s\n", strWarn1, strWarn2);
 
@@ -1604,23 +1609,26 @@ void CConnman::ThreadDNSAddressSeed()
  
     std::shuffle(vMasternodes.begin(), vMasternodes.end(), g);
     
-    int ipV4Count = 0;
-    int ipV6Count = 0;   
+    int ipV4Count = 0; 
+
+    boost::unordered_set<std::string> masternodeIPs;  
 
     for(const CMasternode& mn : vMasternodes) {
 
-        if(mn.addr.IsIPv4() && ipV4Count < MAX_MASTERNODES_SEEDED_AT_ONCE) {
-            vPeers.push_back(CDNSSeedData(mn.addr.ToStringIP(), mn.addr.ToStringIP()));
+        if(ipV4Count >= MAX_MASTERNODES_SEEDED_AT_ONCE) break;
+
+        if(mn.addr.IsIPv4() && 
+           ipV4Count < MAX_MASTERNODES_SEEDED_AT_ONCE && 
+           masternodeIPs.count(mn.addr.ToStringIP())
+        ) {
+            const auto& addr = mn.addr.ToStringIP();
+            vPeers.push_back(CDNSSeedData(addr, addr));
+            masternodeIPs.insert(addr);
             ipV4Count++;
         }
-
-        if(mn.addr.IsIPv6() && ipV6Count < MAX_MASTERNODES_SEEDED_AT_ONCE) {
-            vPeers.push_back(CDNSSeedData(mn.addr.ToStringIP(), mn.addr.ToStringIP()));
-            ipV6Count++;
-        }
-
-        if(ipV4Count >= ipV6Count >= MAX_MASTERNODES_SEEDED_AT_ONCE) break;
     }
+
+    masternodeIPs.clear();
 
     LogPrintf("Loading addresses from DNS seeds (could take a while)\n");
 
@@ -1923,6 +1931,9 @@ bool CConnman::OpenNetworkConnection(const CAddress& addrConnect, bool fCountFai
     //
     // Initiate outbound network connection
     //
+    if (addrConnect.IsIPv6()) { // avoid IPv6 connections
+        return false;
+    }
     if (interruptNet) {
         return false;
     }
@@ -2066,7 +2077,7 @@ bool CConnman::BindListenPort(const CService& addrBind, std::string& strError, b
     if (::bind(hListenSocket, (struct sockaddr*)&sockaddr, len) == SOCKET_ERROR) {
         int nErr = WSAGetLastError();
         if (nErr == WSAEADDRINUSE)
-            strError = strprintf(_("Unable to bind to %s on this computer. Flits is probably already running."), addrBind.ToString());
+            strError = strprintf(_("Unable to bind to %s on this computer. The wallet is probably already running."), addrBind.ToString());
         else
             strError = strprintf(_("Unable to bind to %s on this computer (bind returned error %s)"), addrBind.ToString(), NetworkErrorString(nErr));
         LogPrintf("%s\n", strError);
@@ -2710,4 +2721,3 @@ uint64_t CConnman::CalculateKeyedNetGroup(const CAddress& ad)
 
     return GetDeterministicRandomizer(RANDOMIZER_ID_NETGROUP).Write(&vchNetGroup[0], vchNetGroup.size()).Finalize();
 }
-
