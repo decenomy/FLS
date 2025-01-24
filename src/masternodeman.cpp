@@ -989,7 +989,15 @@ bool CMasternodeMan::ConnectBlock(const CBlockIndex* pindex, const CBlock& block
                 mapRemovedCollaterals[nHeight][outPoint] = coin;
 
                 mapCOutPointCollaterals.erase(outPoint);
-                mapScriptCollaterals.erase(coin.out.scriptPubKey);
+
+                const auto& script = coin.out.scriptPubKey;
+                mapScriptCollaterals.erase(script);
+
+                // mark the masternode as vin spent
+                const auto pmn = Find(script);
+                if(pmn) {
+                    pmn->activeState = CMasternode::MASTERNODE_VIN_SPENT;
+                }
             }
             mapCAmountCollaterals.erase(nCollateral);
         }
