@@ -1162,10 +1162,10 @@ void RPCConsole::setmymasternodes()
     ui->myactivemn->setText(QString::number(nMNCount));
 }
 
-void RPCConsole::setbstamp()
+void RPCConsole::setbstamp(CBlockchainStatus& cbs)
 {
     QDateTime timestamp = QDateTime::currentDateTime();
-    QString timestring = timestamp.toString();
+    QString timestring = timestamp.toString() + "  :  " + QString::number(cbs.nBlocksPerDay) + " blks/day";
     ui->bststamp->setText(timestring);
 }
 
@@ -1195,5 +1195,5 @@ void RPCConsole::updateBlockchainStats()
     setchainmasternodes(cbs);
     setmymasternodes();
     applyColor2Text(ui->bststamp, Qt::black);
-    setbstamp();
+    setbstamp(cbs);
 }
