@@ -1449,12 +1449,10 @@ bool IsInitialBlockDownload()
     if (latchToFalse.load(std::memory_order_relaxed))
         return false;
 
-    LOCK(cs_main);
-    if (latchToFalse.load(std::memory_order_relaxed))
-         return false;
     const int chainHeight = chainActive.Height();
     if (fImporting || fReindex || fVerifyingBlocks || chainHeight < Checkpoints::GetTotalBlocksEstimate())
         return true;
+    LOCK(cs_main);
     bool state = (chainHeight < pindexBestHeader->nHeight - 24 * 6 ||
             pindexBestHeader->GetBlockTime() < GetTime() - nMaxTipAge);
     if (!state)
@@ -1961,11 +1959,13 @@ DisconnectResult DisconnectBlock(CBlock& block, CBlockIndex* pindex, CCoinsViewC
     // move best block pointer to prevout block
     view.SetBestBlock(pindex->pprev->GetBlockHash());
 
-    // Dynamic rewards management
-    if(!CRewards::DisconnectBlock(pindex)) return DISCONNECT_UNCLEAN;
+    if(!IsInitialBlockDownload()) {
+        // Dynamic rewards management
+        if(!CRewards::DisconnectBlock(pindex)) return DISCONNECT_UNCLEAN;
 
-    // Masternode management
-    if(!mnodeman.DisconnectBlock(pindex, block)) return DISCONNECT_UNCLEAN;
+        // Masternode management
+        if(!mnodeman.DisconnectBlock(pindex, block)) return DISCONNECT_UNCLEAN;
+    }
 
     return fClean ? DISCONNECT_OK : DISCONNECT_UNCLEAN;
 }
@@ -2249,11 +2249,13 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     nTimeCallbacks += nTime4 - nTime3;
     LogPrint(BCLog::BENCH, "    - Callbacks: %.2fms [%.2fs]\n", 0.001 * (nTime4 - nTime3), nTimeCallbacks * 0.000001);
 
-    // Dynamic rewards management
-    if(!CRewards::ConnectBlock(pindex, nMint)) return false;
+    if(!IsInitialBlockDownload()) {
+        // Dynamic rewards management
+        if(!CRewards::ConnectBlock(pindex, nMint)) return false;
 
-    // Masternode management
-    if(!mnodeman.ConnectBlock(pindex, block)) return false;
+        // Masternode management
+        if(!mnodeman.ConnectBlock(pindex, block)) return false;
+    }
 
     return true;
 }

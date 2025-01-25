@@ -266,7 +266,7 @@ bool CMasternodeSync::SyncWithNode(CNode* pnode, bool isRegTestNet)
 
             if (lastMasternodeList > 0 && countMasternodeList > 0 &&
                 RequestedMasternodeAttempt >= MASTERNODE_SYNC_THRESHOLD &&
-                mnodeman.CountEnabled() >= (sumMasternodeList * 90) / (countMasternodeList * 100) // only move on after getting a properly sized MN list
+                mnodeman.CountEnabled() >= (sumMasternodeList * 60) / (countMasternodeList * 100) // only move on after getting a properly sized MN list
             ) { // we have a good enough mn list, so we'll move to the next step
                 GetNextAsset();
                 return false;

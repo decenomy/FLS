@@ -152,7 +152,7 @@ private:
     /** show my masternode status */
     void setmymasternodes();
     /** show the timestamp when the status snapshot was taken */
-    void setbstamp();
+    void setbstamp(CBlockchainStatus& cbs);
 
     enum ColumnWidths {
         ADDRESS_COLUMN_WIDTH = 170,
