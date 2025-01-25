@@ -753,13 +753,13 @@ std::string CMasternodePing::GetStrMessage() const
 
 bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fCheckSigTimeOnly)
 {
-    if (sigTime > GetAdjustedTime() + 60 * 60) {
+    if (sigTime > GetAdjustedTime() + HOUR_IN_SECONDS) {
         LogPrint(BCLog::MNPING, "%s: Signature rejected, too far into the future %s\n", __func__, vin.prevout.ToStringShort());
         // nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
     }
 
-    if (sigTime <= GetAdjustedTime() - 60 * 60) {
+    if (sigTime <= GetAdjustedTime() - MASTERNODE_EXPIRATION_SECONDS) {
         LogPrint(BCLog::MNPING, "%s: Signature rejected, too far into the past %s - %d %d \n", __func__, vin.prevout.ToStringShort(), sigTime, GetAdjustedTime());
         // nDos = 1; //disable, this is happening frequently and causing banned peers
         return false;
