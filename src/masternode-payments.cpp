@@ -141,9 +141,10 @@ bool CMasternodePayments::IsTransactionValid(const CBlock& block, const CBlockIn
 
     assert(block.hashPrevBlock == pindexPrev->GetBlockHash());
 
-    const auto nBlockHeight = pindexPrev->nHeight + 1;
-    const auto& params = Params();
-    const auto& consensus = params.GetConsensus();
+    const auto nPrevBlockHeight = pindexPrev->nHeight;
+    const auto nPrevBlockTime = pindexPrev->nTime;
+    const auto nBlockHeight = nPrevBlockHeight + 1;
+
     const auto& txNew = block.vtx[block.IsProofOfStake() ? 1 : 0];
 
     auto requiredMasternodePayment = CMasternode::GetMasternodePayment(nBlockHeight);
@@ -181,18 +182,14 @@ bool CMasternodePayments::IsTransactionValid(const CBlock& block, const CBlockIn
             return false; // should not happen
         }
 
+        if (nPrevBlockHeight - collateral.nHeight < MASTERNODE_MIN_CONFIRMATIONS) {
+            return false; // needs more confirmations
+        }
+
         // get when this masternode was last paid
         int n = 0;
         const auto pLastPaidBlock = mnodeman.GetLastPaidBlockSlow(paidPayee, pindexPrev);
-        const auto lastPaid = std::max(
-            static_cast<uint32_t>(pLastPaidBlock ? pLastPaidBlock->nHeight : 0),
-            collateral.nHeight
-        );
-
-        auto lastPaidDepth = mnodeman.BlocksSincePayment(paidPayee, pindexPrev);
-        if(lastPaidDepth < 0) {
-            lastPaidDepth = pindexPrev->nHeight - collateral.nHeight;
-        }
+        const auto nLastPaid = pLastPaidBlock ? pLastPaidBlock->nTime : WITH_LOCK(cs_main, return chainActive[collateral.nHeight]->nTime);
 
         // get the masternodes choosen on this block from our point of view
         const auto eligible = mnodeman.GetNextMasternodeInQueueEligible(pindexPrev);
@@ -202,21 +199,26 @@ bool CMasternodePayments::IsTransactionValid(const CBlock& block, const CBlockIn
             return true;
         }
 
-        const auto eligibleDepth = eligible.first->BlocksSincePayment(pindexPrev);
+        const auto nEligibleLastPaid = eligible.first->GetLastPaid(pindexPrev);
 
-        auto minDepth = INT32_MAX;
-        auto maxDepth = 0;
+        auto nMinLastPaid = INT64_MAX;
+        auto nMaxLastPaid = INT64_MIN;
 
         for(const auto& txin : eligible.second) {
             CMasternode* pmn = mnodeman.Find(txin);
             if (!pmn) continue;
 
-            const auto nDepth = pmn->BlocksSincePayment(pindexPrev);
-            minDepth = std::min(minDepth, nDepth);
-            maxDepth = std::max(maxDepth, nDepth);
+            auto lp = pmn->GetLastPaid(pindexPrev);
+            nMinLastPaid = std::min(nMinLastPaid, lp);
+            nMaxLastPaid = std::max(nMaxLastPaid, lp);
         }
 
-        if(LogAcceptCategory(BCLog::MASTERNODE)) {
+        if(LogAcceptCategory(BCLog::MASTERNODE)) 
+        {
+            const auto& params = Params();
+            const auto& consensus = params.GetConsensus();
+            const auto& nTargetSpacing = consensus.nTargetSpacing;
+
             if(pLastPaidBlock) {
 
                 CTxDestination destination;
@@ -231,12 +233,12 @@ bool CMasternodePayments::IsTransactionValid(const CBlock& block, const CBlockIn
                 );
             } // nBlockHeight
             LogPrint(BCLog::MASTERNODE, "%s - Block tested/tip %d/%d\n", __func__, nBlockHeight, chainActive.Height());
-            LogPrint(BCLog::MASTERNODE, "%s - Eligible min/max depth %d/%d\n", __func__, minDepth, maxDepth);
-            LogPrint(BCLog::MASTERNODE, "%s - Eligible and paid depth %d/%d\n", __func__, maxDepth, lastPaidDepth);
+            LogPrint(BCLog::MASTERNODE, "%s - Eligible min/max depth %d/%d\n", __func__, (nPrevBlockTime - nMaxLastPaid) / nTargetSpacing, (nPrevBlockTime - nMinLastPaid) / nTargetSpacing);
+            LogPrint(BCLog::MASTERNODE, "%s - Eligible and paid depth %d/%d\n", __func__, (nPrevBlockTime - nMinLastPaid) / nTargetSpacing, (nPrevBlockTime - nLastPaid) / nTargetSpacing);
         }
 
         // reject it, if it is being paid faster than the shortest depth elegible MN
-        if (lastPaidDepth < minDepth) {
+        if (nLastPaid > nMaxLastPaid) {
 
             if(LogAcceptCategory(BCLog::MASTERNODE)) {
                 auto p = pindexPrev;
