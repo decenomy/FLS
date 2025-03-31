@@ -978,7 +978,7 @@ bool CMasternodeMan::ConnectBlock(const CBlockIndex* pindex, const CBlock& block
     // remove all UTXOs with old collaterals
     for(const auto& kv : mapCAmountCollaterals) {
         const auto& nCollateral = kv.first;
-        if(nCollateral != nCollateralAmount && nCollateralAmount != nNextWeekCollateralAmount) {
+        if(nCollateral != nCollateralAmount && nCollateral != nNextWeekCollateralAmount) {
             auto& toRemove = mapCAmountCollaterals[nCollateral];
             for (const auto& outPoint : toRemove) {
                 const auto& coin = mapCOutPointCollaterals[outPoint];

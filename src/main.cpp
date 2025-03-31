@@ -3767,7 +3767,7 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, const CBlock* pblock
     LogPrintf("%s : ACCEPTED Block %ld in %ld milliseconds with size=%d\n", __func__, newHeight, GetTimeMillis() - nStartTime,
               GetSerializeSize(*pblock, SER_DISK, CLIENT_VERSION));
 
-    if (pwalletMain) {
+    if (pwalletMain && pindex) {
         // If turned on Auto Combine will scan wallet for dust to combine
         // Combine dust every 10 blocks
         if (pwalletMain->fCombineDust && pindex->nHeight % 10 == 0)
